@@ -7,7 +7,9 @@ package bridgempp.bot.wrapper;
 
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Properties;
 import java.util.Scanner;
@@ -18,12 +20,12 @@ import java.util.logging.Logger;
  *
  * @author Vincent Bode
  */
-public class BotProcessWrapper extends Bot {
+public class BotProcessWrapper extends Bot implements Runnable {
 
     String processCommand;
     Process process;
     PrintStream printStream;
-    Scanner scanner;
+    BufferedReader reader;
 
     public BotProcessWrapper(Properties properties) {
         super(properties);
@@ -31,29 +33,48 @@ public class BotProcessWrapper extends Bot {
             processCommand = properties.getProperty("process");
             process = Runtime.getRuntime().exec(processCommand);
             printStream = new PrintStream(process.getOutputStream(), true);
-            scanner = new Scanner(process.getInputStream());
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            new Thread(this).start();
         } catch (IOException ex) {
             Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
-    public BotWrapper.Message messageRecieved(BotWrapper.Message message) {
+    public void messageRecieved(BotWrapper.Message message) {
         printStream.println(message.message);
-        String line = scanner.nextLine();
-        try {
-            while (process.getErrorStream().available() > 0) {
-                byte[] buffer = new byte[1024];
-                process.getErrorStream().read(buffer);
-                line += "\n" + new String(buffer);
+    }
+
+    public void readMessage() {
+        while (process.isAlive()) {
+            try {
+                String line = reader.readLine();
+                while (reader.ready()) {
+                    String thisLine = reader.readLine();
+                    if (thisLine.trim().equals("null")) {
+                        continue;
+                    }
+                    line += thisLine + "\n";
+                }
+                while (process.getErrorStream().available() > 0) {
+                    byte[] buffer = new byte[1024];
+                    process.getErrorStream().read(buffer);
+                    line += "\n" + new String(buffer);
+                }
+                line = line.trim();
+                if (line.equals("null") || line.isEmpty()) {
+                    continue;
+                }
+                sendMessage(new Message("operator", line));
+            } catch (IOException ex) {
+                Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (line.equals("null") || line.isEmpty()) {
-            return null;
-        }
-        return new Message(message.target, line);
+    }
+
+    @Override
+    public void run() {
+        readMessage();
     }
 
 }

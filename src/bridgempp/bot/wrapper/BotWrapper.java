@@ -47,10 +47,7 @@ public class BotWrapper {
                     }
                     Message message = new Message(line.substring(0, line.indexOf(": ")), line.substring(line.indexOf(": ") + 2));
                     Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: {0}; {1}", new Object[]{message.target, message.message});
-                    Message reply = bot.messageRecieved(message);
-                    if (reply != null) {
-                        printMessage(reply);
-                    }
+                    bot.messageRecieved(message);
                 }
             } catch (IOException ex) {
                 Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,7 +119,12 @@ public class BotWrapper {
             this.properties = properties;
         }
 
-        public abstract Message messageRecieved(Message message);
+        public abstract void messageRecieved(Message message);
+        
+        public void sendMessage(Message message)
+        {
+            printMessage(message);
+        }
     }
 
     public static class Message {
