@@ -40,7 +40,12 @@ public class BotWrapper {
                 scanner = new Scanner(socket.getInputStream());
                 botInitialize();
                 while (scanner.hasNext()) {
-                    Message message = new Message(scanner.nextLine(), scanner.nextLine());
+                    String line = scanner.nextLine();
+                    if(!line.contains(": "))
+                    {
+                        continue;
+                    }
+                    Message message = new Message(line.substring(0, line.indexOf(": ")), line.substring(line.indexOf(": ") + 2));
                     Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: {0}; {1}", new Object[]{message.target, message.message});
                     Message reply = bot.messageRecieved(message);
                     if (reply != null) {
@@ -64,7 +69,7 @@ public class BotWrapper {
 
     public static void printMessage(Message message) {
         Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outgoing: {0}; {1}", new Object[]{message.target, message.message});
-        printStream.println(message.target);
+        //printStream.println(message.target);
         printStream.println(message.message);
     }
 
