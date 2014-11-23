@@ -7,6 +7,7 @@ package bridgempp.bot.wrapper;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -71,6 +72,10 @@ public class BotWrapper {
             botProperties.load(new FileInputStream("config.txt"));
             String serverKey = botProperties.getProperty("serverKey");
             if (serverKey.isEmpty()) {
+                botProperties.put("serverKey", "<insertserveraccesskey>");
+                botProperties.put("groups", "<groupname1>; <groupname2>");
+                botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
+                botProperties.store(new FileOutputStream("config.txt"), "Bot Wrapper Configuration");
                 throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
             }
             printCommand("!usekey " + serverKey);
@@ -79,6 +84,7 @@ public class BotWrapper {
                 printCommand("!subscribegroup " + groups[i]);
             }
             System.out.println("Joined " + groups.length + " groups");
+            bot = new BotProcessWrapper(botProperties);
         } catch (IOException ex) {
             Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
