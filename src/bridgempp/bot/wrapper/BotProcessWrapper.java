@@ -24,7 +24,7 @@ public class BotProcessWrapper extends Bot {
     Process process;
     PrintStream printStream;
     Scanner scanner;
-    
+
     public BotProcessWrapper(Properties properties) {
         super(properties);
         try {
@@ -36,15 +36,24 @@ public class BotProcessWrapper extends Bot {
             Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @Override
     public BotWrapper.Message messageRecieved(BotWrapper.Message message) {
         printStream.println(message.message);
         String line = scanner.nextLine();
-        if(line.equals("null") || line.isEmpty())
-        {
+        try {
+            while (process.getErrorStream().available() > 0) {
+                byte[] buffer = new byte[1024];
+                process.getErrorStream().read(buffer);
+                line += "\n" + new String(buffer);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (line.equals("null") || line.isEmpty()) {
             return null;
         }
         return new Message(message.target, line);
     }
-    
+
 }
