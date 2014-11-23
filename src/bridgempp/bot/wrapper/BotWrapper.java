@@ -6,6 +6,7 @@ package bridgempp.bot.wrapper;
  */
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,13 +28,14 @@ public class BotWrapper {
     static PrintStream printStream;
 
     static Bot bot;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         while (true) {
             try {
-                socket = new Socket("vinpasso.org", 1234);
+                socket = new Socket("127.0.0.1", 1234);
                 printStream = new PrintStream(socket.getOutputStream(), true);
                 scanner = new Scanner(socket.getInputStream());
                 botInitialize();
@@ -41,12 +43,16 @@ public class BotWrapper {
                     Message message = new Message(scanner.nextLine(), scanner.nextLine());
                     Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: {0}; {1}", new Object[]{message.target, message.message});
                     Message reply = bot.messageRecieved(message);
-                    if(reply != null)
-                    {
+                    if (reply != null) {
                         printMessage(reply);
                     }
                 }
             } catch (IOException ex) {
+                Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException ex) {
                 Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -69,16 +75,21 @@ public class BotWrapper {
     private static void botInitialize() {
         try {
             Properties botProperties = new Properties();
-            botProperties.load(new FileInputStream("config.txt"));
+            File file = new File("config.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            botProperties.load(new FileInputStream(file));
             String serverKey = botProperties.getProperty("serverKey");
-            if (serverKey.isEmpty()) {
-                botProperties.put("serverKey", "<insertserveraccesskey>");
-                botProperties.put("groups", "<groupname1>; <groupname2>");
-                botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
-                botProperties.store(new FileOutputStream("config.txt"), "Bot Wrapper Configuration");
+            if (serverKey == null) {
+                writeDefaultConfig(botProperties);
                 throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
             }
             printCommand("!usekey " + serverKey);
+            String botAlias = botProperties.getProperty("botname");
+            if (botAlias != null) {
+                printCommand("!createalias " + botAlias);
+            }
             String[] groups = botProperties.getProperty("groups").split("; ");
             for (int i = 0; i < groups.length; i++) {
                 printCommand("!subscribegroup " + groups[i]);
@@ -90,14 +101,22 @@ public class BotWrapper {
         }
     }
 
+    private static void writeDefaultConfig(Properties botProperties) throws IOException {
+        botProperties.put("serverKey", "<insertserveraccesskey>");
+        botProperties.put("botname", "<Ahumanreadablebotname>");
+        botProperties.put("groups", "<groupname1>; <groupname2>");
+        botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
+        botProperties.store(new FileOutputStream("config.txt"), "Bot Wrapper Configuration");
+    }
+
     public static abstract class Bot {
+
         private final Properties properties;
-        
-        public Bot(Properties properties)
-        {
+
+        public Bot(Properties properties) {
             this.properties = properties;
         }
-        
+
         public abstract Message messageRecieved(Message message);
     }
 
