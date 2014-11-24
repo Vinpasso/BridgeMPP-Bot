@@ -9,13 +9,13 @@ import bridgempp.bot.wrapper.BotWrapper.Message;
  *         The WikiHelpBot integration class for BridgeMPP
  *
  */
-public class WikiHelpBotBrideMPPIntegration extends bridgempp.bot.wrapper.BotWrapper.Bot {
+public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWrapper.Bot {
 
 	public static final String Name = "WikiHelpBot";
 
 	WikiHelpBot helpBot;
 
-	public WikiHelpBotBrideMPPIntegration() {
+	public WikiHelpBotBridgeMPPIntegration() {
 	}
 
 	@Override

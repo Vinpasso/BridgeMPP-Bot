@@ -97,12 +97,13 @@ public class BotWrapper {
             }
             System.out.println("Joined " + groups.length + " groups");
             String botClass = botProperties.getProperty("botClass");
-            if (serverKey == null) {
+            if (botClass == null) {
                 writeDefaultConfig(botProperties);
                 throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
             }
             bot = (Bot)Class.forName(botClass).newInstance();
             bot.setProperties(botProperties);
+            bot.initializeBot();
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
