@@ -1,4 +1,4 @@
-package de.tum.wikihelpbot;
+package bots.WikiHelpBot;
 
 import bridgempp.bot.wrapper.BotWrapper.Message;
 

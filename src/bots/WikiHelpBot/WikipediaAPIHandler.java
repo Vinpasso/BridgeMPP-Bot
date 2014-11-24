@@ -1,4 +1,4 @@
-package de.tum.wikihelpbot;
+package bots.WikiHelpBot;
 
 import java.io.IOException;
 import java.io.InputStream;
