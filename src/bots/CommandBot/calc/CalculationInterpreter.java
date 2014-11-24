@@ -1,4 +1,4 @@
-package de.bots.command.calc;
+package bots.CommandBot.calc;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

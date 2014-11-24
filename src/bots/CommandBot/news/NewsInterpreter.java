@@ -1,4 +1,4 @@
-package de.bots.command.news;
+package bots.CommandBot.news;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,49 +1,64 @@
-package de.bots.command;
+package bots.CommandBot;
 
-import de.bots.command.calc.CalculationInterpreter;
-import de.bots.command.news.NewsInterpreter;
+import bots.CommandBot.calc.CalculationInterpreter;
+import bots.CommandBot.news.NewsInterpreter;
+import bridgempp.bot.wrapper.BotWrapper;
+import bridgempp.bot.wrapper.BotWrapper.Message;
 
 import java.util.Scanner;
 
-public class CommandBot {
-	private CalculationInterpreter ci;
-	private NewsInterpreter ni;
+public class CommandBot extends bridgempp.bot.wrapper.BotWrapper.Bot {
 
-	public CommandBot() {
-		ci = new CalculationInterpreter();
-		ni = new NewsInterpreter();
-	}
+    private CalculationInterpreter ci;
+    private NewsInterpreter ni;
 
-	public String evaluateMessage(String msg) {
-		if (!msg.startsWith("?")) {
-			return null;
-		}
-		int commandEnd = msg.indexOf(" ");
-		String command = null;
-		String args = null;
-		if (commandEnd > 0) {
-			command = msg.substring(1, commandEnd);
-			args = msg.substring(commandEnd+1);
-		} else {
-			command = msg.substring(1);
-		}
+    public CommandBot() {
+        ci = new CalculationInterpreter();
+        ni = new NewsInterpreter();
+    }
 
-		switch (command) {
-			case "calc":
-				return ci.getAnswer(args);
-			case "news":
-				return ni.getAnswer(args);
-		}
-		return null;
-	}
+    public String evaluateMessage(String msg) {
+        if (!msg.startsWith("?")) {
+            return null;
+        }
+        int commandEnd = msg.indexOf(" ");
+        String command = null;
+        String args = null;
+        if (commandEnd > 0) {
+            command = msg.substring(1, commandEnd);
+            args = msg.substring(commandEnd + 1);
+        } else {
+            command = msg.substring(1);
+        }
 
-	public static void main(String[] args) {
-		CommandBot cb = new CommandBot();
-		Scanner scan = new Scanner(System.in);
-		String line;
-		System.out.println("start:");
-		while (!(line = scan.nextLine()).equals("end")) {
-			System.out.println(cb.evaluateMessage(line));
-		}
-	}
+        switch (command) {
+            case "calc":
+                return ci.getAnswer(args);
+            case "news":
+                return ni.getAnswer(args);
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        CommandBot cb = new CommandBot();
+        Scanner scan = new Scanner(System.in);
+        String line;
+        System.out.println("start:");
+        while (!(line = scan.nextLine()).equals("end")) {
+            System.out.println(cb.evaluateMessage(line));
+        }
+    }
+
+    @Override
+    public void initializeBot() {
+    }
+
+    @Override
+    public void messageRecieved(BotWrapper.Message message) {
+        String botResponse = evaluateMessage(message.message);
+        if (botResponse != null) {
+            sendMessage(new Message(message.target, botResponse));
+        }
+    }
 }
