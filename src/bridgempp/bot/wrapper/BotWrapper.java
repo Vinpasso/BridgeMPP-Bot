@@ -36,7 +36,7 @@ public class BotWrapper {
         while (true) {
             try {
                 socket = new Socket("127.0.0.1", 1234);
-                printStream = new PrintStream(socket.getOutputStream(), true);
+                printStream = new PrintStream(socket.getOutputStream(), true, "UTF-8");
                 scanner = new Scanner(socket.getInputStream());
                 botInitialize();
                 while (scanner.hasNext()) {
