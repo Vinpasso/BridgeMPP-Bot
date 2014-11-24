@@ -120,7 +120,7 @@ public class BotWrapper {
     public static abstract class Bot {
         Properties properties;
         
-        public void setProperties(Properties properties)
+        public final void setProperties(Properties properties)
         {
             this.properties = properties;
         }
@@ -128,7 +128,7 @@ public class BotWrapper {
         public abstract void initializeBot();
         public abstract void messageRecieved(Message message);
 
-        public void sendMessage(Message message) {
+        public final void sendMessage(Message message) {
             printMessage(message);
         }
     }
