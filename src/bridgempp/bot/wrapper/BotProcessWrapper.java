@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,8 +26,11 @@ public class BotProcessWrapper extends Bot implements Runnable {
     PrintStream printStream;
     BufferedReader reader;
 
-    public BotProcessWrapper(Properties properties) {
-        super(properties);
+    public BotProcessWrapper() {
+    }
+    @Override
+    public void initializeBot()
+    {
         try {
             processCommand = properties.getProperty("process");
             process = Runtime.getRuntime().exec(processCommand);

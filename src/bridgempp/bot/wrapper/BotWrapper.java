@@ -102,6 +102,7 @@ public class BotWrapper {
                 throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
             }
             bot = (Bot)Class.forName(botClass).newInstance();
+            bot.setProperties(botProperties);
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -112,17 +113,19 @@ public class BotWrapper {
         botProperties.put("botname", "<Ahumanreadablebotname>");
         botProperties.put("groups", "<groupname1>; <groupname2>");
         botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
+        botProperties.put("botClass", "<FQ Class Name>");
         botProperties.store(new FileOutputStream("config.txt"), "Bot Wrapper Configuration");
     }
 
     public static abstract class Bot {
-
-        private final Properties properties;
-
-        public Bot(Properties properties) {
+        Properties properties;
+        
+        public void setProperties(Properties properties)
+        {
             this.properties = properties;
         }
 
+        public abstract void initializeBot();
         public abstract void messageRecieved(Message message);
 
         public void sendMessage(Message message) {
