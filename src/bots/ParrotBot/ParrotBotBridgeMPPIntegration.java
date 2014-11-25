@@ -1,46 +1,67 @@
 package bots.ParrotBot;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
 public class ParrotBotBridgeMPPIntegration extends Bot{
 
-	List<ParrotBot> parrots;
+	Map<String,ParrotBot> parrots;
 	
 	ParrotBotBridgeMPPIntegration(){
-		parrots = new ArrayList<ParrotBot>();
+		parrots = new HashMap<String,ParrotBot>();
 	}
 	
 	@Override
 	public void initializeBot() {
-		parrots.add(new ParrotBot());
 	}
 
 	@Override
 	public void messageRecieved(Message message) {
 		String msg = message.message;
 		String[] msgWords = msg.split(" ");
+		StringBuilder strBuilder = new StringBuilder();
 		
-		if(msgWords[1].equals("?parrot") && msgWords.length >= 2){
-			if(msgWords[2].equals("kill") && parrots.size() > 0){
+		if(msgWords[0].equals("?parrot") && msgWords.length >= 2){
+			if(msgWords[1].equals("kill") && parrots.size() > 0 && msgWords.length >= 3){
 					try{
-						parrots.remove(Integer.parseInt(msgWords[3]));
+						parrots.remove(msgWords[2]);
 					}
 					catch(Exception e){
 						parrots.remove(0);
 					}
 					
 			}
-			if(msgWords[2].equals("buy")){
-				parrots.add(new ParrotBot());
+			if(msgWords[1].equals("buy")){
+				ParrotBot parrot = msgWords.length >= 3 ? new ParrotBot(msgWords[2]) :new ParrotBot();
+				parrots.put(parrot.getName(), parrot);
+			}
+			if(msgWords[1].equals("feed") && msgWords.length >= 3){
+				ParrotBot parrot = parrots.get(msgWords[2]);
+				if(parrot != null){
+					parrot.feed();
+				}
 			}
 		}
 		
-		for(ParrotBot parrot : parrots){
-			parrot.processSplitMessage(msgWords);
+		for(ParrotBot parrot : parrots.values()){
+			parrot.updateParrot();
+			String parrotStatus = parrot.getStatus();
+			if(parrotStatus != null){
+				strBuilder.append(parrotStatus).append("\n");
+			}
+			
+		}
+		for(ParrotBot parrot : parrots.values()){
+			String parrotMessage = parrot.processSplitMessage(msgWords);
+			if(parrotMessage != null){
+				strBuilder.append(parrotMessage);
+			}
+		}
+		if(!strBuilder.equals("")){
+			sendMessage(new Message("Parrots",strBuilder.toString()));
 		}
 	}
 

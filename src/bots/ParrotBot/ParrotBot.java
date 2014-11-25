@@ -1,32 +1,62 @@
 package bots.ParrotBot;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 
 public class ParrotBot{
 
+	private static final long foodreduceTimeinHrs = 5;
+	private static final long foodreduceTimeinMin = 60*foodreduceTimeinHrs;
+	private static final long foodreduceTimeinSec = 60*foodreduceTimeinMin;
+	private static final long foodreduceTimeinMS = 1000*foodreduceTimeinSec;
+	
 	private final String ParrotSound;
 	private final Random r;
+	private double feediness = 0.5;
+	private double talkiness;
+	private boolean dead = false;
+	private String name;
+	long lastUpdate;
+	List<String> statusqeue = new LinkedList<String>();
 	
 	private char getRandomLowercaseChar(){
 		return (char)(r.nextInt(26) + 'a');
 	}
 	
-	ParrotBot(){
+	private double getRandomNum(){
+		return (r.nextDouble() * feediness * talkiness)%1;
+	}
+	
+	public ParrotBot(){
+		this("tmp");
+		StringBuilder parrotName = new StringBuilder();
+		parrotName.append(Character.toUpperCase(getRandomLowercaseChar()));
+		for(int i = 0; i < 6; i++){
+			parrotName.append(getRandomLowercaseChar());
+		}
+		name = parrotName.toString();
+	}
+	
+	public ParrotBot(String parrotName){
 		r = new Random();
 		r.setSeed(System.nanoTime());
 		char c1 = getRandomLowercaseChar();
 		char c2 = getRandomLowercaseChar();
-		ParrotSound = "Kr" + c1 + "a" + c2 + "h"; 
+		ParrotSound = "Kr" + c1 + "a" + c2 + "h";
+		name = parrotName;
+		talkiness = 1;
+		lastUpdate = System.currentTimeMillis();
 	}
 	
 	public String processSplitMessage(String[] messageWords){
 		StringBuilder repeatingWords = new StringBuilder("");
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
-			if(Math.random() > 0.6){
+			if(getRandomNum() > 0.6){
 				for(int j = i; j < messageWords.length;j++){
-					if(Math.random() > 0.3){
+					if(getRandomNum() > 0.3){
 						repeatingWords.append(messageWords[j]).append(" ");
 					}
 				}
@@ -37,10 +67,10 @@ public class ParrotBot{
 			return null;
 		}
 		
-		if(Math.random() > 0.3){
+		if(getRandomNum() > 0.3){
 			repeatingWords = new StringBuilder(ParrotSound).append(" ").append(repeatingWords);
 		}
-		if(Math.random() > 0.3){
+		if(getRandomNum() > 0.3){
 			repeatingWords.append("...").append(ParrotSound);
 		}
 		
@@ -48,24 +78,77 @@ public class ParrotBot{
 	}
 	
 	public String processMessage(String message){
-		String[] messageWords = message.split(" ");
-		return processSplitMessage(messageWords);
+		if(!dead){
+			String[] messageWords = message.split(" ");
+			String answer = processSplitMessage(messageWords);
+			return answer;
+		}
+		return null;
 	}
 	
-
+	public void updateParrot(){
+		if(System.currentTimeMillis() - lastUpdate > foodreduceTimeinMS){
+			hunger();
+		}
+	}
+	
+	public String getStatus(){
+		return statusqeue.size() > 0? statusqeue.remove(0) : null;
+	}
+	
+	public void hunger(){
+		feediness -= 0.01;
+	if(feediness < 0 && !dead){
+			statusqeue.add("Parrot " + name + " started making weird noises.");
+			statusqeue.add("Parrot " + name + " fell from his favourite place.");
+			statusqeue.add("Parrot " + name + " took his last breath.");
+			dead = true;
+		}
+	}
+	
+	public void feed(){
+		if(dead){
+			return;
+		}
+		feediness += 0.01;
+		statusqeue.add("Parrot " + name + " ate the food.");
+		if(feediness > 1.0){
+			statusqeue.add("Parrot " + name + " looks fat.");
+			statusqeue.add("Parrot" + name + " exploded into a cloud of feathers.");
+		}
+	}
+	
+	public void kill(){
+		statusqeue.add("Parrot " + name + " screams in pain.");
+		statusqeue.add("Parrot " + name + " fell from his favourite place.");
+		statusqeue.add("Parrot " + name + " is breathing heavily.");
+		statusqeue.add("Parrot " + name + " is turning red.");
+		statusqeue.add("Parrot " + name + " is turning into a pool of blood.");
+		statusqeue.add("Parrot " + name + " is no more....");
+		dead = true;
+		
+	}
+	
+	public String getName(){
+		return name;
+	}
 	
 	public static void main(String[] args) {
 		ParrotBot parrot1 = new ParrotBot();
 		Scanner reader = new Scanner(System.in);
 		boolean exit = false;
-
+		ParrotBot parrot2 = new ParrotBot();
+		parrot2.kill();
+		
 		while (!exit) {
 			String line = reader.nextLine();
 			//exit = line.equals("exit");
 			String wikiHelp = parrot1.processMessage(line);
-
+			parrot1.feed();
+			System.out.println(parrot1.getStatus());
+			System.out.println(parrot2.getStatus());
 			if (wikiHelp != null) {
-				System.out.println("Parrot says:");
+				System.out.println("Parrot " + parrot1.name + " says:");
 				 System.out.println(wikiHelp);
 			}
 		}
