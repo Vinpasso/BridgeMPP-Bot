@@ -30,9 +30,9 @@ public class WikiHelpBot {
 		}
 		if (wikiResponseString != null) {
 			try {
-				return URLDecoder.decode(wikiResponseString, "UTF-8");
+				return URLDecoder.decode(wikiResponseString, "UTF-8").replace("&#160;","\u00A0");
 			} catch (UnsupportedEncodingException e) {
-				return wikiResponseString;
+				return wikiResponseString.replace("\u00A0","");
 			}
 		}
 		return null;
