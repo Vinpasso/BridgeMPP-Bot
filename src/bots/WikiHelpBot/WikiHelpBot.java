@@ -12,7 +12,7 @@ public class WikiHelpBot {
 
 	public static final Pattern askingPattern = Pattern.compile("(?i)Wer ist |Was ist ein |Was ist eine |Was ist der |Was ist die |Was ist das |Was ist |Was sind |What is an |What is a |What is |What are ");
 	public static final Pattern greetingPattern = Pattern.compile("guten morgen.*|good morning.*");
-	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz"};
+	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz","ru","cn","pl","ja","zh","pt"};
 	
 	private WikipediaAPIHandler apiHandler;
 	
