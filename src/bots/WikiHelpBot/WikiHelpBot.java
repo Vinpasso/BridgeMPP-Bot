@@ -12,6 +12,7 @@ public class WikiHelpBot {
 
 	public static final Pattern askingPattern = Pattern.compile("(?i)Wer ist |Was ist ein |Was ist eine |Was ist der |Was ist die |Was ist das |Was ist |Was sind |What is an |What is a |What is |What are ");
 	public static final Pattern greetingPattern = Pattern.compile("guten morgen.*|good morning.*");
+	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz"};
 	
 	private WikipediaAPIHandler apiHandler;
 	
@@ -22,8 +23,11 @@ public class WikiHelpBot {
 
 
 	private String getWikiHelp(String topic) {
-		String wikiResponseString = apiHandler.getWikiSummary(topic);
-		
+		String wikiResponseString = null;
+		for(int i = 0; i < wikiLangDomains.length && wikiResponseString == null;i++){
+			apiHandler.wikiLangDomain = wikiLangDomains[i];
+			wikiResponseString = apiHandler.getWikiSummary(topic);
+		}
 		if (wikiResponseString != null) {
 			try {
 				return URLDecoder.decode(wikiResponseString, "UTF-8");

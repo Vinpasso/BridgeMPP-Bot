@@ -22,7 +22,7 @@ public class WikipediaAPIHandler {
 	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
 	public static final int maxSummaryCharacterCount = 200;
 	
-	public final String wikiLangDomain;
+	public String wikiLangDomain;
 
 	String url;
 	String response;
