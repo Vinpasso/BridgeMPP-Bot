@@ -1,4 +1,4 @@
-package bots.CommandBot.news;
+package bots.NewsBot.news;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

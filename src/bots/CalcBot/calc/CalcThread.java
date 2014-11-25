@@ -1,4 +1,4 @@
-package bots.CommandBot.calc;
+package bots.CalcBot.calc;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -22,6 +22,9 @@ public class CalcThread extends Thread {
 				result = "Input has no result.";
 			}
 		} catch (ScriptException e1) {
+			if (CalculationInterpreter.debug) {
+				System.out.println(e1.getMessage());
+			}
 			String ex = e1.getMessage();
 			int start = ex.lastIndexOf(":")+2;
 			int end = ex.indexOf("(")-1;

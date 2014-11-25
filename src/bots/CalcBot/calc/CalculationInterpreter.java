@@ -1,20 +1,26 @@
-package bots.CommandBot.calc;
+package bots.CalcBot.calc;
+
+import bots.logger.ErrorLogger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class CalculationInterpreter {
+	private ScriptEngineManager mgr;
 	private ScriptEngine engine;
 	private List<String> methodNames;
 	private List<String> fieldNames;
+	private long lastOOME = 0;
 
-	public CalculationInterpreter() {
-		ScriptEngineManager mgr = new ScriptEngineManager();
+	public static boolean debug = false;
+
+	public void init() {
+		mgr = new ScriptEngineManager();
 		engine = mgr.getEngineByName("JavaScript");
 
 		Method[] methods = Math.class.getDeclaredMethods();
@@ -36,7 +42,33 @@ public class CalculationInterpreter {
 	}
 
 	public String getAnswer(String expression) {
-		return "CmdBot: " + expression + " = " + calculate(expression);
+		if (expression.equals("debug on")) {
+			debug = true;
+			return null;
+		} else if (expression.equals("debug off")) {
+			debug = false;
+			return null;
+		}
+
+		try {
+			String result = calculate(expression);
+			if (result.split("\n").length > 10 || result.length() > 500) {
+				return "Result is too long.";
+			}
+			return "\"" + expression + "\"   =   " + calculate(expression);
+		} catch (OutOfMemoryError e) {
+			ErrorLogger.logger.log(Level.SEVERE, "An Error has occured:", e);
+			if (debug) {
+				e.printStackTrace();
+			}
+			if (System.currentTimeMillis() - lastOOME < 10000) {
+				throw e;
+			}
+			engine = mgr.getEngineByName("JavaScript");
+			lastOOME = System.currentTimeMillis();
+			ErrorLogger.logger.log(Level.SEVERE, "The Error could be resolved.");
+			return "Scriptengine needed to be restarted, please try again.";
+		}
 	}
 
 	public String calculate(String expression) {
@@ -48,7 +80,11 @@ public class CalculationInterpreter {
 				ct.wait(3000);
 			}
 		} catch (InterruptedException e) {
-			return e.getMessage();
+			ErrorLogger.logger.log(Level.SEVERE, "An Error has occured:", e);
+			if (debug) {
+				e.printStackTrace();
+			}
+			return "Waiting Thread has been interrupted.";
 		}
 		if (ct.getResult() == null) {
 			ct.stop();
@@ -65,10 +101,5 @@ public class CalculationInterpreter {
 			expression = expression.replaceAll("(?i)[^a-zA-Z]" + name + "[^a-zA-Z]", "Math.".concat(name));
 		}
 		return expression;
-	}
-
-	public static void main(String[] args) {
-		CalculationInterpreter i = new CalculationInterpreter();
-		System.out.println(i.getAnswer("for(;;) {}"));
 	}
 }
