@@ -48,11 +48,11 @@ public class WikipediaAPIHandler {
 			wikiResponse = wikiurl.openStream();
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return wikiResponse;
 	}
