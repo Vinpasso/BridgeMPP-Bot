@@ -44,8 +44,8 @@ public class BotWrapper {
                     if (!line.contains(": ")) {
                         continue;
                     }
+                    Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: " + line);
                     Message message = new Message(line.substring(0, line.indexOf(": ", line.indexOf(": ") + 1)), line.substring(line.indexOf(": ", line.indexOf(": ") + 1) + 2));
-                    Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: {0}; {1}", new Object[]{message.target, message.message});
                     bot.messageRecieved(message);
                 }
             } catch (IOException ex) {
@@ -62,7 +62,6 @@ public class BotWrapper {
 //    public static Message parseMessage(BufferedReader reader) throws IOException {
 //        return new Message(reader.readLine(), reader.readLine());
 //    }
-
     public static void printMessage(Message message) {
         Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outgoing: {0}; {1}", new Object[]{message.target, message.message});
         //printStream.println(message.target);
@@ -101,7 +100,7 @@ public class BotWrapper {
                 writeDefaultConfig(botProperties);
                 throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
             }
-            bot = (Bot)Class.forName(botClass).newInstance();
+            bot = (Bot) Class.forName(botClass).newInstance();
             bot.setProperties(botProperties);
             bot.initializeBot();
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
@@ -119,14 +118,15 @@ public class BotWrapper {
     }
 
     public static abstract class Bot {
+
         Properties properties;
-        
-        public final void setProperties(Properties properties)
-        {
+
+        public final void setProperties(Properties properties) {
             this.properties = properties;
         }
 
         public abstract void initializeBot();
+
         public abstract void messageRecieved(Message message);
 
         public final void sendMessage(Message message) {
