@@ -1,4 +1,4 @@
-package bots.CommandBot.news;
+package bots.NewsBot.news;
 
 import java.util.HashMap;
 

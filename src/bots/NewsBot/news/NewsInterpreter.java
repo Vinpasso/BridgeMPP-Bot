@@ -1,7 +1,10 @@
-package bots.CommandBot.news;
+package bots.NewsBot.news;
+
+import bots.NewsBot.logger.ErrorLogger;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 public class NewsInterpreter {
 	private final String HELP = "News - Help:\n" +
@@ -16,7 +19,9 @@ public class NewsInterpreter {
 			"    help/?  - shows this help\n"
 	;
 
-	public NewsInterpreter() {
+	public static boolean debug = false;
+
+	public void init() {
 		Cultures.init();
 		Categories.init();
 	}
@@ -34,6 +39,13 @@ public class NewsInterpreter {
 			}
 
 			switch (params[0]) {
+				case "debug":
+					if (params[1].equals("on")) {
+						debug = true;
+					} else if (params[1].equals("off")) {
+						debug = false;
+					}
+					return null;
 				case "help":
 				case "?":
 					return HELP;
@@ -50,7 +62,7 @@ public class NewsInterpreter {
 					if (paramLength > 2 && params[1].equals("limit") && params[2].matches("[0-9]+")) {
 						return Cultures.getCultures(Integer.parseInt(params[2]));
 					}
-					return Cultures.getCultures();
+					return Cultures.getCultures(3);
 				case "cat":
 				case "cats":
 				case "category":
@@ -120,8 +132,12 @@ public class NewsInterpreter {
 						return Articles.getArticle(category, n);
 					}
 			}
-			return "Please insert a valid command.";
+			return "Please insert a valid bots.";
 		} catch (Exception e) {
+			ErrorLogger.logger.log(Level.SEVERE, "An Error has occured:", e);
+			if (debug) {
+				e.printStackTrace();
+			}
 			return "Input couldn't be interpreted by the news-server.";
 		}
 	}
@@ -139,10 +155,5 @@ public class NewsInterpreter {
 			sb.append(args[i]);
 		}
 		return sb.toString();
-	}
-
-	public static void main(String[] args) {
-		NewsInterpreter i = new NewsInterpreter();
-		System.out.println(i.getAnswer(null));
 	}
 }

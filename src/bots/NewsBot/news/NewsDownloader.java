@@ -1,13 +1,12 @@
-package bots.CommandBot.news;
+package bots.NewsBot.news;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import bots.NewsBot.logger.ErrorLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.logging.Level;
 
 public class NewsDownloader {
 
@@ -34,6 +33,10 @@ public class NewsDownloader {
 
 			return sb.toString();
 		} catch (IOException e) {
+			ErrorLogger.logger.log(Level.SEVERE, "An Error has occured:", e);
+			if (NewsInterpreter.debug) {
+				e.printStackTrace();
+			}
 			return "No connection to news-server possible";
 		}
 	}

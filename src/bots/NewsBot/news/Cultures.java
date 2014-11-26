@@ -1,11 +1,9 @@
-package bots.CommandBot.news;
+package bots.NewsBot.news;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
 
 public class Cultures {
 	private final static String DEFAULT_CULTURE = "de";
