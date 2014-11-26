@@ -77,6 +77,8 @@ public class ParrotBotBridgeMPPIntegration extends Bot{
 				strBuilder.append(parrot.getName()).append(": ").append(parrotMessage).append("\n");
 			}
 		}
+		if(!strBuilder.equals("")){
 			sendMessage(new Message("Parrots",strBuilder.toString()));
+		}
 	}
 }
