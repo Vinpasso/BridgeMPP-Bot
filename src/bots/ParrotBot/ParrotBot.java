@@ -52,6 +52,9 @@ public class ParrotBot{
 	}
 	
 	public String processSplitMessage(String[] messageWords){
+		if(messageWords == null || messageWords.length == 0){
+			return null;
+		}
 		StringBuilder repeatingWords = new StringBuilder("");
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
 			if(getRandomNum() > 0.6){
