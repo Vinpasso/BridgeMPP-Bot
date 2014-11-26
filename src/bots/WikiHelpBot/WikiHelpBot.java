@@ -12,6 +12,8 @@ public class WikiHelpBot {
 
 	public static final Pattern askingPattern = Pattern.compile("(?i)Wer ist |Was ist ein |Was ist eine |Was ist der |Was ist die |Was ist das |Was ist |Was sind |What is an |What is a |What is |What are ");
 	public static final Pattern greetingPattern = Pattern.compile("guten morgen.*|good morning.*");
+	public static final Pattern NoLineBreakSpacePattern = Pattern.compile("&#160;");
+	
 	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz","ru","cn","pl","ja","zh","pt"};
 	
 	private WikipediaAPIHandler apiHandler;
@@ -30,7 +32,7 @@ public class WikiHelpBot {
 		}
 		if (wikiResponseString != null) {
 			try {
-				return URLDecoder.decode(wikiResponseString, "UTF-8").replace("&#160;","\u00A0");
+				return NoLineBreakSpacePattern.matcher(URLDecoder.decode(wikiResponseString, "UTF-8")).replaceAll("\u00A0");
 			} catch (UnsupportedEncodingException e) {
 				return wikiResponseString.replace("\u00A0","");
 			}
