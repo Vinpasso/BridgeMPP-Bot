@@ -1,6 +1,6 @@
 package bots.CalcBot.calc;
 
-import bots.logger.ErrorLogger;
+import bots.CalcBot.logger.ErrorLogger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

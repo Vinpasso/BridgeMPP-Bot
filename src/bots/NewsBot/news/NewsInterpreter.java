@@ -1,6 +1,6 @@
 package bots.NewsBot.news;
 
-import bots.logger.ErrorLogger;
+import bots.NewsBot.logger.ErrorLogger;
 
 import java.util.Arrays;
 import java.util.List;
