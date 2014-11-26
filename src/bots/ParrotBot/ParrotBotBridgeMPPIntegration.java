@@ -65,7 +65,6 @@ public class ParrotBotBridgeMPPIntegration extends Bot{
 				strBuilder.append(parrotStatus).append("\n");
 			}
 			if(parrot.isDone()){
-				System.out.println("found done parrot: " + parrot.getName());
 				doneParrots.add(parrot.getName());
 			}
 		}
@@ -78,7 +77,6 @@ public class ParrotBotBridgeMPPIntegration extends Bot{
 				strBuilder.append(parrot.getName()).append(": ").append(parrotMessage).append("\n");
 			}
 		}
-			System.out.println(strBuilder.toString());
 			sendMessage(new Message("Parrots",strBuilder.toString()));
 	}
 }
