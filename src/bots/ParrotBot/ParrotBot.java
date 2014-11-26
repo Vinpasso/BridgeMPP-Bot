@@ -27,7 +27,7 @@ public class ParrotBot{
 	}
 	
 	private double getRandomNum(){
-		return (r.nextDouble() * feediness * talkiness)%1;
+		return (r.nextDouble())%1;
 	}
 	
 	public ParrotBot(){
@@ -93,7 +93,7 @@ public class ParrotBot{
 	}
 	
 	public String getStatus(){
-		return statusqeue.size() > 0? statusqeue.remove(0) : null;
+		return statusqeue.isEmpty()? null : statusqeue.remove(0) ;
 	}
 	
 	public void hunger(){
@@ -129,6 +129,10 @@ public class ParrotBot{
 		
 	}
 	
+	public boolean isDone(){
+		return dead && statusqeue.isEmpty();
+	}
+	
 	public String getName(){
 		return name;
 	}
@@ -137,16 +141,12 @@ public class ParrotBot{
 		ParrotBot parrot1 = new ParrotBot();
 		Scanner reader = new Scanner(System.in);
 		boolean exit = false;
-		ParrotBot parrot2 = new ParrotBot();
-		parrot2.kill();
 		
 		while (!exit) {
 			String line = reader.nextLine();
 			//exit = line.equals("exit");
 			String wikiHelp = parrot1.processMessage(line);
-			parrot1.feed();
 			System.out.println(parrot1.getStatus());
-			System.out.println(parrot2.getStatus());
 			if (wikiHelp != null) {
 				System.out.println("Parrot " + parrot1.name + " says:");
 				 System.out.println(wikiHelp);
