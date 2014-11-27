@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 
 public class ParrotBot{
@@ -13,10 +14,11 @@ public class ParrotBot{
 	private static final long foodreduceTimeinSec = 60*foodreduceTimeinMin;
 	private static final long foodreduceTimeinMS = 1000*foodreduceTimeinSec;
 	
+	public static final Pattern removeadditionalnewLinesandWhiteSpaces = Pattern.compile("[\n ]+", Pattern.DOTALL);
+	
 	private final String ParrotSound;
 	private final Random r;
 	private double feediness = 0.5;
-	private double talkiness;
 	private boolean dead = false;
 	private String name;
 	long lastUpdate;
@@ -47,7 +49,6 @@ public class ParrotBot{
 		char c2 = getRandomLowercaseChar();
 		ParrotSound = "Kr" + c1 + "a" + c2 + "h";
 		name = parrotName;
-		talkiness = 1;
 		lastUpdate = System.currentTimeMillis();
 	}
 	
@@ -59,7 +60,7 @@ public class ParrotBot{
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
 			if(getRandomNum() > 0.6){
 				for(int j = i; j < messageWords.length;j++){
-					if(getRandomNum() > 0.3){
+					if(getRandomNum() > 0.3 && !removeadditionalnewLinesandWhiteSpaces.matcher(messageWords[j]).matches()){
 						repeatingWords.append(messageWords[j]).append(" ");
 					}
 				}

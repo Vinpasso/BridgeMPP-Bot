@@ -13,6 +13,8 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	Map<String, ParrotBot> parrots;
 	List<String> doneParrots;
 
+	public static int maxParrotCount = -1;
+	
 	public ParrotBotBridgeMPPIntegration() {
 		parrots = new HashMap<String, ParrotBot>();
 		doneParrots = new ArrayList<String>();
@@ -44,7 +46,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 					}
 				}
 
-				if (msgWords[1].equals("buy")) {
+				if (msgWords[1].equals("buy") && parrots.values().size() != maxParrotCount) {
 					ParrotBot parrot = msgWords.length >= 3 ? new ParrotBot(msgWords[2]) : new ParrotBot();
 					parrots.put(parrot.getName(), parrot);
 					strBuilder.append("bought new parrot with name: " + parrot.getName() + "\n");
