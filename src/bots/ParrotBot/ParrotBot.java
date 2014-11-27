@@ -56,7 +56,7 @@ public class ParrotBot{
 		if(messageWords == null || messageWords.length == 0){
 			return null;
 		}
-		StringBuilder repeatingWords = new StringBuilder("");
+		StringBuilder repeatingWords = new StringBuilder();
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
 			if(getRandomNum() > 0.6){
 				for(int j = i; j < messageWords.length;j++){

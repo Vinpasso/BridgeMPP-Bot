@@ -29,7 +29,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 		try {
 			String msg = message.message;
 			String[] msgWords = msg.split(" ");
-			StringBuilder strBuilder = new StringBuilder("");
+			StringBuilder strBuilder = new StringBuilder();
 
 			if (msgWords[0].equals("?parrot") && msgWords.length >= 2) {
 				if (msgWords[1].equals("kill") && parrots.size() > 0 && msgWords.length >= 3) {
