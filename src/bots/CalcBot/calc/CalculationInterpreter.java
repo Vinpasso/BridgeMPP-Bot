@@ -4,6 +4,7 @@ import bots.CalcBot.logger.ErrorLogger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class CalculationInterpreter {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public String calculate(String expression) {
 		String withFunctions = replaceFunctions(expression);
 		CalcThread ct = new CalcThread(engine, withFunctions);

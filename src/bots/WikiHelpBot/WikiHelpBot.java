@@ -1,7 +1,6 @@
 package bots.WikiHelpBot;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Scanner;
