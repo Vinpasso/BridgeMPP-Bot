@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 /**
  *
  * @author Vincent Bode
@@ -167,19 +168,21 @@ public class BotWrapper {
 		}
 
 		public static Message parseMessage(String complexString) {
-			Message message = new Message();
-			Pattern pattern = Pattern.compile("[^(:\\ |\\ -->\\ )]+");
-			Matcher matcher = pattern.matcher(complexString);
-			matcher.find();
-			message.setMessageFormat(matcher.group());
-			matcher.find();
-			message.setGroup(matcher.group());
-			matcher.find();
-			message.setSender(matcher.group());
-			matcher.find();
-			message.setTarget(matcher.group());
-			message.setMessage(complexString.substring(matcher.end() + 2));
-			return message;
+	    	Message message = new Message();
+	    	String[] messageSplit = complexString.split("\\s*(?::| -->)\\s+", 5);
+	    	if(messageSplit.length == 5)
+	    	{
+	        	message.setMessageFormat(messageSplit[0]);
+	    		message.setGroup(messageSplit[1]);
+	    		message.setSender(messageSplit[2]);
+	    		message.setTarget(messageSplit[3]);
+	    		message.setMessage(messageSplit[4]);
+	    	}
+	    	else
+	    	{
+	    		message.setMessage(complexString);
+	    	}
+	    	return message;
 		}
 		
 	    public String toComplexString() {
