@@ -21,6 +21,7 @@ public class WikipediaAPIHandler {
 	public static final Pattern removeadditionalWhiteSpaces = Pattern.compile(" +", Pattern.DOTALL);
 	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
 	public static final int maxSummaryCharacterCount = 200;
+	public static final boolean doReturnHTMLText = true;
 	
 	public String wikiLangDomain;
 
@@ -58,6 +59,11 @@ public class WikipediaAPIHandler {
 	}
 	
 	public String removeHTMLfromString(String text) {
+		
+		if(doReturnHTMLText){
+			return text;
+		}
+		
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
 		String rmaddWhiteSpacesWikiPageString = removeadditionalWhiteSpaces.matcher(modWikiPageString).replaceAll(" ");
 		String rmaddNewLinesWikiPageString = removeadditionalnewLines.matcher(rmaddWhiteSpacesWikiPageString).replaceAll("\n");
