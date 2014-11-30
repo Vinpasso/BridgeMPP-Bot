@@ -119,6 +119,7 @@ public class ParrotBot{
 		if(feediness > 1.0){
 			statusqeue.add("Parrot " + name + " looks fat.");
 			statusqeue.add("Parrot" + name + " exploded into a cloud of feathers.");
+			dead = true;
 		}
 	}
 	
