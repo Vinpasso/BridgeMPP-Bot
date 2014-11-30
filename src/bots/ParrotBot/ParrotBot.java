@@ -14,6 +14,9 @@ public class ParrotBot{
 	private static final long foodreduceTimeinSec = 60*foodreduceTimeinMin;
 	private static final long foodreduceTimeinMS = 1000*foodreduceTimeinSec;
 	
+	private static final String vovels = "aeiou";
+	private static final String consonents = "bcdfghjklmnpqrstvwxyz";
+	
 	public static final Pattern removeadditionalnewLinesandWhiteSpaces = Pattern.compile("[\n ]+", Pattern.DOTALL);
 	
 	private final String ParrotSound;
@@ -28,18 +31,26 @@ public class ParrotBot{
 		return (char)(r.nextInt(26) + 'a');
 	}
 	
+	private String getRandomName(){
+		StringBuilder name = new StringBuilder();
+		int i = 0;
+		name.append((i%2 == 0?vovels:consonents).toUpperCase().charAt(r.nextInt((i%2 == 0?vovels:consonents).length())));
+		for(; i < 5;i++){
+			name.append((i%2 == 0?vovels:consonents).charAt(r.nextInt((i%2 == 0?vovels:consonents).length())));
+		}
+		for(;r.nextDouble() > 0.3;i++){
+			name.append((i%2 == 0?vovels:consonents).charAt(r.nextInt((i%2 == 0?vovels:consonents).length())));
+		}
+		return name.toString();
+	}
+	
 	private double getRandomNum(){
 		return (r.nextDouble())%1;
 	}
 	
 	public ParrotBot(){
 		this("tmp");
-		StringBuilder parrotName = new StringBuilder();
-		parrotName.append(Character.toUpperCase(getRandomLowercaseChar()));
-		for(int i = 0; i < 6; i++){
-			parrotName.append(getRandomLowercaseChar());
-		}
-		name = parrotName.toString();
+		name = getRandomName();
 	}
 	
 	public ParrotBot(String parrotName){
