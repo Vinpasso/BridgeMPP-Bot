@@ -45,10 +45,9 @@ public class BotWrapper {
 				botInitialize();
 				while (true) {
 					String buffer = "";
-					while(bufferedReader.ready())
-					{
+					do {
 						buffer += bufferedReader.readLine() + "\n";
-					}
+					} while(bufferedReader.ready());
 					buffer = buffer.trim();
 					Matcher matcher = Pattern.compile("(?<=<message>)[^<]+(?=<\\/message>)").matcher(buffer);
 					while (matcher.find()) {					
@@ -68,15 +67,13 @@ public class BotWrapper {
 		}
 	}
 
-	// public static Message parseMessage(BufferedReader reader) throws
-	// IOException {
-	// return new Message(reader.readLine(), reader.readLine());
-	// }
 	public static void printMessage(Message message) {
-		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outgoing: {0}; {1}",
-				new Object[] { message.target, message.message });
-		// printStream.println(message.target);
-		printStream.println(message.message);
+		if(message.message.length() == 0)
+		{
+			return;
+		}
+		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outgoing: " + message.toComplexString());
+		printStream.println("<message>" + message.toComplexString() + "</message>");
 	}
 
 	public static void printCommand(String command) {
@@ -85,13 +82,13 @@ public class BotWrapper {
 
 	private static void botInitialize() {
 		try {
+			printStream.println("!protoxmlcarry");
 			Properties botProperties = new Properties();
 			File file = new File("config.txt");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			botProperties.load(new FileInputStream(file));
-			printCommand("!protoxmlcarry");
 			String serverKey = botProperties.getProperty("serverKey");
 			if (serverKey == null) {
 				writeDefaultConfig(botProperties);
@@ -147,11 +144,11 @@ public class BotWrapper {
 	}
 
 	public static class Message {
-		public String group;
-		public String sender;
-		public String target;
-		public String message;
-		public String messageFormat;
+		private String group;
+		private String sender;
+		private String target;
+		private String message;
+		private String messageFormat;
 
 		public Message() {
 
@@ -162,11 +159,11 @@ public class BotWrapper {
 		}
 
 		public Message(String group, String sender, String target, String message, String messageFormat) {
-			this.group = group;
-			this.sender = sender;
-			this.target = target;
-			this.message = message;
-			this.messageFormat = messageFormat;
+			this.setGroup(group);
+			this.setSender(sender);
+			this.setTarget(target);
+			this.setMessage(message);
+			this.setMessageFormat(messageFormat);
 		}
 
 		public static Message parseMessage(String complexString) {
@@ -174,15 +171,94 @@ public class BotWrapper {
 			Pattern pattern = Pattern.compile("[^(:\\ |\\ -->\\ )]+");
 			Matcher matcher = pattern.matcher(complexString);
 			matcher.find();
-			message.messageFormat = matcher.group();
+			message.setMessageFormat(matcher.group());
 			matcher.find();
-			message.group = matcher.group();
+			message.setGroup(matcher.group());
 			matcher.find();
-			message.sender = matcher.group();
+			message.setSender(matcher.group());
 			matcher.find();
-			message.target = matcher.group();
-			message.message = complexString.substring(matcher.end() + 2);
+			message.setTarget(matcher.group());
+			message.setMessage(complexString.substring(matcher.end() + 2));
 			return message;
 		}
+		
+	    public String toComplexString() {
+	    	String messageFormat = getMessageFormat() + ": ";
+	        String group = (getGroup() != null)?(getGroup() + ": "):"Direct Message: ";
+	        String sender = (getSender() != null)?getSender().toString():"Unknown";
+	        String target = (getTarget() != null)?(getTarget().toString() + ": "):("Unknown: ");
+	        return messageFormat + group + sender + " --> " + target + getMessage();
+	    }
+
+		/**
+		 * @return the group
+		 */
+		public String getGroup() {
+			return group;
+		}
+
+		/**
+		 * @param group the group to set
+		 */
+		public void setGroup(String group) {
+			this.group = group;
+		}
+
+		/**
+		 * @return the sender
+		 */
+		public String getSender() {
+			return sender;
+		}
+
+		/**
+		 * @param sender the sender to set
+		 */
+		public void setSender(String sender) {
+			this.sender = sender;
+		}
+
+		/**
+		 * @return the target
+		 */
+		public String getTarget() {
+			return target;
+		}
+
+		/**
+		 * @param target the target to set
+		 */
+		public void setTarget(String target) {
+			this.target = target;
+		}
+
+		/**
+		 * @return the message
+		 */
+		public String getMessage() {
+			return message;
+		}
+
+		/**
+		 * @param message the message to set
+		 */
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+		/**
+		 * @return the messageFormat
+		 */
+		public String getMessageFormat() {
+			return messageFormat;
+		}
+
+		/**
+		 * @param messageFormat the messageFormat to set
+		 */
+		public void setMessageFormat(String messageFormat) {
+			this.messageFormat = messageFormat;
+		}
+
 	}
 }

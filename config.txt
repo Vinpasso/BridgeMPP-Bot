@@ -1,0 +1,6 @@
+#Bot Wrapper Configuration
+#Sun Nov 30 00:57:01 CET 2014
+groups=
+serverKey=bridgempp-key
+botClass=bots.ParrotBot.ParrotBotBridgeMPPIntegration
+botname=Parrot Bot

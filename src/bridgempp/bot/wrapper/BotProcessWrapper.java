@@ -43,7 +43,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
 
     @Override
     public void messageRecieved(BotWrapper.Message message) {
-        printStream.println(message.message);
+        printStream.println(message.getMessage());
     }
 
     public void readMessage() {

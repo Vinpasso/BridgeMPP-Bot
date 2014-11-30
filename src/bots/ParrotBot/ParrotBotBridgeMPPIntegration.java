@@ -27,7 +27,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	@Override
 	public void messageRecieved(Message message) {
 		try {
-			String msg = message.message;
+			String msg = message.getMessage();
 			String[] msgWords = msg.split(" ");
 			StringBuilder strBuilder = new StringBuilder();
 
