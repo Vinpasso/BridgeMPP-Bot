@@ -55,7 +55,7 @@ public class BotWrapper {
 						buffer += line + "\n";
 					} while(bufferedReader.ready());
 					buffer = buffer.trim();
-					Matcher matcher = Pattern.compile("(?<=<message>)[^<]+(?=<\\/message>)").matcher(buffer);
+					Matcher matcher = Pattern.compile("(?<=<message>).+(?=<\\/message>)", Pattern.DOTALL).matcher(buffer);
 					while (matcher.find()) {					
 						Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: " + matcher.group());
 						Message message = Message.parseMessage(matcher.group());
