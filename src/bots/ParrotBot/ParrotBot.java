@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class ParrotBot{
 
-	private static final long foodreduceTimeinHrs = 5;
+	private static final long foodreduceTimeinHrs = 1;
 	private static final long foodreduceTimeinMin = 60*foodreduceTimeinHrs;
 	private static final long foodreduceTimeinSec = 60*foodreduceTimeinMin;
 	private static final long foodreduceTimeinMS = 1000*foodreduceTimeinSec;
@@ -114,7 +114,7 @@ public class ParrotBot{
 		if(dead){
 			return;
 		}
-		feediness += 0.01;
+		feediness += 0.1;
 		statusqeue.add("Parrot " + name + " ate the food.");
 		if(feediness > 1.0){
 			statusqeue.add("Parrot " + name + " looks fat.");
