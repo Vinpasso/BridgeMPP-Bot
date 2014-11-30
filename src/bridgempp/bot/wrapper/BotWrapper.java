@@ -55,7 +55,7 @@ public class BotWrapper {
 						buffer += line + "\n";
 					} while(bufferedReader.ready());
 					buffer = buffer.trim();
-					Matcher matcher = Pattern.compile("(?<=<message>).+(?=<\\/message>)", Pattern.DOTALL).matcher(buffer);
+					Matcher matcher = Pattern.compile("(?<=<message>).+?(?=<\\/message>)", Pattern.DOTALL).matcher(buffer);
 					while (matcher.find()) {					
 						Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: " + matcher.group());
 						Message message = Message.parseMessage(matcher.group());
@@ -160,8 +160,14 @@ public class BotWrapper {
 
 		}
 
+		@Deprecated
 		public Message(String sender, String message) {
 			this("", sender, "", message, "Plain Text");
+		}
+		
+		public Message(String group, String message, String messageFormat)
+		{
+			this(group, "", "", message, messageFormat);
 		}
 
 		public Message(String group, String sender, String target, String message, String messageFormat) {
