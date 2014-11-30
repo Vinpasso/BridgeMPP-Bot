@@ -31,7 +31,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 				sendMessage(new Message("WikiBot", wikiWis,"HTML"));
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 

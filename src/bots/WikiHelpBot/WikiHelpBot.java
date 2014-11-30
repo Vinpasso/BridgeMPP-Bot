@@ -54,7 +54,7 @@ public class WikiHelpBot {
 	public String getWikiBotWisdom(String message){
 		
 		if(greetingPattern.matcher(message.trim().toLowerCase()).matches()){
-			return "Der WikiHelpBot grüßt euch, Erdbewohner";
+			return "Der WikiHelpBot grÃ¼ÃŸt euch, Erdbewohner";
 		}
 		else{
 			return needWikiResponse(message);
