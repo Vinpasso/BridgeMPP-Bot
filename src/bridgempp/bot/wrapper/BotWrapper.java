@@ -47,7 +47,12 @@ public class BotWrapper {
 				while (true) {
 					String buffer = "";
 					do {
-						buffer += bufferedReader.readLine() + "\n";
+						String line = bufferedReader.readLine();
+						if(line == null)
+						{
+							throw new IOException("Stream closed");
+						}
+						buffer += line + "\n";
 					} while(bufferedReader.ready());
 					buffer = buffer.trim();
 					Matcher matcher = Pattern.compile("(?<=<message>)[^<]+(?=<\\/message>)").matcher(buffer);
