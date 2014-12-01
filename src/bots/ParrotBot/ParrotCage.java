@@ -38,7 +38,7 @@ public class ParrotCage {
 			try {
 				parrots.get(parrotName).kill();
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public class ParrotCage {
 		try{
 			parrots.get(parrot).feed();
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
 	}
 	

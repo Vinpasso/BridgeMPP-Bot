@@ -46,7 +46,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			}
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 }
