@@ -1,5 +1,6 @@
 package bots.ParrotBot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -16,6 +17,7 @@ public class ParrotBot{
 	
 	private static final String vovels = "aeiou";
 	private static final String consonents = "bcdfghjklmnpqrstvwxyz";
+	private static final String colourParts = "0123456789ABCDEF";
 	
 	public static final Pattern removeadditionalnewLinesandWhiteSpaces = Pattern.compile("[\n ]+", Pattern.DOTALL);
 	
@@ -24,11 +26,25 @@ public class ParrotBot{
 	private double feediness = 0.5;
 	private boolean dead = false;
 	private String name;
-	long lastUpdate;
-	List<String> statusqeue = new LinkedList<String>();
+	private long lastUpdate;
+	private boolean shiny = false;
+	private List<String> statusqeue = new LinkedList<String>();
+	private List<String> colours = new ArrayList<String>();
 	
 	private char getRandomLowercaseChar(){
 		return (char)(r.nextInt(26) + 'a');
+	}
+	
+	private char getRandomColourChar(){
+		return colourParts.charAt(r.nextInt(colourParts.length()));
+	}
+	
+	private String getRandomColour(){
+		StringBuilder colour = new StringBuilder();
+		for(int i = 0; i < 6; i++){
+			colour.append(getRandomColourChar());
+		}
+		return colour.toString();
 	}
 	
 	private String getRandomName(){
@@ -43,14 +59,59 @@ public class ParrotBot{
 		}
 		return name.toString();
 	}
+
+	private String getColouredName(String name){
+		StringBuilder colouredName = new StringBuilder();
+		
+		for(char c : name.toCharArray()){
+			String colour = getRandomColour();
+			colours.add(colour);
+			colouredName.append("<span style=\"#");
+			colouredName.append(colour);
+			colouredName.append("\">");
+			colouredName.append(c);
+			colouredName.append("</span>");
+		}
+		
+		return colouredName.toString();
+	}
+	
+	private String makeShiny(String string){
+		if(!shiny){
+			return string;
+		}
+		StringBuilder shiny = new StringBuilder();
+		int colourLength = Math.max(1,string.length() / colours.size());
+		for(int i = 0; i < string.length();i+=colourLength){
+			shiny.append("<span style=\"#");
+			colours.get(i/colourLength);
+			shiny.append("\">");
+			shiny.append(string.substring(i, i+colourLength >= string.length() ? string.length():i+colourLength));
+			shiny.append("</span>");
+		}
+		return shiny.toString();
+	}
 	
 	private double getRandomNum(){
 		return (r.nextDouble())%1;
 	}
 	
+	private void setParrotName(String parrotName){
+		name = getColouredName(parrotName);
+		if(parrotName.equals("John")){
+			shiny = true;
+		}
+		else if(r.nextInt(101) == 100){
+			shiny = true;
+		}
+		else{
+			shiny = false;
+		}
+	}
+	
 	public ParrotBot(){
 		this("tmp");
-		name = getRandomName();
+		setParrotName(getRandomName());
 	}
 	
 	public ParrotBot(String parrotName){
@@ -59,7 +120,7 @@ public class ParrotBot{
 		char c1 = getRandomLowercaseChar();
 		char c2 = getRandomLowercaseChar();
 		ParrotSound = "Kr" + c1 + "a" + c2 + "h";
-		name = parrotName;
+		setParrotName(parrotName);
 		lastUpdate = System.currentTimeMillis();
 	}
 	
@@ -89,7 +150,7 @@ public class ParrotBot{
 			repeatingWords.append("...").append(ParrotSound);
 		}
 		
-		return repeatingWords.toString();
+		return makeShiny(repeatingWords.toString());
 	}
 	
 	public String processMessage(String message){
@@ -154,7 +215,7 @@ public class ParrotBot{
 	}
 	
 	public static void main(String[] args) {
-		ParrotBot parrot1 = new ParrotBot();
+		ParrotBot parrot1 = new ParrotBot("John");
 		Scanner reader = new Scanner(System.in);
 		boolean exit = false;
 		

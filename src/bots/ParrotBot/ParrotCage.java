@@ -37,7 +37,6 @@ public class ParrotCage {
 		} else {
 			try {
 				parrots.get(parrotName).kill();
-				;
 			} catch (Exception e) {
 
 			}

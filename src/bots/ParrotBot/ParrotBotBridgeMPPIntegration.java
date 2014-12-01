@@ -1,10 +1,5 @@
 package bots.ParrotBot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
@@ -47,7 +42,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			strBuilder.append(cage.getStatus());
 			strBuilder.append(cage.processMessage(msgWords));
 			if (!strBuilder.equals("")) {
-				sendMessage(new Message("Parrots", strBuilder.toString(),"Plain Text"));
+				sendMessage(new Message("Parrots", strBuilder.toString(),"HTML"));
 			}
 
 		} catch (Exception e) {
