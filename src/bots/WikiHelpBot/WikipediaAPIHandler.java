@@ -21,13 +21,15 @@ public class WikipediaAPIHandler {
 	public static final Pattern removeadditionalWhiteSpaces = Pattern.compile(" +", Pattern.DOTALL);
 	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
 	public static final Pattern extendWikiURLLinksPattern = Pattern.compile("/wiki/");
+	public static final Pattern extendReferenceURLLinksPattern = Pattern.compile("href=\"#");
 	public static final int maxSummaryCharacterCount = 200;
 	public static final boolean doReturnHTMLText = true;
 	
 	public String wikiLangDomain;
 
-	String url;
-	String response;
+	private String url;
+	private String response;
+	private String topic; 
 	
 	public WikipediaAPIHandler(String wikiLangDomain) {
 		super();
@@ -63,7 +65,8 @@ public class WikipediaAPIHandler {
 		
 		if(doReturnHTMLText){
 			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll(wikiLangDomain + ".wikipedia.org/wiki/");
-			return extendedWikiURLText;
+			String extendedWikiAndReferenceURLText = extendReferenceURLLinksPattern.matcher(extendedWikiURLText).replaceAll("href=\"" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + "#");
+			return extendedWikiAndReferenceURLText;
 		}
 		
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
@@ -92,6 +95,7 @@ public class WikipediaAPIHandler {
 			int redirectStartIndex = textNodeText.indexOf("?title=") + 7;
 			int redirectEndIndex = textNodeText.indexOf("&", redirectStartIndex);
 			String redirect = textNodeText.substring(redirectStartIndex, redirectEndIndex);
+			topic = redirect;
 			textNodeText = extractHTMLPageText(readURL(redirect));
 		}
 		return isRedirection;
@@ -156,6 +160,7 @@ public class WikipediaAPIHandler {
 	}	
 	
 	public String getWikiSummary(String topic){
+		this.topic = topic;
 		InputStream wikiResponseStream = readURL(topic);
 		String wikiResponseString = extractHTMLPageText(wikiResponseStream);
 		return wikiResponseString;
