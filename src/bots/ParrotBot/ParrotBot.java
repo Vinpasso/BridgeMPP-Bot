@@ -81,13 +81,15 @@ public class ParrotBot{
 			return string;
 		}
 		StringBuilder shiny = new StringBuilder();
-		int colourLength = Math.max(1,string.length() / colours.size());
+		int colourLength = Math.max(1,string.length() / (colours.size()-1));
 		for(int i = 0; i < string.length();i+=colourLength){
+			
 			shiny.append("<span style=\"#");
-			colours.get(i/colourLength);
+			colours.get((i/colourLength));
 			shiny.append("\">");
 			shiny.append(string.substring(i, i+colourLength >= string.length() ? string.length():i+colourLength));
 			shiny.append("</span>");
+			
 		}
 		return shiny.toString();
 	}
