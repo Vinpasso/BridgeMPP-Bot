@@ -222,16 +222,16 @@ public class ParrotBot{
 		Scanner reader = new Scanner(System.in);
 		boolean exit = false;
 		
-		while (!exit) {
+		
 			String line = reader.nextLine();
 			//exit = line.equals("exit");
 			String wikiHelp = parrot1.processMessage(line);
 			System.out.println(parrot1.getStatus());
+			System.out.println(parrot1.shiny);
 			if (wikiHelp != null) {
 				System.out.println("Parrot " + parrot1.name + " says:");
 				 System.out.println(wikiHelp);
 			}
-		}
 		reader.close();
 	}
 
