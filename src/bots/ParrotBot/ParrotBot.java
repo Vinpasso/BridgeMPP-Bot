@@ -66,7 +66,7 @@ public class ParrotBot{
 		for(char c : name.toCharArray()){
 			String colour = getRandomColour();
 			colours.add(colour);
-			colouredName.append("<span style=\"#");
+			colouredName.append("<span style=\"color:#");
 			colouredName.append(colour);
 			colouredName.append("\">");
 			colouredName.append(c);
@@ -84,7 +84,7 @@ public class ParrotBot{
 		int colourLength = Math.max(1,string.length() / (colours.size()-1));
 		for(int i = 0; i < string.length();i+=colourLength){
 			
-			shiny.append("<span style=\"#");
+			shiny.append("<span style=\"color:#");
 			colours.get((i/colourLength));
 			shiny.append("\">");
 			shiny.append(string.substring(i, i+colourLength >= string.length() ? string.length():i+colourLength));
