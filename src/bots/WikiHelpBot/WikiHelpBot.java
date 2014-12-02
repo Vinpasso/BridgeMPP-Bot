@@ -13,7 +13,7 @@ public class WikiHelpBot {
 	public static final Pattern greetingPattern = Pattern.compile("guten morgen.*|good morning.*");
 	public static final Pattern NoLineBreakSpacePattern = Pattern.compile("&#160;");
 	
-	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz","ru","cn","pl","ja","zh","pt"};
+	public static final String[] wikiLangDomains = {"de","bar","en","es","fr","it","cz","ru","pl","ja","zh","pt"};
 	
 	private WikipediaAPIHandler apiHandler;
 	
