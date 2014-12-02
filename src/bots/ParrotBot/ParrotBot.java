@@ -100,10 +100,10 @@ public class ParrotBot{
 	
 	private void setParrotName(String parrotName){
 		name = getColouredName(parrotName);
-		if(parrotName.equals("John")){
+		if(parrotName.trim().equals("John")){
 			shiny = true;
 		}
-		else if(r.nextInt(101) == 100){
+		else if(r.nextInt(8193) == 0){
 			shiny = true;
 		}
 		else{
