@@ -14,6 +14,7 @@ public class ParrotBot{
 	private static final long foodreduceTimeinMin = 60*foodreduceTimeinHrs;
 	private static final long foodreduceTimeinSec = 60*foodreduceTimeinMin;
 	private static final long foodreduceTimeinMS = 1000*foodreduceTimeinSec;
+	private static final int shinyParrotChance = 10;
 	
 	private static final String vovels = "aeiou";
 	private static final String consonents = "bcdfghjklmnpqrstvwxyz";
@@ -103,7 +104,7 @@ public class ParrotBot{
 		if(parrotName.trim().equals("John")){
 			shiny = true;
 		}
-		else if(r.nextInt(8193) == 0){
+		else if(r.nextInt(shinyParrotChance+1) == 0){
 			shiny = true;
 		}
 		else{
