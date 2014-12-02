@@ -1,7 +1,6 @@
 package bots.WikiHelpBot;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -32,7 +31,7 @@ public class WikiHelpBot {
 		if (wikiResponseString != null) {
 			try {
 				return NoLineBreakSpacePattern.matcher(URLDecoder.decode(wikiResponseString, "UTF-8")).replaceAll("\u00A0");
-			} catch (UnsupportedEncodingException e) {
+			} catch (Exception e) {
 				return wikiResponseString.replace("\u00A0","");
 			}
 		}

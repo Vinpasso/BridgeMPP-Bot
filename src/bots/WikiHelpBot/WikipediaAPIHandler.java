@@ -64,8 +64,8 @@ public class WikipediaAPIHandler {
 	public String removeHTMLfromString(String text) {
 		
 		if(doReturnHTMLText){
-			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll(wikiLangDomain + ".wikipedia.org/wiki/");
-			String extendedWikiAndReferenceURLText = extendReferenceURLLinksPattern.matcher(extendedWikiURLText).replaceAll("href=\"" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + "#");
+			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll("http://" + wikiLangDomain + ".wikipedia.org/wiki/");
+			String extendedWikiAndReferenceURLText = extendReferenceURLLinksPattern.matcher(extendedWikiURLText).replaceAll("href=\"http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + "#");
 			return extendedWikiAndReferenceURLText;
 		}
 		
