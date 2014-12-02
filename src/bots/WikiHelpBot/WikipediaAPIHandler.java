@@ -20,6 +20,7 @@ public class WikipediaAPIHandler {
 	public static final Pattern removeHTMLTagsPattern = Pattern.compile("<[^>]*>", Pattern.DOTALL);
 	public static final Pattern removeadditionalWhiteSpaces = Pattern.compile(" +", Pattern.DOTALL);
 	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
+	public static final Pattern extendWikiURLLinksPattern = Pattern.compile("/wiki/");
 	public static final int maxSummaryCharacterCount = 200;
 	public static final boolean doReturnHTMLText = true;
 	
@@ -61,7 +62,8 @@ public class WikipediaAPIHandler {
 	public String removeHTMLfromString(String text) {
 		
 		if(doReturnHTMLText){
-			return text;
+			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll(wikiLangDomain + ".wikipedia.org/wiki/");
+			return extendedWikiURLText;
 		}
 		
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
