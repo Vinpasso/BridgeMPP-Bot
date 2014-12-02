@@ -22,6 +22,7 @@ public class WikipediaAPIHandler {
 	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
 	public static final Pattern extendWikiURLLinksPattern = Pattern.compile("/wiki/");
 	public static final Pattern extendReferenceURLLinksPattern = Pattern.compile("href=\"#");
+	public static final Pattern extendMiscURLPattern = Pattern.compile("href=//");
 	public static final int maxSummaryCharacterCount = 200;
 	public static final boolean doReturnHTMLText = true;
 	
@@ -66,7 +67,8 @@ public class WikipediaAPIHandler {
 		if(doReturnHTMLText){
 			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll("http://" + wikiLangDomain + ".wikipedia.org/wiki/");
 			String extendedWikiAndReferenceURLText = extendReferenceURLLinksPattern.matcher(extendedWikiURLText).replaceAll("href=\"http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + "#");
-			return extendedWikiAndReferenceURLText;
+			String extendedWikiReferenceAndMiscURLText = extendMiscURLPattern.matcher(extendedWikiAndReferenceURLText).replaceAll("href=http://");
+			return extendedWikiReferenceAndMiscURLText;
 		}
 		
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
