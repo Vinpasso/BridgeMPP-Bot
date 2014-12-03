@@ -6,20 +6,21 @@ package bridgempp.bot.wrapper;
  * and open the template in the editor.
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 /**
  *
@@ -27,114 +28,150 @@ import java.util.regex.Pattern;
  */
 public class BotWrapper {
 
-	static Socket socket;
-	static BufferedReader bufferedReader;
-	static PrintStream printStream;
 
-	static Bot bot;
+	static Selector selector;
 
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-		while (true) {
-			try {
-				socket = new Socket("127.0.0.1", 1234);
-				printStream = new PrintStream(socket.getOutputStream(), true, "UTF-8");
-				bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-				botInitialize();
-				while (true) {
-					String buffer = "";
-					do {
-						String line = bufferedReader.readLine();
-						if(line == null)
-						{
-							throw new IOException("Stream closed");
-						}
-						buffer += line + "\n";
-					} while(bufferedReader.ready());
-					buffer = buffer.trim();
-					Matcher matcher = Pattern.compile("(?<=<message>).+?(?=<\\/message>)", Pattern.DOTALL).matcher(buffer);
-					while (matcher.find()) {					
-						Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Incomming: " + matcher.group());
-						Message message = Message.parseMessage(matcher.group());
-						bot.messageRecieved(message);
-					}
+		try {
+			File botsDir = new File("bots/");
+			if(!botsDir.exists())
+			{
+				botsDir.mkdir();
+				Properties exampleBotProperties = new Properties();
+				writeDefaultConfig(exampleBotProperties);
+				exampleBotProperties.store(new FileOutputStream("bots/exampleBot.config"), "Bot Wrapper Configuration");
+				System.out.println("Created Example Config. Please Edit");
+				return;
+			}
+			for(File botConfig : botsDir.listFiles())
+			{
+				botInitialize(botConfig);
+			}
+			while (true) {
+				selector.select();
+				Iterator<SelectionKey> updates = selector.selectedKeys().iterator();
+				while (updates.hasNext()) {
+					SelectionKey selectionKey = updates.next();
+					updates.remove();
+					Bot bot = (Bot) selectionKey.attachment();
+					ProtoBuf.Message protoMessage = ProtoBuf.Message.parseDelimitedFrom(bot.inputStream);
+					Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(), protoMessage.getMessage(), protoMessage.getMessageFormat());
+					bot.messageRecieved(message);
 				}
-			} catch (IOException ex) {
-				Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			try {
-				Thread.sleep(60000);
-			} catch (InterruptedException ex) {
-				Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
-			}
+		} catch (IOException ex) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					null, ex);
+		}
+		try {
+			Thread.sleep(60000);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					null, ex);
 		}
 	}
 
-	public static void printMessage(Message message) {
-		if(message.message.length() == 0)
-		{
+	public static void printMessage(Message message, Bot bot) {
+		if (message.message.length() == 0) {
 			return;
 		}
-		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outgoing: " + message.toComplexString());
-		printStream.println("<message>" + message.toComplexString() + "</message>");
-	}
-
-	public static void printCommand(String command) {
-		printMessage(new Message("operator", command));
-	}
-
-	private static void botInitialize() {
+		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO,
+				"Outgoing: " + message.toComplexString());
 		try {
-			printStream.println("!protoxmlcarry");
+			ProtoBuf.Message.newBuilder()
+					.setMessageFormat(message.getMessageFormat())
+					.setMessage(message.getMessage())
+					.setSender(message.getSender())
+					.setTarget(message.getTarget())
+					.setGroup(message.getGroup()).build()
+					.writeDelimitedTo(bot.outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void printCommand(String command, Bot bot) {
+		printMessage(new Message("operator", command), bot);
+	}
+
+	private static void botInitialize(File botConfig) {
+		try {
 			Properties botProperties = new Properties();
-			File file = new File("config.txt");
-			if (!file.exists()) {
-				file.createNewFile();
+			if (!botConfig.exists()) {
+				botConfig.createNewFile();
 			}
-			botProperties.load(new FileInputStream(file));
-			String serverKey = botProperties.getProperty("serverKey");
-			if (serverKey == null) {
-				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
-			}
-			printCommand("!usekey " + serverKey);
-			String botAlias = botProperties.getProperty("botname");
-			if (botAlias != null) {
-				printCommand("!createalias " + botAlias);
-			}
-			String[] groups = botProperties.getProperty("groups").split("; ");
-			for (int i = 0; i < groups.length; i++) {
-				printCommand("!subscribegroup " + groups[i]);
-			}
-			System.out.println("Joined " + groups.length + " groups");
+			botProperties.load(new FileInputStream(botConfig));
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException(
+						"Bot Class is null, cannot execute BridgeMPP server commands");
 			}
-			bot = (Bot) Class.forName(botClass).newInstance();
+			Bot bot = (Bot) Class.forName(botClass).newInstance();
+			String serverAddress = botProperties.getProperty("serverAddress");
+			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
+			if(serverAddress == null)
+			{
+				writeDefaultConfig(botProperties);
+				throw new UnsupportedOperationException(
+						"Server Address is null, cannot execute BridgeMPP server commands");
+			}
+			SocketChannel socket = SocketChannel.open();
+			socket.connect(new InetSocketAddress(serverAddress, portNumber));
+			socket.configureBlocking(false);
+			SelectionKey selectionKey = socket.register(selector, SelectionKey.OP_READ);
+			bot.channel = socket;
+			bot.inputStream = Channels.newInputStream(socket);
+			bot.outputStream = Channels.newOutputStream(socket);
+			bot.outputStream.write("!protoProtoBufCarry".getBytes("UTF-8"));
 			bot.setProperties(botProperties);
+			selectionKey.attach(bot);
+			
+			String serverKey = botProperties.getProperty("serverKey");
+			if (serverKey == null) {
+				writeDefaultConfig(botProperties);
+				throw new UnsupportedOperationException(
+						"Server Key is null, cannot execute BridgeMPP server commands");
+			}
+			printCommand("!usekey " + serverKey, bot);
+			String botAlias = botProperties.getProperty("botname");
+			if (botAlias != null) {
+				printCommand("!createalias " + botAlias, bot);
+			}
+			String[] groups = botProperties.getProperty("groups").split("; ");
+			for (int i = 0; i < groups.length; i++) {
+				printCommand("!subscribegroup " + groups[i], bot);
+			}
+			System.out.println("Joined " + groups.length + " groups");
+
+
 			bot.initializeBot();
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException | ClassNotFoundException | InstantiationException
+				| IllegalAccessException ex) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					null, ex);
 		}
 	}
 
-	private static void writeDefaultConfig(Properties botProperties) throws IOException {
+	private static void writeDefaultConfig(Properties botProperties)
+			throws IOException {
 		botProperties.put("serverKey", "<insertserveraccesskey>");
 		botProperties.put("botname", "<Ahumanreadablebotname>");
 		botProperties.put("groups", "<groupname1>; <groupname2>");
 		botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
 		botProperties.put("botClass", "<FQ Class Name>");
-		botProperties.store(new FileOutputStream("config.txt"), "Bot Wrapper Configuration");
 	}
 
 	public static abstract class Bot {
 
 		Properties properties;
+		SocketChannel channel;
+		OutputStream outputStream;
+		InputStream inputStream;
 
 		public final void setProperties(Properties properties) {
 			this.properties = properties;
@@ -145,7 +182,7 @@ public class BotWrapper {
 		public abstract void messageRecieved(Message message);
 
 		public final void sendMessage(Message message) {
-			printMessage(message);
+			printMessage(message, this);
 		}
 	}
 
@@ -164,13 +201,13 @@ public class BotWrapper {
 		public Message(String sender, String message) {
 			this("", sender, "", message, "Plain Text");
 		}
-		
-		public Message(String group, String message, String messageFormat)
-		{
+
+		public Message(String group, String message, String messageFormat) {
 			this(group, "", "", message, messageFormat);
 		}
 
-		public Message(String group, String sender, String target, String message, String messageFormat) {
+		public Message(String group, String sender, String target,
+				String message, String messageFormat) {
 			this.setGroup(group);
 			this.setSender(sender);
 			this.setTarget(target);
@@ -179,30 +216,32 @@ public class BotWrapper {
 		}
 
 		public static Message parseMessage(String complexString) {
-	    	Message message = new Message();
-	    	String[] messageSplit = complexString.split("\\s*(?::| -->)\\s+", 5);
-	    	if(messageSplit.length == 5)
-	    	{
-	        	message.setMessageFormat(messageSplit[0]);
-	    		message.setGroup(messageSplit[1]);
-	    		message.setSender(messageSplit[2]);
-	    		message.setTarget(messageSplit[3]);
-	    		message.setMessage(messageSplit[4]);
-	    	}
-	    	else
-	    	{
-	    		message.setMessage(complexString);
-	    	}
-	    	return message;
+			Message message = new Message();
+			String[] messageSplit = complexString
+					.split("\\s*(?::| -->)\\s+", 5);
+			if (messageSplit.length == 5) {
+				message.setMessageFormat(messageSplit[0]);
+				message.setGroup(messageSplit[1]);
+				message.setSender(messageSplit[2]);
+				message.setTarget(messageSplit[3]);
+				message.setMessage(messageSplit[4]);
+			} else {
+				message.setMessage(complexString);
+			}
+			return message;
 		}
-		
-	    public String toComplexString() {
-	    	String messageFormat = getMessageFormat() + ": ";
-	        String group = (getGroup() != null)?(getGroup() + ": "):"Direct Message: ";
-	        String sender = (getSender() != null)?getSender().toString():"Unknown";
-	        String target = (getTarget() != null)?(getTarget().toString() + ": "):("Unknown: ");
-	        return messageFormat + group + sender + " --> " + target + getMessage();
-	    }
+
+		public String toComplexString() {
+			String messageFormat = getMessageFormat() + ": ";
+			String group = (getGroup() != null) ? (getGroup() + ": ")
+					: "Direct Message: ";
+			String sender = (getSender() != null) ? getSender().toString()
+					: "Unknown";
+			String target = (getTarget() != null) ? (getTarget().toString() + ": ")
+					: ("Unknown: ");
+			return messageFormat + group + sender + " --> " + target
+					+ getMessage();
+		}
 
 		/**
 		 * @return the group
@@ -212,7 +251,8 @@ public class BotWrapper {
 		}
 
 		/**
-		 * @param group the group to set
+		 * @param group
+		 *            the group to set
 		 */
 		public void setGroup(String group) {
 			this.group = group;
@@ -226,7 +266,8 @@ public class BotWrapper {
 		}
 
 		/**
-		 * @param sender the sender to set
+		 * @param sender
+		 *            the sender to set
 		 */
 		public void setSender(String sender) {
 			this.sender = sender;
@@ -240,7 +281,8 @@ public class BotWrapper {
 		}
 
 		/**
-		 * @param target the target to set
+		 * @param target
+		 *            the target to set
 		 */
 		public void setTarget(String target) {
 			this.target = target;
@@ -254,7 +296,8 @@ public class BotWrapper {
 		}
 
 		/**
-		 * @param message the message to set
+		 * @param message
+		 *            the message to set
 		 */
 		public void setMessage(String message) {
 			this.message = message;
@@ -268,7 +311,8 @@ public class BotWrapper {
 		}
 
 		/**
-		 * @param messageFormat the messageFormat to set
+		 * @param messageFormat
+		 *            the messageFormat to set
 		 */
 		public void setMessageFormat(String messageFormat) {
 			this.messageFormat = messageFormat;
