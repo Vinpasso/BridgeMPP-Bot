@@ -89,7 +89,7 @@ public class ParrotBot{
 		for(int i = 0; i < string.length();i+=colourLength){
 			
 			shiny.append("<span style=\"color:#");
-			colours.get((i/colourLength));
+			colours.get((i/colourLength) >= colours.size() ? colours.size()-1 : (i/colourLength));
 			shiny.append("\">");
 			shiny.append(string.substring(i, i+colourLength >= string.length() ? string.length():i+colourLength));
 			shiny.append("</span>");
