@@ -1,11 +1,17 @@
 package bots.ParrotBot;
 
+import java.util.regex.Pattern;
+
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
 public class ParrotBotBridgeMPPIntegration extends Bot {
 
 	ParrotCage cage;
+	
+	public static Pattern isKillCommand = Pattern.compile("\\A\\?parrot kill");
+	public static Pattern isFeedCommand = Pattern.compile("\\A\\?parrot feed");
+	public static Pattern isBuyCommand =  Pattern.compile("\\A\\?parrot buy");
 
 	public ParrotBotBridgeMPPIntegration() {
 		cage = new ParrotCage();
@@ -18,24 +24,18 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	@Override
 	public void messageRecieved(Message message) {
 		try {
-			String msg = message.getMessage();
+			String msg = message.getMessage().trim();
 			String[] msgWords = msg.split(" ");
 			StringBuilder strBuilder = new StringBuilder();
 
-			if (msgWords[0].equals("?parrot") && msgWords.length >= 2) {
-				if (msgWords[1].equals("kill") && msgWords.length >= 3) {
-					cage.killParrot(msgWords[2]);
-				}
-
-				if (msgWords[1].equals("buy")) {
-					ParrotBot newParrot = msgWords.length < 3 ? cage.addParrot(null) : cage.addParrot(msgWords[2]);
-					if (newParrot != null) {
-						strBuilder.append("bought new parrot with name: " + newParrot.getName() + "\n");
-					}
-				}
-				if (msgWords[1].equals("feed") && msgWords.length >= 3) {
-					cage.feedParrot(msgWords[2]);
-				}
+			if(msg.length() > 12 && isBuyCommand.matcher(msg).find()){
+				cage.addParrot(msg.substring(12));
+			}
+			else if(msg.length() > 13 && isFeedCommand.matcher(msg).find()){
+				cage.feedParrot(msg.substring(13));
+			}
+			else if(msg.length() > 13 && isKillCommand.matcher(msg).find()){
+				cage.killParrot(msg.substring(13));
 			}
 
 			cage.updateParrots();
