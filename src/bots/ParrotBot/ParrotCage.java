@@ -84,7 +84,7 @@ public class ParrotCage {
 		for (ParrotBot parrot : parrots.values()) {
 			String parrotMessage = parrot.processSplitMessage(msgWords);
 			if (parrotMessage != null) {
-				stringBuilder.append(parrot.getName()).append(": ").append(parrotMessage).append("\n");
+				stringBuilder.append(parrot.getColouredName()).append(": ").append(parrotMessage).append("\n");
 			}
 		}
 		return stringBuilder.toString();

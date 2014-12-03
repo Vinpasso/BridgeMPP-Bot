@@ -26,6 +26,7 @@ public class ParrotBot{
 	private final Random r;
 	private double feediness = 0.5;
 	private boolean dead = false;
+	private String colouredName;
 	private String name;
 	private long lastUpdate;
 	private boolean shiny = false;
@@ -64,6 +65,8 @@ public class ParrotBot{
 	private String getColouredName(String name){
 		StringBuilder colouredName = new StringBuilder();
 		
+		this.name = name;
+		
 		for(char c : name.toCharArray()){
 			String colour = getRandomColour();
 			colours.add(colour);
@@ -100,7 +103,7 @@ public class ParrotBot{
 	}
 	
 	private void setParrotName(String parrotName){
-		name = getColouredName(parrotName);
+		colouredName = getColouredName(parrotName);
 		if(parrotName.trim().equals("John")){
 			shiny = true;
 		}
@@ -178,9 +181,9 @@ public class ParrotBot{
 	public void hunger(){
 		feediness -= 0.01;
 	if(feediness < 0 && !dead){
-			statusqeue.add("Parrot " + name + " started making weird noises.");
-			statusqeue.add("Parrot " + name + " fell from his favourite place.");
-			statusqeue.add("Parrot " + name + " took his last breath.");
+			statusqeue.add("Parrot " + colouredName + " started making weird noises.");
+			statusqeue.add("Parrot " + colouredName + " fell from his favourite place.");
+			statusqeue.add("Parrot " + colouredName + " took his last breath.");
 			dead = true;
 		}
 	}
@@ -190,27 +193,31 @@ public class ParrotBot{
 			return;
 		}
 		feediness += 0.1;
-		statusqeue.add("Parrot " + name + " ate the food.");
+		statusqeue.add("Parrot " + colouredName + " ate the food.");
 		if(feediness > 1.0){
-			statusqeue.add("Parrot " + name + " looks fat.");
-			statusqeue.add("Parrot" + name + " exploded into a cloud of feathers.");
+			statusqeue.add("Parrot " + colouredName + " looks fat.");
+			statusqeue.add("Parrot" + colouredName + " exploded into a cloud of feathers.");
 			dead = true;
 		}
 	}
 	
 	public void kill(){
-		statusqeue.add("Parrot " + name + " screams in pain.");
-		statusqeue.add("Parrot " + name + " fell from his favourite place.");
-		statusqeue.add("Parrot " + name + " is breathing heavily.");
-		statusqeue.add("Parrot " + name + " is turning red.");
-		statusqeue.add("Parrot " + name + " is turning into a pool of blood.");
-		statusqeue.add("Parrot " + name + " is no more....");
+		statusqeue.add("Parrot " + colouredName + " screams in pain.");
+		statusqeue.add("Parrot " + colouredName + " fell from his favourite place.");
+		statusqeue.add("Parrot " + colouredName + " is breathing heavily.");
+		statusqeue.add("Parrot " + colouredName + " is turning red.");
+		statusqeue.add("Parrot " + colouredName + " is turning into a pool of blood.");
+		statusqeue.add("Parrot " + colouredName + " is no more....");
 		dead = true;
 		
 	}
 	
 	public boolean isDone(){
 		return dead && statusqeue.isEmpty();
+	}
+	
+	public String getColouredName(){
+		return colouredName;
 	}
 	
 	public String getName(){
@@ -229,7 +236,7 @@ public class ParrotBot{
 			System.out.println(parrot1.getStatus());
 			System.out.println(parrot1.shiny);
 			if (wikiHelp != null) {
-				System.out.println("Parrot " + parrot1.name + " says:");
+				System.out.println("Parrot " + parrot1.colouredName + " says:");
 				 System.out.println(wikiHelp);
 			}
 		reader.close();
