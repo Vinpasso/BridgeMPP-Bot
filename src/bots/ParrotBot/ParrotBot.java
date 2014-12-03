@@ -203,13 +203,19 @@ public class ParrotBot{
 	
 	public void kill(){
 		statusqeue.add("Parrot " + colouredName + " screams in pain.");
+		for(int i = 0; i < r.nextInt(101);i++){
+			statusqeue.add(ParrotBotMessages.stage1KillMessages[r.nextInt(ParrotBotMessages.stage1KillMessages.length)]);
+		}
 		statusqeue.add("Parrot " + colouredName + " fell from his favourite place.");
-		statusqeue.add("Parrot " + colouredName + " is breathing heavily.");
-		statusqeue.add("Parrot " + colouredName + " is turning red.");
+		for(int i = 0; i < r.nextInt(101);i++){
+			statusqeue.add(ParrotBotMessages.stage2KillMessages[r.nextInt(ParrotBotMessages.stage2KillMessages.length)]);
+		}
 		statusqeue.add("Parrot " + colouredName + " is turning into a pool of blood.");
+		for(int i = 0; i < r.nextInt(101);i++){
+			statusqeue.add(ParrotBotMessages.stage3KillMessages[r.nextInt(ParrotBotMessages.stage3KillMessages.length)]);
+		}
 		statusqeue.add("Parrot " + colouredName + " is no more....");
 		dead = true;
-		
 	}
 	
 	public boolean isDone(){
