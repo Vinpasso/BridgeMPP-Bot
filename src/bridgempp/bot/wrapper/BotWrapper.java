@@ -10,10 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.channels.Channels;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -21,6 +19,9 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.protobuf.CodedInputStream;
+import com.google.protobuf.CodedOutputStream;
 
 /**
  *
@@ -37,6 +38,7 @@ public class BotWrapper {
 	 */
 	public static void main(String[] args) {
 		try {
+			selector = Selector.open();
 			File botsDir = new File("bots/");
 			if(!botsDir.exists())
 			{
@@ -58,9 +60,23 @@ public class BotWrapper {
 					SelectionKey selectionKey = updates.next();
 					updates.remove();
 					Bot bot = (Bot) selectionKey.attachment();
-					ProtoBuf.Message protoMessage = ProtoBuf.Message.parseDelimitedFrom(bot.inputStream);
+					bot.channel.read(bot.buffer);
+					CodedInputStream inputStream = CodedInputStream.newInstance(bot.buffer);
+					int needLength = inputStream.readRawVarint32();
+					if(needLength > bot.buffer.capacity())
+					{
+						throw new RuntimeException("Message larger than Buffer");
+					}
+					ProtoBuf.Message protoMessage = ProtoBuf.Message.parseFrom(inputStream);
 					Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(), protoMessage.getMessage(), protoMessage.getMessageFormat());
+					try
+					{
 					bot.messageRecieved(message);
+					}
+					catch(Exception e)
+					{
+						printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString(), "Plain Text"), bot);
+					}
 				}
 			}
 		} catch (IOException ex) {
@@ -82,13 +98,20 @@ public class BotWrapper {
 		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO,
 				"Outgoing: " + message.toComplexString());
 		try {
-			ProtoBuf.Message.newBuilder()
+			ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder()
 					.setMessageFormat(message.getMessageFormat())
 					.setMessage(message.getMessage())
 					.setSender(message.getSender())
 					.setTarget(message.getTarget())
-					.setGroup(message.getGroup()).build()
-					.writeDelimitedTo(bot.outputStream);
+					.setGroup(message.getGroup()).build();
+			int serializedSize = protoMessage.getSerializedSize();
+			int headerSize = CodedOutputStream.computeRawVarint32Size(serializedSize);
+			ByteBuffer buffer = ByteBuffer.allocate(headerSize + serializedSize);
+			CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(buffer);
+			codedOutputStream.writeRawVarint32(headerSize);
+			protoMessage.writeTo(codedOutputStream);
+			codedOutputStream.flush();
+			bot.channel.write(buffer);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -123,11 +146,11 @@ public class BotWrapper {
 			SocketChannel socket = SocketChannel.open();
 			socket.connect(new InetSocketAddress(serverAddress, portNumber));
 			socket.configureBlocking(false);
+
 			SelectionKey selectionKey = socket.register(selector, SelectionKey.OP_READ);
 			bot.channel = socket;
-			bot.inputStream = Channels.newInputStream(socket);
-			bot.outputStream = Channels.newOutputStream(socket);
-			bot.outputStream.write("!protoProtoBufCarry".getBytes("UTF-8"));
+			bot.buffer = ByteBuffer.allocate(1024);
+			bot.channel.write(ByteBuffer.wrap("!protoProtoBufCarry".getBytes("UTF-8")));
 			bot.setProperties(botProperties);
 			selectionKey.attach(bot);
 			
@@ -170,9 +193,8 @@ public class BotWrapper {
 
 		Properties properties;
 		SocketChannel channel;
-		OutputStream outputStream;
-		InputStream inputStream;
-
+		ByteBuffer buffer;
+		
 		public final void setProperties(Properties properties) {
 			this.properties = properties;
 		}
