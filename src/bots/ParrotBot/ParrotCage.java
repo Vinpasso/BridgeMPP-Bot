@@ -22,7 +22,7 @@ public class ParrotCage {
 			return null;
 		}
 		ParrotBot parrot = null;
-		if(parrotName == null || parrotName.trim().equals("")){
+		if(parrotName == null || parrotName.trim().equals("") || parrotName.trim().equals(" ")){
 			parrot = new ParrotBot();
 		}
 		else{
