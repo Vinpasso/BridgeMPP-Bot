@@ -6,22 +6,29 @@ package bridgempp.bot.wrapper;
  * and open the template in the editor.
  */
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.protobuf.CodedInputStream;
-import com.google.protobuf.CodedOutputStream;
 
 /**
  *
@@ -29,92 +36,52 @@ import com.google.protobuf.CodedOutputStream;
  */
 public class BotWrapper {
 
-
-	static Selector selector;
+	private static Bootstrap bootstrap;
 
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-		try {
-			selector = Selector.open();
-			File botsDir = new File("bots/");
-			if(!botsDir.exists())
-			{
-				botsDir.mkdir();
-				Properties exampleBotProperties = new Properties();
+		EventLoopGroup loopGroup = new NioEventLoopGroup(1);
+		bootstrap = new Bootstrap();
+		bootstrap.group(loopGroup);
+		bootstrap.channel(NioSocketChannel.class);
+		bootstrap.handler(new ChannelInitializer<Channel>() {
+
+			@Override
+			protected void initChannel(Channel channel) throws Exception {
+
+			}
+		});
+		File botsDir = new File("bots/");
+		if (!botsDir.exists()) {
+			botsDir.mkdir();
+			Properties exampleBotProperties = new Properties();
+			try {
 				writeDefaultConfig(exampleBotProperties);
 				exampleBotProperties.store(new FileOutputStream("bots/exampleBot.config"), "Bot Wrapper Configuration");
-				System.out.println("Created Example Config. Please Edit");
-				return;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			for(File botConfig : botsDir.listFiles())
-			{
-				botInitialize(botConfig);
-			}
-			while (true) {
-				selector.select();
-				Iterator<SelectionKey> updates = selector.selectedKeys().iterator();
-				while (updates.hasNext()) {
-					SelectionKey selectionKey = updates.next();
-					updates.remove();
-					Bot bot = (Bot) selectionKey.attachment();
-					bot.channel.read(bot.buffer);
-					CodedInputStream inputStream = CodedInputStream.newInstance(bot.buffer);
-					int needLength = inputStream.readRawVarint32();
-					if(needLength > bot.buffer.capacity())
-					{
-						throw new RuntimeException("Message larger than Buffer");
-					}
-					ProtoBuf.Message protoMessage = ProtoBuf.Message.parseFrom(inputStream);
-					Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(), protoMessage.getMessage(), protoMessage.getMessageFormat());
-					try
-					{
-					bot.messageRecieved(message);
-					}
-					catch(Exception e)
-					{
-						printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString(), "Plain Text"), bot);
-					}
-				}
-			}
-		} catch (IOException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+			System.out.println("Created Example Config. Please Edit");
+			return;
 		}
-		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+		for (File botConfig : botsDir.listFiles()) {
+			botInitialize(botConfig);
 		}
+
 	}
 
 	public static void printMessage(Message message, Bot bot) {
 		if (message.message.length() == 0) {
 			return;
 		}
-		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO,
-				"Outgoing: " + message.toComplexString());
-		try {
-			ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder()
-					.setMessageFormat(message.getMessageFormat())
-					.setMessage(message.getMessage())
-					.setSender(message.getSender())
-					.setTarget(message.getTarget())
-					.setGroup(message.getGroup()).build();
-			int serializedSize = protoMessage.getSerializedSize();
-			int headerSize = CodedOutputStream.computeRawVarint32Size(serializedSize);
-			ByteBuffer buffer = ByteBuffer.allocate(headerSize + serializedSize);
-			CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(buffer);
-			codedOutputStream.writeRawVarint32(headerSize);
-			protoMessage.writeTo(codedOutputStream);
-			codedOutputStream.flush();
-			bot.channel.write(buffer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat())
+				.setMessage(message.getMessage()).setSender(message.getSender()).setTarget(message.getTarget())
+				.setGroup(message.group).build();
+		bot.channelFuture.channel().writeAndFlush(protoMessage);
+		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outbound: " + message.toComplexString());
 	}
 
 	public static void printCommand(String command, Bot bot) {
@@ -131,34 +98,33 @@ public class BotWrapper {
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Bot Class is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
-			if(serverAddress == null)
-			{
+			if (serverAddress == null) {
 				writeDefaultConfig(botProperties);
 				throw new UnsupportedOperationException(
 						"Server Address is null, cannot execute BridgeMPP server commands");
 			}
-			SocketChannel socket = SocketChannel.open();
-			socket.connect(new InetSocketAddress(serverAddress, portNumber));
-			socket.configureBlocking(false);
-
-			SelectionKey selectionKey = socket.register(selector, SelectionKey.OP_READ);
-			bot.channel = socket;
-			bot.buffer = ByteBuffer.allocate(1024);
-			bot.channel.write(ByteBuffer.wrap("!protoProtoBufCarry".getBytes("UTF-8")));
+			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
+			byte[] protocol = new byte[1];
+			protocol[0] = 0x32;
+			channelFuture.channel().writeAndFlush(Unpooled.wrappedBuffer(protocol));
+			channelFuture.channel().pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
+			channelFuture.channel().pipeline()
+					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
+			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
+			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
+			bot.channelFuture = channelFuture;
 			bot.setProperties(botProperties);
-			selectionKey.attach(bot);
-			
+
 			String serverKey = botProperties.getProperty("serverKey");
 			if (serverKey == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Server Key is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
 			}
 			printCommand("!usekey " + serverKey, bot);
 			String botAlias = botProperties.getProperty("botname");
@@ -171,17 +137,13 @@ public class BotWrapper {
 			}
 			System.out.println("Joined " + groups.length + " groups");
 
-
 			bot.initializeBot();
-		} catch (IOException | ClassNotFoundException | InstantiationException
-				| IllegalAccessException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
-	private static void writeDefaultConfig(Properties botProperties)
-			throws IOException {
+	private static void writeDefaultConfig(Properties botProperties) throws IOException {
 		botProperties.put("serverKey", "<insertserveraccesskey>");
 		botProperties.put("botname", "<Ahumanreadablebotname>");
 		botProperties.put("groups", "<groupname1>; <groupname2>");
@@ -192,9 +154,8 @@ public class BotWrapper {
 	public static abstract class Bot {
 
 		Properties properties;
-		SocketChannel channel;
-		ByteBuffer buffer;
-		
+		ChannelFuture channelFuture;
+
 		public final void setProperties(Properties properties) {
 			this.properties = properties;
 		}
@@ -206,6 +167,33 @@ public class BotWrapper {
 		public final void sendMessage(Message message) {
 			printMessage(message, this);
 		}
+	}
+
+	public static class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBuf.Message> {
+		private Bot bot;
+
+		public IncommingMessageHandler(Bot bot) {
+			this.bot = bot;
+		}
+
+		protected void channelRead0(ChannelHandlerContext channelHandlerContext, ProtoBuf.Message protoMessage) {
+			Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(),
+					protoMessage.getMessage(), protoMessage.getMessageFormat());
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Inbound: " + message.toComplexString());
+			try {
+				bot.messageRecieved(message);
+			} catch (Exception e) {
+				printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString(), "Plain Text"), bot);
+			}
+		}
+		
+	    @Override
+	    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+	    {
+	    	Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "A Connection has been disconnected, exiting...", cause);
+	    	System.exit(0);
+	    }
+		
 	}
 
 	public static class Message {
@@ -228,8 +216,7 @@ public class BotWrapper {
 			this(group, "", "", message, messageFormat);
 		}
 
-		public Message(String group, String sender, String target,
-				String message, String messageFormat) {
+		public Message(String group, String sender, String target, String message, String messageFormat) {
 			this.setGroup(group);
 			this.setSender(sender);
 			this.setTarget(target);
@@ -239,8 +226,7 @@ public class BotWrapper {
 
 		public static Message parseMessage(String complexString) {
 			Message message = new Message();
-			String[] messageSplit = complexString
-					.split("\\s*(?::| -->)\\s+", 5);
+			String[] messageSplit = complexString.split("\\s*(?::| -->)\\s+", 5);
 			if (messageSplit.length == 5) {
 				message.setMessageFormat(messageSplit[0]);
 				message.setGroup(messageSplit[1]);
@@ -255,14 +241,10 @@ public class BotWrapper {
 
 		public String toComplexString() {
 			String messageFormat = getMessageFormat() + ": ";
-			String group = (getGroup() != null) ? (getGroup() + ": ")
-					: "Direct Message: ";
-			String sender = (getSender() != null) ? getSender().toString()
-					: "Unknown";
-			String target = (getTarget() != null) ? (getTarget().toString() + ": ")
-					: ("Unknown: ");
-			return messageFormat + group + sender + " --> " + target
-					+ getMessage();
+			String group = (getGroup() != null) ? (getGroup() + ": ") : "Direct Message: ";
+			String sender = (getSender() != null) ? getSender().toString() : "Unknown";
+			String target = (getTarget() != null) ? (getTarget().toString() + ": ") : ("Unknown: ");
+			return messageFormat + group + sender + " --> " + target + getMessage();
 		}
 
 		/**
