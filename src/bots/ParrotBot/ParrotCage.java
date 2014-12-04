@@ -21,7 +21,13 @@ public class ParrotCage {
 		if(parrots.size() == maxParrotCount){
 			return null;
 		}
-		ParrotBot parrot = parrotName == null ? new ParrotBot() : new ParrotBot(parrotName);
+		ParrotBot parrot = null;
+		if(parrotName == null || parrotName.trim().equals("")){
+			parrot = new ParrotBot();
+		}
+		else{
+			parrot = new ParrotBot(parrotName);
+		}
 		parrots.put(parrot.getName(), parrot);
 		return parrot;
 	}
