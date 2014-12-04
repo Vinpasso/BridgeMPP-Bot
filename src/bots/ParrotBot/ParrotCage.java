@@ -87,7 +87,10 @@ public class ParrotCage {
 				stringBuilder.append(parrot.getColouredName()).append(": ").append(parrotMessage).append(" <br/>");
 			}
 		}
-		return stringBuilder.substring(0, stringBuilder.length() - "<br/>".length());
+		if(stringBuilder.length() > "<br/>".length()){
+			return stringBuilder.substring(0, stringBuilder.length());
+		}
+		return stringBuilder.toString();
 	}
 	
 }
