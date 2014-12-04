@@ -88,7 +88,7 @@ public class ParrotCage {
 			}
 		}
 		if(stringBuilder.length() > "<br/>".length()){
-			return stringBuilder.substring(0, stringBuilder.length());
+			return stringBuilder.substring(0, stringBuilder.length()-"<br/>".length());
 		}
 		return stringBuilder.toString();
 	}
