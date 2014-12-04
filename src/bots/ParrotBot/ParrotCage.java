@@ -82,6 +82,9 @@ public class ParrotCage {
 				stringBuilder.append(parrotStatus).append(" <br/>");
 			}
 		}
+		if(stringBuilder.length() > "<br/>".length()){
+			return stringBuilder.substring(0, stringBuilder.length()-"<br/>".length());
+		}
 		return stringBuilder.toString();
 	}
 
