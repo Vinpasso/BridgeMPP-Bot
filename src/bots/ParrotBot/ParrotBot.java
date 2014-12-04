@@ -131,7 +131,7 @@ public class ParrotBot{
 	}
 	
 	public String processSplitMessage(String[] messageWords){
-		if(messageWords == null || messageWords.length == 0){
+		if(messageWords == null || messageWords.length == 0 || dead){
 			return null;
 		}
 		StringBuilder repeatingWords = new StringBuilder();
