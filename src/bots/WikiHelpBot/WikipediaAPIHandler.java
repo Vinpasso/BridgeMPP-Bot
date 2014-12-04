@@ -24,7 +24,9 @@ public class WikipediaAPIHandler {
 	public static final Pattern extendReferenceURLLinksPattern = Pattern.compile("href=\"#");
 	public static final Pattern extendMiscURLPattern = Pattern.compile("href=//");
 	public static final int maxSummaryCharacterCount = 200;
+	
 	public static final boolean doReturnHTMLText = true;
+	public static final boolean doAppendWikiSourceURL = true;
 	
 	public String wikiLangDomain;
 
@@ -165,7 +167,21 @@ public class WikipediaAPIHandler {
 		this.topic = topic;
 		InputStream wikiResponseStream = readURL(topic);
 		String wikiResponseString = extractHTMLPageText(wikiResponseStream);
-		return wikiResponseString;
+		if(wikiResponseString == null){
+			return wikiResponseString;
+		}
+		else{
+			if(doReturnHTMLText){
+				StringBuilder wikiSourceString = new StringBuilder(wikiResponseString);
+				wikiSourceString.append("<br>");
+				wikiSourceString.append("(");
+				wikiSourceString.append("<a href=\"");
+				wikiSourceString.append("http://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic);
+				wikiSourceString.append("\"> Source</a>)");
+				return wikiSourceString.toString();
+			}
+			return wikiResponseString.concat("\u2026" + System.lineSeparator() + "(Source: http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + ")" );
+		}
 	}
 	
 }
