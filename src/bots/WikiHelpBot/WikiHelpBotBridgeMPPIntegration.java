@@ -28,7 +28,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 		try {
 			String wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
 			if (wikiWis != null) {
-				sendMessage(new Message("WikiBot", wikiWis,"HTML"));
+				sendMessage(new Message("WikiBot", wikiWis,"XHTML"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
