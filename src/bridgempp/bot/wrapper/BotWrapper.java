@@ -101,6 +101,7 @@ public class BotWrapper {
 				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
+			bot.initializeBot();
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null) {
@@ -137,7 +138,6 @@ public class BotWrapper {
 			}
 			System.out.println("Joined " + groups.length + " groups");
 
-			bot.initializeBot();
 		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
 		}
