@@ -48,6 +48,10 @@ public class WikipediaAPIHandler {
 		}
 	}
 	
+	private String buildWikiSourceURL(){
+		return new StringBuilder().append("http://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic).toString();
+	}
+	
 	public InputStream readURL(String topic) {
 		InputStream wikiResponse = null;
 		try {
@@ -175,9 +179,9 @@ public class WikipediaAPIHandler {
 				StringBuilder wikiSourceString = new StringBuilder(wikiResponseString);
 				wikiSourceString.append("<br>");
 				wikiSourceString.append("(");
-				wikiSourceString.append("<a href=\"");
-				wikiSourceString.append("http://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic);
-				wikiSourceString.append("\"> Source</a>)");
+				wikiSourceString.append("<a href=\"").append(buildWikiSourceURL()).append("\"> ");
+				wikiSourceString.append(buildWikiSourceURL());
+				wikiSourceString.append("</a>)");
 				return wikiSourceString.toString();
 			}
 			return wikiResponseString.concat("\u2026" + System.lineSeparator() + "(Source: http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + ")" );
