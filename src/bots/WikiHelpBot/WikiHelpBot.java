@@ -30,9 +30,10 @@ public class WikiHelpBot {
 		}
 		if (wikiResponseString != null) {
 			try {
-				return NoLineBreakSpacePattern.matcher(URLDecoder.decode(wikiResponseString, "UTF-8")).replaceAll("\u00A0");
+				String wikiDecodedResponseString = URLDecoder.decode(wikiResponseString, "UTF-8");
+				return WikipediaAPIHandler.doReturnHTMLText?wikiDecodedResponseString : NoLineBreakSpacePattern.matcher(wikiDecodedResponseString).replaceAll("\u00A0");
 			} catch (Exception e) {
-				return wikiResponseString.replace("\u00A0","");
+				return WikipediaAPIHandler.doReturnHTMLText?wikiResponseString : wikiResponseString.replace("\u00A0","");
 			}
 		}
 		return null;
