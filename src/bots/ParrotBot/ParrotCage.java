@@ -21,7 +21,13 @@ public class ParrotCage {
 		if(parrots.size() == maxParrotCount){
 			return null;
 		}
-		ParrotBot parrot = parrotName == null ? new ParrotBot() : new ParrotBot(parrotName);
+		ParrotBot parrot = null;
+		if(parrotName == null || parrotName.trim().equals("") || parrotName.trim().equals(" ")){
+			parrot = new ParrotBot();
+		}
+		else{
+			parrot = new ParrotBot(parrotName);
+		}
 		parrots.put(parrot.getName(), parrot);
 		return parrot;
 	}
@@ -75,6 +81,9 @@ public class ParrotCage {
 			if (parrotStatus != null) {
 				stringBuilder.append(parrotStatus).append(" <br/>");
 			}
+		}
+		if(stringBuilder.length() > "<br/>".length()){
+			return stringBuilder.substring(0, stringBuilder.length()-"<br/>".length());
 		}
 		return stringBuilder.toString();
 	}
