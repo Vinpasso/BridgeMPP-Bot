@@ -167,10 +167,10 @@ public class WikipediaAPIHandler {
 		this.topic = topic;
 		InputStream wikiResponseStream = readURL(topic);
 		String wikiResponseString = extractHTMLPageText(wikiResponseStream);
-		if(wikiResponseString == null){
+		if(!doAppendWikiSourceURL || wikiResponseString == null){
 			return wikiResponseString;
 		}
-		else{
+		else {
 			if(doReturnHTMLText){
 				StringBuilder wikiSourceString = new StringBuilder(wikiResponseString);
 				wikiSourceString.append("<br>");
