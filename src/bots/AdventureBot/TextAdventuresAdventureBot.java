@@ -24,7 +24,7 @@ import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
-public class TextAdventuresAdventureBot extends ConsoleBot {
+public class TextAdventuresAdventureBot extends Bot {
 
 	private WebClient webclient;
 	private HtmlPage htmlPage;
