@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.KeyboardEvent;
 
 import bots.AdventureBot.StringUtils.diff_match_patch;
 import bots.AdventureBot.StringUtils.diff_match_patch.Diff;
@@ -23,12 +24,12 @@ import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
-public class TextAdventuresAdventureBot extends Bot {
+public class TextAdventuresAdventureBot extends ConsoleBot {
 
 	private WebClient webclient;
 	private HtmlPage htmlPage;
 	private diff_match_patch diff;
-	private String cached = "";
+	private String cached;
 	
 	@Override
 	public void initializeBot() {
@@ -58,6 +59,7 @@ public class TextAdventuresAdventureBot extends Bot {
 		switch(command)
 		{
 		case "play":
+			cached = "";
 			initializeGame(message.getMessage().substring(message.getMessage().lastIndexOf(" ") + 1));
 			sendMessage(new Message(message.getGroup(), "Welcome to TextAdventures", "Plain Text"));
 			sendMessage(new Message(message.getGroup(), getResponse(), "Plain Text"));
@@ -73,7 +75,7 @@ public class TextAdventuresAdventureBot extends Bot {
 		webclient.getOptions().setThrowExceptionOnScriptError(false);
 		try {
 			htmlPage = webclient.getPage(location);
-			webclient.waitForBackgroundJavaScript(5000);
+			webclient.waitForBackgroundJavaScript(10000);
 		} catch (FailingHttpStatusCodeException | IOException e) {
 			e.printStackTrace();
 		}
@@ -83,7 +85,8 @@ public class TextAdventuresAdventureBot extends Bot {
 	{
 		try {
 			htmlPage.getFocusedElement().type(query);
-			webclient.waitForBackgroundJavaScript(5000);
+			htmlPage.getFocusedElement().type(KeyboardEvent.DOM_VK_RETURN);
+			webclient.waitForBackgroundJavaScript(10000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +94,8 @@ public class TextAdventuresAdventureBot extends Bot {
 	
 	private String getResponse()
 	{
-		LinesToCharsResult lines = diff.diff_linesToChars(cached, htmlPage.asText());
+		String text = htmlPage.asText();
+		LinesToCharsResult lines = diff.diff_linesToChars(cached, text);
 		LinkedList<Diff> differences = diff.diff_main(lines.chars1, lines.chars2, false);
 		diff.diff_charsToLines(differences, lines.lineArray);
 		String buffer = "";
@@ -102,7 +106,7 @@ public class TextAdventuresAdventureBot extends Bot {
 			switch(diff.operation)
 			{
 			case DELETE:
-				buffer += "\n- " + diff.text;
+				//buffer += "\n- " + diff.text;
 				break;
 			case EQUAL:
 				break;
@@ -113,7 +117,7 @@ public class TextAdventuresAdventureBot extends Bot {
 				break;
 			}
 		}
-		cached = buffer;
+		cached = text;
 		return buffer.replaceAll("(\\s)\\s+", "$1");
 	}
 	
