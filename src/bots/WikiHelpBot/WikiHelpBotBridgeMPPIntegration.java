@@ -1,5 +1,7 @@
 package bots.WikiHelpBot;
 
+import java.util.regex.Pattern;
+
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
 /**
@@ -9,9 +11,11 @@ import bridgempp.bot.wrapper.BotWrapper.Message;
  *         The WikiHelpBot integration class for BridgeMPP
  *
  */
+
 public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWrapper.Bot {
 
 	public static final String Name = "WikiHelpBot";
+	public static Pattern HTMLBrPattern = Pattern.compile("<br>");
 
 	WikiHelpBot helpBot;
 
@@ -28,7 +32,8 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 		try {
 			String wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
 			if (wikiWis != null) {
-				sendMessage(new Message("WikiBot", wikiWis,"XHTML"));
+				String xhtmlwikiWisdom = HTMLBrPattern.matcher(wikiWis).replaceAll("<br/>");
+				sendMessage(new Message("WikiBot", xhtmlwikiWisdom,"XHTML"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
