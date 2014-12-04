@@ -164,7 +164,7 @@ public class BotWrapper {
 
 		public abstract void messageRecieved(Message message);
 
-		public final void sendMessage(Message message) {
+		public void sendMessage(Message message) {
 			printMessage(message, this);
 		}
 	}
@@ -183,7 +183,7 @@ public class BotWrapper {
 			try {
 				bot.messageRecieved(message);
 			} catch (Exception e) {
-				printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString(), "Plain Text"), bot);
+				printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + e.getStackTrace()[0].toString(), "Plain Text"), bot);
 			}
 		}
 		
