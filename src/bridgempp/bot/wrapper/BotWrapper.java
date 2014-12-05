@@ -112,6 +112,7 @@ public class BotWrapper {
 			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
 			byte[] protocol = new byte[1];
 			protocol[0] = 0x32;
+			channelFuture.await();
 			channelFuture.channel().writeAndFlush(Unpooled.wrappedBuffer(protocol));
 			channelFuture.channel().pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
 			channelFuture.channel().pipeline()
@@ -138,7 +139,7 @@ public class BotWrapper {
 			}
 			System.out.println("Joined " + groups.length + " groups");
 
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | InterruptedException ex) {
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
