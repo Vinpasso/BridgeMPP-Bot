@@ -64,12 +64,18 @@ public class TextAdventuresAdventureBot extends Bot {
 			sendMessage(new Message(message.getGroup(), "Welcome to TextAdventures", "Plain Text"));
 			sendMessage(new Message(message.getGroup(), getResponse(), "Plain Text"));
 			break;
+		case "stop":
+			webclient.closeAllWindows();
 		}
 		
 	}
 	
 	private void initializeGame(String location)
 	{
+		if(webclient != null)
+		{
+			webclient.closeAllWindows();
+		}
 		diff = new diff_match_patch();
 		webclient = new WebClient(BrowserVersion.FIREFOX_24);
 		webclient.getOptions().setThrowExceptionOnScriptError(false);
