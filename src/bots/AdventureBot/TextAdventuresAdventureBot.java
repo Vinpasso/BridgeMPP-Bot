@@ -84,7 +84,7 @@ public class TextAdventuresAdventureBot extends Bot {
 	private void enterQuery(String query)
 	{
 		try {
-			htmlPage.getFocusedElement().type(query);
+			htmlPage.getFocusedElement().type(query + "\n");
 			htmlPage.getFocusedElement().type(KeyboardEvent.DOM_VK_RETURN);
 			webclient.waitForBackgroundJavaScript(10000);
 		} catch (IOException e) {
@@ -118,7 +118,7 @@ public class TextAdventuresAdventureBot extends Bot {
 			}
 		}
 		cached = text;
-		return buffer.replaceAll("(\\s)\\s+", "$1");
+		return buffer.replaceAll("(\\s)\\s+", "$1").trim();
 	}
 	
 }
