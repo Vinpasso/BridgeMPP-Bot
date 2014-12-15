@@ -66,6 +66,11 @@ public class TextAdventuresAdventureBot extends Bot {
 			break;
 		case "stop":
 			webclient.closeAllWindows();
+			htmlPage = null;
+			webclient = null;
+			diff = null;
+			cached = null;
+			sendMessage(new Message(message.getGroup(), "A TextAdventure has been closed", "Plain Text"));
 		}
 		
 	}
