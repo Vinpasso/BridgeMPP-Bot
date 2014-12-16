@@ -7,7 +7,7 @@ import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
-public class ShowMeBot extends ConsoleBot {
+public class ShowMeBot extends Bot {
 
 	private String[] triggers = { "zeig mir", "show me" };
 
@@ -19,15 +19,15 @@ public class ShowMeBot extends ConsoleBot {
 	@Override
 	public void messageRecieved(Message message) {
 		String query = hasTrigger(message.getMessage());
-		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		if(query == null)
 		{
 			return;
 		}
+		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		try
 		{
 			new URL("http://" + query + ".jpg.to").openConnection();
-			sendMessage(new Message(message.getGroup(), "<img src=http://" + query + ".jpg.to alt=\"Insert funny picture here\"/>", "XHTML"));
+			sendMessage(new Message(message.getGroup(), "<img src=\"http://" + query + ".jpg.to\" alt=\""+query+"\" width=\"320\" height=\"240\"/>", "XHTML"));
 		}
 		catch(IOException e)
 		{
