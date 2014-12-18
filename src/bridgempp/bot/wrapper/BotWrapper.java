@@ -30,6 +30,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author Vincent Bode
@@ -77,6 +82,12 @@ public class BotWrapper {
 		if (message.message.length() == 0) {
 			return;
 		}
+		try {
+			message.validate();
+		} catch (Exception e) {
+			throw new InvalidMessageFormatException(e);
+		}
+
 		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat())
 				.setMessage(message.getMessage()).setSender(message.getSender()).setTarget(message.getTarget())
 				.setGroup(message.group).build();
@@ -139,7 +150,8 @@ public class BotWrapper {
 			}
 			System.out.println("Joined " + groups.length + " groups");
 
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | InterruptedException ex) {
+		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
+				| InterruptedException ex) {
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -181,25 +193,27 @@ public class BotWrapper {
 			Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(),
 					protoMessage.getMessage(), protoMessage.getMessageFormat());
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Inbound: " + message.toComplexString());
-			if(message.getMessage().startsWith("?botwrapper reload"))
-			{
-				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 60 seconds", "Plain Text"));
+			if (message.getMessage().startsWith("?botwrapper reload")) {
+				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 60 seconds",
+						"Plain Text"));
 				System.exit(0);
 			}
 			try {
 				bot.messageRecieved(message);
 			} catch (Exception e) {
-				printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + e.getStackTrace()[0].toString(), "Plain Text"), bot);
+				printMessage(
+						new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n"
+								+ e.getStackTrace()[0].toString(), "Plain Text"), bot);
 			}
 		}
-		
-	    @Override
-	    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-	    {
-	    	Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "A Connection has been disconnected, exiting...", cause);
-	    	System.exit(0);
-	    }
-		
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					"A Connection has been disconnected, exiting...", cause);
+			System.exit(0);
+		}
+
 	}
 
 	public static class Message {
@@ -211,6 +225,20 @@ public class BotWrapper {
 
 		public Message() {
 
+		}
+
+		public void validate() throws Exception {
+			if(getMessage().length() > 60000)
+			{
+				throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
+			}
+			switch (messageFormat) {
+			case "XHTML":
+				DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(getMessage());
+				break;
+			default:
+				break;
+			}
 		}
 
 		@Deprecated

@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -31,35 +32,38 @@ public class ShowMeBot extends Bot {
 	@Override
 	public void messageRecieved(Message message) {
 		String query = hasTrigger(message.getMessage());
-		if(query == null)
-		{
+		if (query == null) {
 			return;
 		}
 		query = query.replaceAll("[^a-zA-Z0-9]", "");
-		try
-		{
-			Matcher matcher = Pattern.compile("src=\"([^\"]*?)\"").matcher(IOUtils.toString(new URL("http://" + query + ".jpg.to")));
-			if(!matcher.find())
-			{
+		try {
+			Matcher matcher = Pattern.compile("src=\"([^\"]*?)\"").matcher(
+					IOUtils.toString(new URL("http://" + query + ".jpg.to")));
+			if (!matcher.find()) {
 				return;
 			}
 			URL imageURL = new URL(matcher.group(1));
-			byte[] image = resizeImage(imageURL, 100, 100);
-			if(image != null)
-			{
-				sendMessage(new Message(message.getGroup(), "<img src=\"data:image/jpeg;base64," + Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query + "\"/>", "XHTML"));
+			URLConnection connection = imageURL.openConnection();
+			byte[] image;
+			if (connection.getContentLengthLong() < 30000) {
+				image = IOUtils.toByteArray(connection.getInputStream());
+			} else {
+				image = resizeImage(connection, 320, 240);
 			}
-			sendMessage(new Message(message.getGroup(), "<img src=\"" +  imageURL.toString() + "\" alt=\""+query+"\" width=\"320\" height=\"240\"/>", "XHTML"));
-		}
-		catch(IOException e)
-		{
+			if (image != null) {
+				sendMessage(new Message(message.getGroup(), "<img src=\"data:image/jpeg;base64,"
+						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query + "\"/>", "XHTML"));
+			}
+			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
+					+ "\" width=\"320\" height=\"240\"/>", "XHTML"));
+		} catch (IOException e) {
 			return;
 		}
 	}
 
-	private byte[] resizeImage(URL imageURL, int width, int height) {
+	private byte[] resizeImage(URLConnection connection, int width, int height) {
 		try {
-			BufferedImage originalImage = ImageIO.read(imageURL);
+			BufferedImage originalImage = ImageIO.read(connection.getInputStream());
 			BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics = resizedImage.createGraphics();
 			graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -73,15 +77,14 @@ public class ShowMeBot extends Bot {
 
 				@Override
 				public void write(int b) throws IOException {
-					buffer.put((byte)b);
+					buffer.put((byte) b);
 				}
-				
+
 				@Override
-				public void write(byte[] bytes, int start, int length)
-				{
+				public void write(byte[] bytes, int start, int length) {
 					buffer.put(bytes, start, length);
 				}
-				
+
 			});
 			buffer.flip();
 			byte[] array = new byte[buffer.remaining()];
@@ -97,8 +100,7 @@ public class ShowMeBot extends Bot {
 		message = message.trim().toLowerCase();
 		for (int i = 0; i < triggers.length; i++) {
 			if (message.contains(triggers[i])) {
-				return message.substring(message.indexOf(triggers[i])
-						+ triggers[i].length());
+				return message.substring(message.indexOf(triggers[i]) + triggers[i].length());
 			}
 		}
 		return null;
