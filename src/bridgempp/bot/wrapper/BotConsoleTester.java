@@ -32,7 +32,7 @@ public class BotConsoleTester {
 	{
 		public void sendMessage(Message message)
 		{
-			System.out.println(message.toComplexString());
+			System.out.println("CONSOLE BOT" + message.toComplexString());
 		}
 	}
 	
