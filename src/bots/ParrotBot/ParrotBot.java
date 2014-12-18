@@ -138,7 +138,7 @@ public class ParrotBot{
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
 			if(getRandomNum() > 0.6){
 				for(int j = i; j < messageWords.length;j++){
-					if(getRandomNum() > 0.3 && !removeadditionalnewLinesandWhiteSpaces.matcher(messageWords[j]).matches()){
+					if(!messageWords[j].contains("<") && !messageWords[j].contains(">") && getRandomNum() > 0.3 && !removeadditionalnewLinesandWhiteSpaces.matcher(messageWords[j]).matches()){
 						repeatingWords.append(messageWords[j]).append(" ");
 					}
 				}
