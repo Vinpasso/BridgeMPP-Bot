@@ -24,34 +24,35 @@ public class WikipediaAPIHandler {
 	public static final Pattern extendReferenceURLLinksPattern = Pattern.compile("href=\"#");
 	public static final Pattern extendMiscURLPattern = Pattern.compile("href=//");
 	public static final int maxSummaryCharacterCount = 200;
-	
+
 	public static final boolean doReturnHTMLText = true;
 	public static final boolean doAppendWikiSourceURL = true;
-	
+
 	public String wikiLangDomain;
 
-	private String url;
-	private String response;
-	private String topic; 
-	
+	private String topic;
+
 	public WikipediaAPIHandler(String wikiLangDomain) {
 		super();
 		this.wikiLangDomain = wikiLangDomain;
 	}
-	
-	private String buildWikiParseURL(String topic) {
 
+	private String encodeURL(String unencoded) {
 		try {
-			return "http://" + wikiLangDomain + ".wikipedia.org/w/api.php?action=parse&format=xml&page=" + URLEncoder.encode(topic, "UTF-8") + "&redirects=&noimages&section=0";
+			return URLEncoder.encode(unencoded, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			return "http://de.wikipedia.org/w/api.php?action=parse&format=xml&page=" + topic + "&redirects=&noimages&section=0";
+			return unencoded;
 		}
 	}
-	
-	private String buildWikiSourceURL(){
+
+	private String buildWikiParseURL(String topic) {
+		return "http://" + wikiLangDomain + ".wikipedia.org/w/api.php?action=query&prop=extracts&format=xml&exintro=&exsectionformat=plain&rawcontinue=&titles=" + topic + "&redirects=true";
+	}
+
+	private String buildWikiSourceURL() {
 		return new StringBuilder().append("http://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic).toString();
 	}
-	
+
 	public InputStream readURL(String topic) {
 		InputStream wikiResponse = null;
 		try {
@@ -62,39 +63,39 @@ public class WikipediaAPIHandler {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return wikiResponse;
 	}
-	
+
 	public String removeHTMLfromString(String text) {
-		
-		if(doReturnHTMLText){
+
+		if (doReturnHTMLText) {
 			String extendedWikiURLText = extendWikiURLLinksPattern.matcher(text).replaceAll("http://" + wikiLangDomain + ".wikipedia.org/wiki/");
 			String extendedWikiAndReferenceURLText = extendReferenceURLLinksPattern.matcher(extendedWikiURLText).replaceAll("href=\"http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + "#");
 			String extendedWikiReferenceAndMiscURLText = extendMiscURLPattern.matcher(extendedWikiAndReferenceURLText).replaceAll("href=http://");
 			return extendedWikiReferenceAndMiscURLText;
 		}
-		
+
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
 		String rmaddWhiteSpacesWikiPageString = removeadditionalWhiteSpaces.matcher(modWikiPageString).replaceAll(" ");
 		String rmaddNewLinesWikiPageString = removeadditionalnewLines.matcher(rmaddWhiteSpacesWikiPageString).replaceAll("\n");
 		return rmaddNewLinesWikiPageString;
 	}
-	
-	public String shortenWikiLink(String topic, String summary){
+
+	public String shortenWikiLink(String topic, String summary) {
 		StringBuilder result = new StringBuilder();
-		int EndSummaryPosition = maxSummaryCharacterCount > summary.length() ? summary.length():maxSummaryCharacterCount;
-		if(summary.indexOf('.', EndSummaryPosition) >= 0){
+		int EndSummaryPosition = maxSummaryCharacterCount > summary.length() ? summary.length() : maxSummaryCharacterCount;
+		if (summary.indexOf('.', EndSummaryPosition) >= 0) {
 			EndSummaryPosition = summary.indexOf('.', EndSummaryPosition);
 		}
 		result.append(summary.substring(0, EndSummaryPosition));
-		result.append( "\u2026" + System.lineSeparator() + "https://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic);
-		
+		result.append("\u2026" + System.lineSeparator() + "https://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic);
+
 		return result.toString();
 	}
-	
+
 	private boolean resolveRedirection(String textNodeText) {
 
 		boolean isRedirection = textNodeText.indexOf("<div class=\"redirectMsg\">") >= 0;
@@ -109,34 +110,14 @@ public class WikipediaAPIHandler {
 		return isRedirection;
 	}
 
-	private String useTablePage(String pageText) {
-
-		String wikiTableText = pageText;
-		int indexOfSisterprojects = pageText.indexOf("<div class=\"sisterproject\"") - 20;
-
-		if (indexOfSisterprojects >= 0) {
-			String tableTextwithSeeAlso = pageText.substring(0, indexOfSisterprojects);
-			int indexOfSeeAlso = tableTextwithSeeAlso.lastIndexOf("<b>");
-			wikiTableText = tableTextwithSeeAlso.substring(0, indexOfSeeAlso);
-		}
-
-		return removeHTMLfromString(wikiTableText);
-	}
-
 	private String handleTextNode(String textNodeText) {
 
 		if (resolveRedirection(textNodeText)) {
 			return removeHTMLfromString(textNodeText);
 		}
-
-		int indexOfTableEnd = textNodeText.contains("</table>") ? textNodeText.lastIndexOf("</table>") + 9: 0;
-		int indexOfReferences = textNodeText.indexOf("<ol class=\"references\"");
-		indexOfReferences = indexOfReferences >= 0 ? indexOfReferences : textNodeText.length();
-		String HTMLwikiPageText = textNodeText.substring(indexOfTableEnd, indexOfReferences);
-		String wikiPageText = removeHTMLfromString(HTMLwikiPageText);
-
+		String wikiPageText = removeHTMLfromString(textNodeText);
 		if (wikiPageText.matches("[\n ]*")) {
-			return useTablePage(textNodeText.substring(0, indexOfTableEnd));
+			return null;
 		}
 		return wikiPageText;
 
@@ -153,7 +134,7 @@ public class WikipediaAPIHandler {
 
 			doc.normalize();
 
-			NodeList textNodes = doc.getElementsByTagName("text");
+			NodeList textNodes = doc.getElementsByTagName("extract");
 			if (doc.getElementsByTagName("error").item(0) != null) {
 				return null;
 			}
@@ -162,20 +143,19 @@ public class WikipediaAPIHandler {
 				return handleTextNode(textNode.getTextContent());
 			}
 			return null;
-		} catch (Exception e){
+		} catch (Exception e) {
 			return null;
 		}
-	}	
-	
-	public String getWikiSummary(String topic){
-		this.topic = topic;
-		InputStream wikiResponseStream = readURL(topic);
+	}
+
+	public String getWikiSummary(String topic) {
+		this.topic = encodeURL(topic);
+		InputStream wikiResponseStream = readURL(this.topic);
 		String wikiResponseString = extractHTMLPageText(wikiResponseStream);
-		if(!doAppendWikiSourceURL || wikiResponseString == null){
+		if (!doAppendWikiSourceURL || wikiResponseString == null) {
 			return wikiResponseString;
-		}
-		else {
-			if(doReturnHTMLText){
+		} else {
+			if (doReturnHTMLText) {
 				StringBuilder wikiSourceString = new StringBuilder(wikiResponseString);
 				wikiSourceString.append("<br>");
 				wikiSourceString.append("(");
@@ -184,8 +164,8 @@ public class WikipediaAPIHandler {
 				wikiSourceString.append("</a>)");
 				return wikiSourceString.toString();
 			}
-			return wikiResponseString.concat("\u2026" + System.lineSeparator() + "(Source: http://" + wikiLangDomain + ".wikipedia.org/wiki/" + topic + ")" );
+			return wikiResponseString.concat("\u2026" + System.lineSeparator() + "(Source: http://" + wikiLangDomain + ".wikipedia.org/wiki/" + this.topic + ")");
 		}
 	}
-	
+
 }
