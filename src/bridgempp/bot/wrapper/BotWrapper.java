@@ -25,14 +25,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -234,7 +237,12 @@ public class BotWrapper {
 			}
 			switch (messageFormat) {
 			case "XHTML":
-				DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(getMessage());
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(false);
+				factory.setValidating(false);
+				factory.setExpandEntityReferences(false);
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				builder.parse(new InputSource(new StringReader(getMessage())));
 				break;
 			default:
 				break;
