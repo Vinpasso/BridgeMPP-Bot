@@ -96,25 +96,8 @@ public class WikipediaAPIHandler {
 		return result.toString();
 	}
 
-	private boolean resolveRedirection(String textNodeText) {
-
-		boolean isRedirection = textNodeText.indexOf("<div class=\"redirectMsg\">") >= 0;
-
-		if (isRedirection) {
-			int redirectStartIndex = textNodeText.indexOf("?title=") + 7;
-			int redirectEndIndex = textNodeText.indexOf("&", redirectStartIndex);
-			String redirect = textNodeText.substring(redirectStartIndex, redirectEndIndex);
-			topic = redirect;
-			textNodeText = extractHTMLPageText(readURL(redirect));
-		}
-		return isRedirection;
-	}
-
 	private String handleTextNode(String textNodeText) {
 
-		if (resolveRedirection(textNodeText)) {
-			return removeHTMLfromString(textNodeText);
-		}
 		String wikiPageText = removeHTMLfromString(textNodeText);
 		if (wikiPageText.matches("[\n ]*")) {
 			return null;
