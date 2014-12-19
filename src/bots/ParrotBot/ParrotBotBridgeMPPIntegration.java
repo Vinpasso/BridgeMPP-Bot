@@ -25,7 +25,6 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	public void messageRecieved(Message message) {
 		try {
 			String msg = message.getMessage().trim();
-			String[] msgWords = msg.split(" ");
 			StringBuilder strBuilder = new StringBuilder();
 
 			if(msg.length() > 12 && isBuyCommand.matcher(msg).find()){
@@ -40,9 +39,9 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 
 			cage.updateParrots();
 			strBuilder.append(cage.getStatus());
-			strBuilder.append(cage.processMessage(msgWords));
+			strBuilder.append(cage.processMessage(msg));
 			if (!strBuilder.equals("")) {
-				sendMessage(new Message("Parrots", strBuilder.toString(),"XHTML"));
+				sendMessage(new Message("Parrots", strBuilder.toString(),"HTML"));
 			}
 
 		} catch (Exception e) {

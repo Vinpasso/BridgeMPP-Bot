@@ -4,7 +4,7 @@ public class ParrotBotMessages {
 
 	public static String[] stage1KillMessages = {
 		" is hardly holding on to his favourite place.",
-		" looks like he is curseing",
+		" seems like he cursed you",
 		" looks at the hole in his body",
 		" is looking into the void",
 		"'s wound starts bleeding",
@@ -15,7 +15,7 @@ public class ParrotBotMessages {
 		" tries to get up but fails.",
 		"'s feathers look more red",
 		" skipped a breath",
-		" sheds a tear, as the thought of his near death crossed his mind",
+		" sheds a tear, as the thought of his near deaht crossed his mind",
 		"'s vision starts to blur",
 		" tries to get away but he can hardly move anymore"
 	};
