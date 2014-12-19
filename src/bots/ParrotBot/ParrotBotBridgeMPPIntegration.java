@@ -23,9 +23,10 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 
 	@Override
 	public void messageRecieved(Message message) {
+		StringBuilder strBuilder = new StringBuilder();
 		try {
 			String msg = message.getMessage().trim();
-			StringBuilder strBuilder = new StringBuilder();
+			strBuilder = new StringBuilder();
 
 			if(msg.length() > 12 && isBuyCommand.matcher(msg).find()){
 				cage.addParrot(msg.substring(12));
@@ -40,12 +41,11 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			cage.updateParrots();
 			strBuilder.append(cage.getStatus());
 			strBuilder.append(cage.processMessage(msg));
-			if (!strBuilder.equals("")) {
-				sendMessage(new Message("Parrots", strBuilder.toString(),"HTML"));
-			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if (!strBuilder.equals("")) {
+			sendMessage(new Message("Parrots", strBuilder.toString(),"HTML"));
 		}
 	}
 }
