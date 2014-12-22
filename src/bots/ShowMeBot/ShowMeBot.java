@@ -55,7 +55,7 @@ public class ShowMeBot extends Bot {
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query + "\"/>", "XHTML"));
 			}
 			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"320\" height=\"240\"/>", "XHTML"));
+					+ "\" width=\"320\" height=\"240\"/> Source: " + imageURL.toString(), "XHTML"));
 		} catch (IOException e) {
 			return;
 		}
