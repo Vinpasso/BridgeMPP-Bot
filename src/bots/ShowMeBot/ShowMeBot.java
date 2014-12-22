@@ -41,6 +41,7 @@ public class ShowMeBot extends Bot {
 			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
 			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
 			if (!matcher.find()) {
+				sendMessage(new Message(message.getGroup(), "No search result for: " + query, "Plain Text"));
 				return;
 			}
 			URL imageURL = new URL(matcher.group(1));
@@ -58,6 +59,7 @@ public class ShowMeBot extends Bot {
 			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
 					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), "XHTML"));
 		} catch (IOException e) {
+			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), "Plain Text"));
 			return;
 		}
 	}
