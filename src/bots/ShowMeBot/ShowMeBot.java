@@ -37,8 +37,9 @@ public class ShowMeBot extends Bot {
 		}
 		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		try {
-			Matcher matcher = Pattern.compile("src=\"([^\"]*?)\"").matcher(
-					IOUtils.toString(new URL("http://" + query + ".jpg.to")));
+			String htmlText = IOUtils.toString(new URL("http://" + query + ".jpg.to"));
+			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
+			Matcher matcher = Pattern.compile("<img src=\"([^\"]*?)\"").matcher(htmlText);
 			if (!matcher.find()) {
 				return;
 			}
