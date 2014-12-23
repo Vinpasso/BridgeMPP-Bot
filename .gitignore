@@ -3,3 +3,5 @@
 /bin/
 /target/
 /nbproject/private/
+.idea
+BridgeMPP-Bot.iml

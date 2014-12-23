@@ -41,17 +41,20 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
                         for (int i = 0; i < position; i++) {
                             if (!comics.hasNext()) {
                                 sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                                comics.close();
                                 return;
                             }
                             comics.nextLine();
                         }
                         if (!comics.hasNext()) {
                             sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                            comics.close();
                             return;
                         }
                         currComic = comics.nextInt();
                         sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
                         position++;
+                        comics.close();
                     } catch (IOException e) {
                         sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
                     }
