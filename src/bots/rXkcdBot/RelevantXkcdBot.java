@@ -16,6 +16,9 @@ import java.util.Scanner;
  */
 public class RelevantXkcdBot extends BotWrapper.Bot {
 
+    private int position;
+    private URL currUrl;
+
     @Override
     public void initializeBot() {
 
@@ -25,15 +28,42 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
     public void messageRecieved(BotWrapper.Message message) {
         if (message.getMessage().startsWith("?xkcd ")) {
             String argument = message.getMessage().substring(6);
-            try {
-                Scanner comics = new Scanner(new URL("http://relevantxkcd.appspot.com/process?action=xkcd&query=" + URLEncoder.encode(argument, "UTF-8")).openStream());
-                comics.nextLine();
-                comics.nextLine(); // Skip weight arguments
-                comics.nextInt(); //Skip first part
-                sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
-                comics.close();
-            } catch (IOException e) {
-                sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+            if (argument.equals("next")) {
+                try {
+                    Scanner comics = new Scanner(currUrl.openStream());
+                    comics.nextLine();
+                    comics.nextLine();
+                    for (int i = 0; i < position; i++) {
+                        if (!comics.hasNext()) {
+                            sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                            return;
+                        }
+                        comics.nextLine();
+                    }
+                    if (!comics.hasNext()) {
+                        sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                        return;
+                    }
+                    comics.nextInt();
+                    sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                    position++;
+                } catch (IOException e) {
+                    sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                }
+            } else {
+                try {
+                    currUrl = new URL("http://relevantxkcd.appspot.com/process?action=xkcd&query=" + URLEncoder.encode(argument, "UTF-8"));
+                    Scanner comics = new Scanner(currUrl.openStream());
+                    comics.nextLine();
+                    comics.nextLine(); // Skip weight arguments
+                    comics.nextInt(); //Skip first part
+                    position = 0;
+                    sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                    position++;
+                    comics.close();
+                } catch (IOException e) {
+                    sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                }
             }
         }
     }
