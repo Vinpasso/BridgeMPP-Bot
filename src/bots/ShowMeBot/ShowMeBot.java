@@ -37,9 +37,11 @@ public class ShowMeBot extends Bot {
 		}
 		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		try {
-			Matcher matcher = Pattern.compile("src=\"([^\"]*?)\"").matcher(
-					IOUtils.toString(new URL("http://" + query + ".jpg.to")));
+			String htmlText = IOUtils.toString(new URL("http://" + query + ".jpg.to"));
+			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
+			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
 			if (!matcher.find()) {
+				sendMessage(new Message(message.getGroup(), "No search result for: " + query, "Plain Text"));
 				return;
 			}
 			URL imageURL = new URL(matcher.group(1));
@@ -48,15 +50,16 @@ public class ShowMeBot extends Bot {
 			if (connection.getContentLengthLong() < 30000) {
 				image = IOUtils.toByteArray(connection.getInputStream());
 			} else {
-				image = resizeImage(connection, 320, 240);
+				image = resizeImage(connection, 100, 100);
 			}
 			if (image != null) {
 				sendMessage(new Message(message.getGroup(), "<img src=\"data:image/jpeg;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query + "\" width=\"320\" height=\"240\"/>", "XHTML"));
 			}
 			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"320\" height=\"240\"/>", "XHTML"));
+					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), "XHTML"));
 		} catch (IOException e) {
+			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), "Plain Text"));
 			return;
 		}
 	}

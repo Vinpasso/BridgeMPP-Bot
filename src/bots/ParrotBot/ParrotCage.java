@@ -21,13 +21,7 @@ public class ParrotCage {
 		if(parrots.size() == maxParrotCount){
 			return null;
 		}
-		ParrotBot parrot = null;
-		if(parrotName == null || parrotName.trim().equals("") || parrotName.trim().equals(" ")){
-			parrot = new ParrotBot();
-		}
-		else{
-			parrot = new ParrotBot(parrotName);
-		}
+		ParrotBot parrot = parrotName == null ? new ParrotBot() : new ParrotBot(parrotName);
 		parrots.put(parrot.getName(), parrot);
 		return parrot;
 	}
@@ -79,25 +73,19 @@ public class ParrotCage {
 		for (ParrotBot parrot : parrots.values()) {
 			String parrotStatus = parrot.getStatus();
 			if (parrotStatus != null) {
-				stringBuilder.append(parrotStatus).append(" <br/>");
+				stringBuilder.append(parrotStatus).append(" \n");
 			}
-		}
-		if(stringBuilder.length() > "<br/>".length()){
-			return stringBuilder.substring(0, stringBuilder.length()-"<br/>".length());
 		}
 		return stringBuilder.toString();
 	}
 
-	public String processMessage(String[] msgWords) {
+	public String processMessage(String msgWords) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (ParrotBot parrot : parrots.values()) {
-			String parrotMessage = parrot.processSplitMessage(msgWords);
+			String parrotMessage = parrot.processMessage(msgWords);
 			if (parrotMessage != null) {
-				stringBuilder.append(parrot.getColouredName()).append(": ").append(parrotMessage).append(" <br/>");
+				stringBuilder.append(parrot.getColouredName()).append(": ").append(parrotMessage).append(" \n");
 			}
-		}
-		if(stringBuilder.length() > "<br/>".length()){
-			return stringBuilder.substring(0, stringBuilder.length()-"<br/>".length());
 		}
 		return stringBuilder.toString();
 	}

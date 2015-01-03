@@ -21,6 +21,7 @@ public class ParrotBot{
 	private static final String colourParts = "0123456789ABCDEF";
 	
 	public static final Pattern removeadditionalnewLinesandWhiteSpaces = Pattern.compile("[\n ]+", Pattern.DOTALL);
+	public static final Pattern stripHTMLTagPattern = Pattern.compile("<[^>]*>");
 	
 	private final String ParrotSound;
 	private final Random r;
@@ -89,7 +90,7 @@ public class ParrotBot{
 		for(int i = 0; i < string.length();i+=colourLength){
 			
 			shiny.append("<span style=\"color:#");
-			shiny.append(colours.get((i/colourLength) >= colours.size() ? colours.size()-1 : (i/colourLength)));
+			colours.get((i/colourLength) >= colours.size() ? colours.size()-1 : (i/colourLength));
 			shiny.append("\">");
 			shiny.append(string.substring(i, i+colourLength >= string.length() ? string.length():i+colourLength));
 			shiny.append("</span>");
@@ -130,15 +131,15 @@ public class ParrotBot{
 		lastUpdate = System.currentTimeMillis();
 	}
 	
-	public String processSplitMessage(String[] messageWords){
-		if(messageWords == null || messageWords.length == 0 || dead){
+	private String processSplitMessage(String[] messageWords){
+		if(messageWords == null || messageWords.length == 0){
 			return null;
 		}
 		StringBuilder repeatingWords = new StringBuilder();
 		for(int i = 0; i < messageWords.length && repeatingWords.length() < 1;i++){
 			if(getRandomNum() > 0.6){
 				for(int j = i; j < messageWords.length;j++){
-					if(!messageWords[j].contains("<") && !messageWords[j].contains(">") && getRandomNum() > 0.3 && !removeadditionalnewLinesandWhiteSpaces.matcher(messageWords[j]).matches()){
+					if(getRandomNum() > 0.3 && !removeadditionalnewLinesandWhiteSpaces.matcher(messageWords[j]).matches()){
 						repeatingWords.append(messageWords[j]).append(" ");
 					}
 				}
@@ -161,7 +162,8 @@ public class ParrotBot{
 	
 	public String processMessage(String message){
 		if(!dead){
-			String[] messageWords = message.split(" ");
+			String processableMessage = stripHTMLTagPattern.matcher(message).replaceAll("");
+			String[] messageWords = processableMessage.split(" ");
 			String answer = processSplitMessage(messageWords);
 			return answer;
 		}
@@ -203,16 +205,16 @@ public class ParrotBot{
 	
 	public void kill(){
 		statusqeue.add("Parrot " + colouredName + " screams in pain.");
-		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage1KillMessages.length+2);i++){
+		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage1KillMessages.length);i++){
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage1KillMessages[r.nextInt(ParrotBotMessages.stage1KillMessages.length)]);
 		}
 		statusqeue.add("Parrot " + colouredName + " fell from his favourite place.");
-		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage2KillMessages.length+2);i++){
+		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage2KillMessages.length);i++){
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage2KillMessages[r.nextInt(ParrotBotMessages.stage2KillMessages.length)]);
 		}
 		statusqeue.add("Parrot " + colouredName + " is turning into a pool of blood.");
 		dead = true;
-		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage3KillMessages.length+2);i++){
+		for(int i = 0; i < r.nextInt(ParrotBotMessages.stage3KillMessages.length);i++){
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage3KillMessages[r.nextInt(ParrotBotMessages.stage3KillMessages.length)]);
 		}
 		statusqeue.add("Parrot " + colouredName + " is no more....");
@@ -241,6 +243,11 @@ public class ParrotBot{
 			String wikiHelp = parrot1.processMessage(line);
 			System.out.println(parrot1.getStatus());
 			System.out.println(parrot1.shiny);
+			ParrotBot die = new ParrotBot("Try");
+			die.kill();
+			while(!die.isDone()){
+				System.out.println(die.getStatus());
+			}
 			if (wikiHelp != null) {
 				System.out.println("Parrot " + parrot1.colouredName + " says:");
 				 System.out.println(wikiHelp);

@@ -242,7 +242,7 @@ public class BotWrapper {
 				factory.setValidating(false);
 				factory.setExpandEntityReferences(false);
 				DocumentBuilder builder = factory.newDocumentBuilder();
-				builder.parse(new InputSource(new StringReader(getMessage())));
+				builder.parse(new InputSource(new StringReader("<body>" + getMessage() + "</body>")));
 				break;
 			default:
 				break;

@@ -29,14 +29,15 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 
 	@Override
 	public void messageRecieved(bridgempp.bot.wrapper.BotWrapper.Message message) {
+		String wikiWis = new String();
 		try {
-			String wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
-			if (wikiWis != null) {
-				String xhtmlwikiWisdom = HTMLBrPattern.matcher(wikiWis).replaceAll("<br/>");
-				sendMessage(new Message("WikiBot", xhtmlwikiWisdom,"XHTML"));
-			}
+			wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if (wikiWis != null) {
+			String xhtmlwikiWisdom = HTMLBrPattern.matcher(wikiWis).replaceAll("<br/>");
+			sendMessage(new Message("WikiBot", xhtmlwikiWisdom,"XHTML"));
 		}
 	}
 
