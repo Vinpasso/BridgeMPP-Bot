@@ -36,13 +36,16 @@ public class HashBot {
 
 			StringBuilder hashtags = new StringBuilder();
 			String[] splitmessage = removeSpecialLetters.matcher(message).replaceAll("").split(" ");
-
-			for (String s : splitmessage) {
-				if (r.nextInt(100) < 89 && !s.equals("") && isCapitalWord.matcher(s).matches()) {
+			if(splitmessage.length <= 1){
+				return null;
+			}
+			for (int i = 1; i < splitmessage.length;i++) {
+				String s = splitmessage[i];
+				if (r.nextInt(100) < 89 && s.length() > 3 && isCapitalWord.matcher(s).matches()) {
 					try {
-						hashtags.append("<a href=\"twitter.com/hashtag/").append(URLEncoder.encode(s, "UTF-8")).append("?src=hash\"").append(">");
+						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(URLEncoder.encode(s, "UTF-8")).append("?src=hash\"").append(">");
 					} catch (UnsupportedEncodingException e) {
-						hashtags.append("<a href=\"twitter.com/hashtag/").append(s).append("?src=hash\"").append(">");
+						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(s).append("?src=hash\"").append(">");
 					}
 					hashtags.append("#").append(s);
 					hashtags.append("</a> ");
