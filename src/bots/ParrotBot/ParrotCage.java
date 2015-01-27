@@ -11,32 +11,29 @@ public class ParrotCage {
 	List<String> doneParrots;
 	public static int maxParrotCount = -1;
 
-	
 	public ParrotCage() {
 		parrots = new HashMap<String, ParrotBot>();
 		doneParrots = new ArrayList<String>();
 	}
 
 	public ParrotBot addParrot(String parrotName) {
-		System.err.println("Adding Parrot Name: " + parrotName + " with length: " + parrotName.length());
-		if(parrots.size() == maxParrotCount){
+		if (parrots.size() == maxParrotCount) {
 			return null;
 		}
-		ParrotBot parrot = (parrotName == null  || parrotName.length() == 0 || parrotName.trim().equals(" "))? new ParrotBot() : new ParrotBot(parrotName);
+		ParrotBot parrot = (parrotName == null || parrotName.length() == 0 || parrotName.trim().equals(" ")) ? new ParrotBot() : new ParrotBot(parrotName);
 		parrots.put(parrot.getName(), parrot);
 		return parrot;
 	}
 
 	public void killParrot(String parrotName) {
-		if(parrots.size() == 0){
+		if (parrots.size() == 0) {
 			return;
 		}
 		if (parrotName.equals("all with nuclear bomb")) {
 			for (ParrotBot parrot : parrots.values()) {
 				parrot.nuke();
 			}
-		} 
-		else if (parrotName.equals("all")) {
+		} else if (parrotName.equals("all")) {
 			for (ParrotBot parrot : parrots.values()) {
 				parrot.kill();
 			}
@@ -62,18 +59,18 @@ public class ParrotCage {
 		}
 	}
 
-	public void feedParrot(String parrot){
-		try{
+	public void feedParrot(String parrot) {
+		try {
 			parrots.get(parrot).feed();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public int getParrotCount(){
+
+	public int getParrotCount() {
 		return parrots.size();
 	}
-	
+
 	public String getStatus() {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (ParrotBot parrot : parrots.values()) {
@@ -93,7 +90,7 @@ public class ParrotCage {
 				stringBuilder.append(parrot.getColouredName()).append(": ").append(parrotMessage).append(" \n");
 			}
 		}
-		return stringBuilder.toString();
+		String returnString = stringBuilder.toString().trim();
+		return (returnString.length() > 0 &&  (returnString.charAt(returnString.length()-1) == '\n')) ? returnString.substring(0, returnString.length()-1) : returnString ;
 	}
-	
 }

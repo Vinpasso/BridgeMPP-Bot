@@ -30,7 +30,6 @@ public class ParrotBotBridgeMPPIntegration extends ConsoleBot {
 			strBuilder = new StringBuilder();
 
 			if(msg.length() > 10 && isBuyCommand.matcher(msg).find()){
-				System.err.println("Buying Parrot");
 				cage.addParrot(msg.substring(11));
 			}
 			else if(msg.length() > 13 && isFeedCommand.matcher(msg).find()){
