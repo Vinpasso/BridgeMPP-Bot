@@ -45,7 +45,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			e.printStackTrace();
 		}
 		if (!strBuilder.equals("")) {
-			sendMessage(new Message("Parrots", strBuilder.toString(),"HTML"));
+			sendMessage(new Message("Parrots", strBuilder.toString(),"XHTML"));
 		}
 	}
 }
