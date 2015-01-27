@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
 
-import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 

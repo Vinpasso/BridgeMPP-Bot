@@ -2,7 +2,6 @@ package bots.ParrotBot;
 
 import java.util.regex.Pattern;
 
-import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 

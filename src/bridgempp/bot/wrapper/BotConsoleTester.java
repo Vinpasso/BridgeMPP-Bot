@@ -15,25 +15,18 @@ public class BotConsoleTester {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Please enter Bot FQCN:");
 		try {
-			ConsoleBot bot = (ConsoleBot) Class.forName(scanner.nextLine()).newInstance();
+			Bot bot = (Bot) Class.forName(scanner.nextLine()).newInstance();
 			bot.initializeBot();
 			System.out.println("Bot loaded");
 			while(true)
 			{
 				bot.messageRecieved(new Message("TESTGROUP", scanner.nextLine(), "Plain Text"));
+				System.out.println("Bot Execution Completed");
 			}
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		scanner.close();
-	}
-	
-	public static abstract class ConsoleBot extends Bot
-	{
-		public void sendMessage(Message message)
-		{
-			System.out.println("CONSOLE BOT" + message.toComplexString());
-		}
 	}
 	
 }

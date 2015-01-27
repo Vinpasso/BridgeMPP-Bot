@@ -1,13 +1,6 @@
 package bots.AdventureBot;
 
 import java.io.IOException;
-
-
-
-
-
-
-
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -20,7 +13,6 @@ import com.gargoylesoftware.htmlunit.javascript.host.KeyboardEvent;
 import bots.AdventureBot.StringUtils.diff_match_patch;
 import bots.AdventureBot.StringUtils.diff_match_patch.Diff;
 import bots.AdventureBot.StringUtils.diff_match_patch.LinesToCharsResult;
-import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 

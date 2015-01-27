@@ -33,10 +33,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -82,6 +80,15 @@ public class BotWrapper {
 	}
 
 	public static void printMessage(Message message, Bot bot) {
+		if(bot.channelFuture == null)
+		{
+			if(message.message.length() == 0)
+			{
+				System.out.println("CONSOLE BOT: Empty Message");
+			}
+			System.out.println("CONSOLE BOT: " + message.toComplexString());
+			return;
+		}
 		if (message.message.length() == 0) {
 			return;
 		}
@@ -147,6 +154,7 @@ public class BotWrapper {
 			if (botAlias != null) {
 				printCommand("!createalias " + botAlias, bot);
 			}
+			bot.name = botAlias;
 			String[] groups = botProperties.getProperty("groups").split("; ");
 			for (int i = 0; i < groups.length; i++) {
 				printCommand("!subscribegroup " + groups[i], bot);
@@ -169,6 +177,7 @@ public class BotWrapper {
 
 	public static abstract class Bot {
 
+		public String name;
 		Properties properties;
 		ChannelFuture channelFuture;
 
@@ -200,6 +209,10 @@ public class BotWrapper {
 				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 60 seconds",
 						"Plain Text"));
 				System.exit(0);
+			}
+			if(message.getMessage().startsWith("?botwrapper ping"))
+			{
+				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service", "Plain Text"));
 			}
 			try {
 				bot.messageRecieved(message);
