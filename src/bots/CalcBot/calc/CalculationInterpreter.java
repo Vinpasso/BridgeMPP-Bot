@@ -100,7 +100,7 @@ public class CalculationInterpreter {
 			expression = expression.replaceAll(name, "Math.".concat(name));
 		}
 		for (String name : fieldNames) {
-			expression = expression.replaceAll("(?i)[^a-zA-Z]" + name + "[^a-zA-Z]", "Math.".concat(name));
+			expression = expression.replaceAll("(?i)[^a-zA-z0-9]" + name + "[^a-zA-Z0-9]", "Math.".concat(name));
 		}
 		return expression;
 	}
