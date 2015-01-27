@@ -6,7 +6,7 @@ import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
-public class ParrotBotBridgeMPPIntegration extends ConsoleBot {
+public class ParrotBotBridgeMPPIntegration extends Bot {
 
 	ParrotCage cage;
 	
