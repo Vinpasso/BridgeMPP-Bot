@@ -18,10 +18,11 @@ public class ParrotCage {
 	}
 
 	public ParrotBot addParrot(String parrotName) {
+		System.err.println("Adding Parrot Name: " + parrotName + " with length: " + parrotName.length());
 		if(parrots.size() == maxParrotCount){
 			return null;
 		}
-		ParrotBot parrot = parrotName == null ? new ParrotBot() : new ParrotBot(parrotName);
+		ParrotBot parrot = (parrotName == null  || parrotName.length() == 0 || parrotName.trim().equals(" "))? new ParrotBot() : new ParrotBot(parrotName);
 		parrots.put(parrot.getName(), parrot);
 		return parrot;
 	}
@@ -30,7 +31,12 @@ public class ParrotCage {
 		if(parrots.size() == 0){
 			return;
 		}
-		if (parrotName.equals("all")) {
+		if (parrotName.equals("all with nuclear bomb")) {
+			for (ParrotBot parrot : parrots.values()) {
+				parrot.nuke();
+			}
+		} 
+		else if (parrotName.equals("all")) {
 			for (ParrotBot parrot : parrots.values()) {
 				parrot.kill();
 			}

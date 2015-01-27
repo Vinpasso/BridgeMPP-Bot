@@ -2,10 +2,11 @@ package bots.ParrotBot;
 
 import java.util.regex.Pattern;
 
+import bridgempp.bot.wrapper.BotConsoleTester.ConsoleBot;
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
 
-public class ParrotBotBridgeMPPIntegration extends Bot {
+public class ParrotBotBridgeMPPIntegration extends ConsoleBot {
 
 	ParrotCage cage;
 	
@@ -28,8 +29,9 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			String msg = message.getMessage().trim();
 			strBuilder = new StringBuilder();
 
-			if(msg.length() > 12 && isBuyCommand.matcher(msg).find()){
-				cage.addParrot(msg.substring(12));
+			if(msg.length() > 10 && isBuyCommand.matcher(msg).find()){
+				System.err.println("Buying Parrot");
+				cage.addParrot(msg.substring(11));
 			}
 			else if(msg.length() > 13 && isFeedCommand.matcher(msg).find()){
 				cage.feedParrot(msg.substring(13));
