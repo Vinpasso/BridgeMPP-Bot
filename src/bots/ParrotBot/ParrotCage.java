@@ -41,7 +41,6 @@ public class ParrotCage {
 			try {
 				parrots.get(parrotName).kill();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -91,6 +90,6 @@ public class ParrotCage {
 			}
 		}
 		String returnString = stringBuilder.toString().trim();
-		return (returnString.length() > 0 &&  (returnString.charAt(returnString.length()-1) == '\n')) ? returnString.substring(0, returnString.length()-1) : returnString ;
+		return (returnString.length() > 0 && (returnString.charAt(returnString.length() - 1) == '\n')) ? returnString.substring(0, returnString.length() - 1) : returnString;
 	}
 }
