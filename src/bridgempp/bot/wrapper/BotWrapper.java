@@ -49,7 +49,7 @@ public class BotWrapper {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-		EventLoopGroup loopGroup = new NioEventLoopGroup(1);
+		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);
 		bootstrap.channel(NioSocketChannel.class);
