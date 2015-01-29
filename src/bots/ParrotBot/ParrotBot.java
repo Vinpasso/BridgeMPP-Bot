@@ -99,7 +99,7 @@ public class ParrotBot {
 		for (int i = 0; i < string.length(); i += colourLength) {
 
 			shiny.append("<span style=\"color:#");
-			colours.get((i / colourLength) >= colours.size() ? colours.size() - 1 : (i / colourLength));
+			shiny.append(colours.get((i / colourLength) >= colours.size() ? colours.size() - 1 : (i / colourLength)));
 			shiny.append("\">");
 			shiny.append(string.substring(i, i + colourLength >= string.length() ? string.length() : i + colourLength));
 			shiny.append("</span>");
@@ -137,8 +137,8 @@ public class ParrotBot {
 			statusqeue.add("You watch Parrot " + colouredName + "'s dust slowly fading off into the distance as he is no more...");
 			dead = true;
 		} else {
-			statusqeue.add("Parrot " + colouredName + "is glowing green.");
-			statusqeue.add("Parrot " + colouredName + "seems to have survived the atomic blast...");
+			statusqeue.add("Parrot " + colouredName + " is glowing green.");
+			statusqeue.add("Parrot " + colouredName + " seems to have survived the atomic blast...");
 		}
 	}
 
