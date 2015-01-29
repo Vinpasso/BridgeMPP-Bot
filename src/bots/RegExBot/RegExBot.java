@@ -12,7 +12,7 @@ public class RegExBot extends Bot {
 	
 	@Override
 	public void initializeBot() {
-		pattern = Pattern.compile("(.+)\\s+?(.+)\\s+?(.+)");
+		pattern = Pattern.compile("(.+?)\\s+?(.+?)\\s+?(.+)");
 	}
 
 	@Override
@@ -20,6 +20,7 @@ public class RegExBot extends Bot {
 		if(message.getMessage().toLowerCase().startsWith("?regex"))
 		{
 			Matcher matcher = pattern.matcher(message.getMessage());
+			matcher.find();
 			if(matcher.groupCount() < 3)
 			{
 				sendMessage(new Message(message.getGroup(), "Not enough Arguments: Usage ?regex <regex> <matchstring>", "Plain Text"));
