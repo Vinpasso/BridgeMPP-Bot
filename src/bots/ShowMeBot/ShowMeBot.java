@@ -5,15 +5,11 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
@@ -109,7 +105,7 @@ public class ShowMeBot extends Bot {
 		JSONObject jsonQuery = new JSONObject(jsonSearchQuery);
 		JSONArray queryArray = jsonQuery.getJSONObject("responseData").getJSONArray("results");
 		int chooseQuery = new Random().nextInt(queryArray.length());
-		return queryArray.getJSONObject(chooseQuery).getString("url");
+		return queryArray.getJSONObject(chooseQuery).getString("unescapedUrl");
 	}
 
 	public String hasTrigger(String message) {
