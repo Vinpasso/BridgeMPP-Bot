@@ -5,16 +5,20 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.Base64;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import bridgempp.bot.wrapper.BotWrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper.Message;
@@ -36,14 +40,15 @@ public class ShowMeBot extends Bot {
 		}
 		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		try {
-			String htmlText = IOUtils.toString(new URL("http://www.google.com/search?q=" + query + "&tbm=isch"));
-			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
-			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
-			if (!matcher.find()) {
-				sendMessage(new Message(message.getGroup(), "No search result for: " + query, "Plain Text"));
-				return;
-			}
-			URL imageURL = new URL(matcher.group(1));
+//			String htmlText = IOUtils.toString(new URL("http://www.google.com/search?q=" + query + "&tbm=isch"));
+//			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
+//			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
+//			if (!matcher.find()) {
+//				sendMessage(new Message(message.getGroup(), "No search result for: " + query, "Plain Text"));
+//				return;
+//			}
+//			URL imageURL = new URL(matcher.group(1));
+			URL imageURL = new URL(getGoogleImageSearchResult(query));
 			URLConnection connection = imageURL.openConnection();
 			byte[] image;
 			image = resizeImage(connection, 100, 100);
@@ -94,6 +99,17 @@ public class ShowMeBot extends Bot {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public String getGoogleImageSearchResult(String query) throws IOException {
+		URL url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query);
+		URLConnection connection = url.openConnection();
+		connection.addRequestProperty("Referer", "http://vinpasso.org");
+		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
+		JSONObject jsonQuery = new JSONObject(jsonSearchQuery);
+		JSONArray queryArray = jsonQuery.getJSONObject("responseData").getJSONArray("results");
+		int chooseQuery = new Random().nextInt(queryArray.length());
+		return queryArray.getJSONObject(chooseQuery).getString("url");
 	}
 
 	public String hasTrigger(String message) {
