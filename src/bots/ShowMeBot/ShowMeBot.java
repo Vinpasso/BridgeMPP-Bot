@@ -5,15 +5,12 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -107,7 +104,7 @@ public class ShowMeBot extends Bot {
 		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
 		JSONObject jsonQuery = new JSONObject(jsonSearchQuery);
 		JSONArray queryArray = jsonQuery.getJSONObject("responseData").getJSONArray("results");
-		int chooseQuery = (random)?new Random().nextInt(queryArray.length()):0;
+		int chooseQuery = (random)?new Random().nextInt(Math.max(queryArray.length(), 0)):0;
 		return queryArray.getJSONObject(chooseQuery).getString("unescapedUrl");
 	}
 
