@@ -5,8 +5,10 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -34,8 +36,8 @@ public class ShowMeBot extends Bot {
 		if (query == null) {
 			return;
 		}
-		query = query.replaceAll("[^a-zA-Z0-9]", "");
 		try {
+			query = URLEncoder.encode(query, "UTF-8");
 			String htmlText = IOUtils.toString(new URL("http://" + query + ".jpg.to"));
 			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
 			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
@@ -57,7 +59,7 @@ public class ShowMeBot extends Bot {
 			}
 			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
 					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), "XHTML"));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), "Plain Text"));
 			return;
 		}
