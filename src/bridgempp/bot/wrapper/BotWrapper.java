@@ -9,6 +9,7 @@ package bridgempp.bot.wrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -20,6 +21,8 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -231,7 +235,26 @@ public class BotWrapper {
 		}
 
 	}
-
+	
+	public static class KeepAliveSender extends ChannelDuplexHandler
+	{
+		@Override
+		public void userEventTriggered(ChannelHandlerContext context, Object event) throws Exception
+		{
+			if(event instanceof IdleStateEvent)
+			{
+				IdleStateEvent idleEvent = (IdleStateEvent) event;
+				if(idleEvent.state() == IdleState.WRITER_IDLE)
+				{
+					ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat("PLAIN_TEXT")
+							.setMessage("").setSender("").setTarget("")
+							.setGroup("").build();
+					context.writeAndFlush(protoMessage);		
+				}
+			}
+		}
+	}
+	
 	public static class Message {
 		private String group;
 		private String sender;
