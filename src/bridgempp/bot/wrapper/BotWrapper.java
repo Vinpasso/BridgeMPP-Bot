@@ -11,6 +11,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -242,7 +243,7 @@ public class BotWrapper {
 	public static class KeepAliveSender extends ChannelDuplexHandler
 	{
 		@Override
-		public void userEventTriggered(ChannelHandlerContext context, Object event) throws Exception
+		public void userEventTriggered(ChannelHandlerContext context, Object event) 
 		{
 			if(event instanceof IdleStateEvent)
 			{
@@ -252,7 +253,19 @@ public class BotWrapper {
 					ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat("PLAIN_TEXT")
 							.setMessage("").setSender("").setTarget("")
 							.setGroup("").build();
-					context.writeAndFlush(protoMessage);		
+					ChannelFuture future = context.writeAndFlush(protoMessage);
+					future.addListener(new ChannelFutureListener() {
+						
+						@Override
+						public void operationComplete(ChannelFuture future) throws Exception {
+							if(!future.isSuccess())
+							{
+								Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+										"A Connection has been disconnected after PING: " + future.toString() + ", exiting...");
+								System.exit(0);
+							}
+						}
+					});
 				}
 			}
 		}
