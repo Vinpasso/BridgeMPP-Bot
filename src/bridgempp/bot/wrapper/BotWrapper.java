@@ -23,6 +23,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -144,6 +145,8 @@ public class BotWrapper {
 					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
 			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
+			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(0, 60, 0));
+			channelFuture.channel().pipeline().addLast("keepAliveSender", new KeepAliveSender());
 			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
 			bot.setProperties(botProperties);
