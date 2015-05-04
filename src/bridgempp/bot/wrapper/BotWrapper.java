@@ -250,6 +250,9 @@ public class BotWrapper {
 				IdleStateEvent idleEvent = (IdleStateEvent) event;
 				if(idleEvent.state() == IdleState.WRITER_IDLE)
 				{
+					Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
+							"A Connection is idle. Sending PING...");
+
 					ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat("PLAIN_TEXT")
 							.setMessage("").setSender("").setTarget("")
 							.setGroup("").build();
