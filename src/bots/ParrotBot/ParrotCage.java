@@ -60,6 +60,9 @@ public class ParrotCage {
 
 	public void feedParrot(String parrot) {
 		try {
+			if(parrot.startsWith("glitter")){
+				parrots.get(parrot.substring(6)).makeShiny();
+			}
 			parrots.get(parrot).feed();
 		} catch (Exception e) {
 			e.printStackTrace();
