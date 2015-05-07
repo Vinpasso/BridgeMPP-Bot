@@ -1,6 +1,9 @@
 package bots.HashBot;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +12,9 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class HashBot {
 
@@ -43,8 +49,9 @@ public class HashBot {
 				String s = splitmessage[i];
 				if (r.nextInt(100) < 89 && s.length() > 3 && isCapitalWord.matcher(s).matches()) {
 					try {
+						//hashtags.append(getPopularTweet(s));
 						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(URLEncoder.encode(s, "UTF-8")).append("?src=hash\"").append(">");
-					} catch (UnsupportedEncodingException e) {
+					} catch (Exception e) {
 						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(s).append("?src=hash\"").append(">");
 					}
 					hashtags.append("#").append(s);
@@ -75,6 +82,15 @@ public class HashBot {
 			}
 		}
 		reader.close();
+	}
+	
+	public String getPopularTweet(String keyword) throws Exception
+	{
+		URL url = new URL("https://twitter.com/search?src=typd&q=%23" + keyword);
+		URLConnection connection = url.openConnection();
+		String searchResults = IOUtils.toString(connection.getInputStream());
+		Pattern pattern = Pattern.compile("<.*?tweet-text.*?>(.*?)</.*?>");
+		return pattern.matcher(searchResults).group(1);
 	}
 
 }

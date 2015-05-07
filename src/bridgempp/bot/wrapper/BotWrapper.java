@@ -25,6 +25,8 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.timeout.WriteTimeoutException;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -146,6 +148,7 @@ public class BotWrapper {
 					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
 			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
+			channelFuture.channel().pipeline().addLast("writeTimeoutHandler", new WriteTimeoutHandler(30));
 			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(0, 60, 0));
 			channelFuture.channel().pipeline().addLast("keepAliveSender", new KeepAliveSender());
 			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
@@ -270,6 +273,20 @@ public class BotWrapper {
 						}
 					});
 				}
+			}
+		}
+		
+		public void exceptionCaught(ChannelHandlerContext context, Throwable cause) throws Exception
+		{
+			if(cause instanceof WriteTimeoutException)
+			{
+				Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+						"A Connection has been disconnected after Write Timeout: " + cause.toString() + ", exiting...");
+				System.exit(0);
+			}
+			else
+			{
+				super.exceptionCaught(context, cause);
 			}
 		}
 	}
