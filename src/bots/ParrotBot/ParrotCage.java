@@ -62,8 +62,10 @@ public class ParrotCage {
 		try {
 			if(parrot.startsWith("glitter")){
 				parrots.get(parrot.substring(6)).makeShiny();
+			} 
+			else{
+				parrots.get(parrot).feed();
 			}
-			parrots.get(parrot).feed();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
