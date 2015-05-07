@@ -60,8 +60,8 @@ public class ParrotCage {
 
 	public void feedParrot(String parrot) {
 		try {
-			if(parrot.startsWith("glitter")){
-				parrots.get(parrot.substring(6)).makeShiny();
+			if(parrot.startsWith("glitter to")){
+				parrots.get(parrot.substring(11)).makeShiny();
 			} 
 			else{
 				parrots.get(parrot).feed();
