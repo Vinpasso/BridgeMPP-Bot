@@ -32,10 +32,10 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 				cage.addParrot(msg.substring(11));
 			}
 			else if(msg.length() > 13 && isFeedCommand.matcher(msg).find()){
-				cage.feedParrot(msg.substring(14));
+				cage.feedParrot(msg.substring(13));
 			}
 			else if(msg.length() > 13 && isKillCommand.matcher(msg).find()){
-				cage.killParrot(msg.substring(14));
+				cage.killParrot(msg.substring(13));
 			}
 
 			cage.updateParrots();
