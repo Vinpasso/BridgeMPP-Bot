@@ -90,7 +90,11 @@ public class ParrotBot {
 		return colouredName.toString();
 	}
 
-	String makeShiny(String string) {
+	void makeShiny(){
+		shiny = true;
+	}
+	
+	private String makeShiny(String string) {
 		if (!shiny) {
 			return string;
 		}
