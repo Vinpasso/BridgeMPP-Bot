@@ -1,8 +1,7 @@
 language: java
-addons:
-    ssh_known_hosts: $HOST
 before_install:
     openssl aes-256-cbc -k "$KEY" -in deploy/rsa-id.enc -out deploy/rsa-id -d
 after_success:
     ssh-add deploy/rsa-id
+    ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
     scp target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar $USER@$HOST:$PATH
