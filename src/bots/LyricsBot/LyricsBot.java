@@ -39,8 +39,8 @@ public class LyricsBot extends Bot {
 
 		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
 		JSONArray jsonQuery = new JSONArray(jsonSearchQuery);
-		return jsonQuery.getJSONObject(0).getJSONObject("artist").getString("name") + ": "
-				+ jsonQuery.getJSONObject(0).getString("title") + ": "
+		return "Artist: " + jsonQuery.getJSONObject(0).getJSONObject("artist").getString("name") + "\nTitle: "
+				+ jsonQuery.getJSONObject(0).getString("title") + "\n"
 				+ jsonQuery.getJSONObject(0).getString("snippet");
 
 	}
