@@ -357,7 +357,7 @@ public class BotWrapper {
 			{
 				throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 			}
-			if(Pattern.compile("[\\x00-\\x08|\\x10-\\x1F]").matcher(getMessage()).find())
+			if(Pattern.compile("[\\x00-\\x08|\\x0E-\\x1F]").matcher(getMessage()).find())
 			{
 				throw new Exception("Dangerous Control Characters detected! Access Denied!\nURL Encoded Original Message: " + URLEncoder.encode(getMessage(), "UTF-8"));
 			}
