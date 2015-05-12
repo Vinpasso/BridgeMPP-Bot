@@ -53,9 +53,11 @@ public class ChatterBot extends Bot {
 				StringBuilder strb = new StringBuilder();
 				strb.append("?chatter add Cleverbot <name> - adds a Cleverbot instance named <name>\n");
 				strb.append("?chatter add Pandorabot <ID> <name> - adds the Pandorabot instance <ID> with name <ID>\n");
-				strb.append("?chatter mute <name> - mutes <name>");
-				strb.append("?chatter unmute <name> - unmutes <name>");
-				strb.append("?chatter remove <name> - removes <name>");
+				strb.append("?chatter mute <name> - mutes <name>\n");
+				strb.append("?chatter unmute <name> - unmutes <name>\n");
+				strb.append("?chatter remove <name> - removes <name>\n");
+				sendMessage(new Message(message.getGroup(), strb.toString().trim(), "Plaintext"));
+
 			}
 		}
 		else{
