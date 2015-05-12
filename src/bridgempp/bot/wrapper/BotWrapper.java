@@ -307,6 +307,10 @@ public class BotWrapper {
 			{
 				throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 			}
+			if(getMessage().contains("\u0000"))
+			{
+				throw new Exception("Dangerous Control Characters detected! Access Denied!");
+			}
 			switch (messageFormat) {
 			case "XHTML":
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
