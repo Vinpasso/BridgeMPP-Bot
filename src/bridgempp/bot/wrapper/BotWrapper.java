@@ -34,10 +34,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -307,9 +309,9 @@ public class BotWrapper {
 			{
 				throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 			}
-			if(getMessage().contains("\u0000"))
+			if(Pattern.compile("[\\x00-\\x08|\\x10-\\x1F]").matcher(getMessage()).find())
 			{
-				throw new Exception("Dangerous Control Characters detected! Access Denied!");
+				throw new Exception("Dangerous Control Characters detected! Access Denied! " + URLEncoder.encode(getMessage(), "UTF-8"));
 			}
 			switch (messageFormat) {
 			case "XHTML":
