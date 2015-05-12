@@ -2,7 +2,8 @@ language: java
 jdk:
     oraclejdk8
 after_success:
-   - openssl aes-256-cbc -k "$KEY" -in deploy/rsa-id.enc -out deploy/rsa-id -d
-   - ssh-add deploy/rsa-id
-   - ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+   - openssl aes-256-cbc -k "$KEY" -in ~/build/Vinpasso/BridgeMPP-Bot/deploy/rsa-id.enc -out ~/build/Vinpasso/BridgeMPP-Bot/deploy/rsa-id -d
+   - mkdir ~/.ssh/
+   - cp ~/build/Vinpasso/BridgeMPP-Bot/deploy/id-rsa ~/.ssh/id-rsa
+   - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
    - scp target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar $SSH_USER@$SSH_HOST:$UPLOAD_PATH
