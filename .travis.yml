@@ -1,4 +1,5 @@
 language: java
+
 before_install:
     openssl aes-256-cbc -k "$KEY" -in deploy/rsa-id.enc -out deploy/rsa-id -d
 after_success:
