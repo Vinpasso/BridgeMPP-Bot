@@ -359,7 +359,7 @@ public class BotWrapper {
 			}
 			if(Pattern.compile("[\\x00-\\x08|\\x10-\\x1F]").matcher(getMessage()).find())
 			{
-				throw new Exception("Dangerous Control Characters detected! Access Denied! " + URLEncoder.encode(getMessage(), "UTF-8"));
+				throw new Exception("Dangerous Control Characters detected! Access Denied!\nURL Encoded Original Message: " + URLEncoder.encode(getMessage(), "UTF-8"));
 			}
 			switch (messageFormat) {
 			case "XHTML":
