@@ -31,7 +31,7 @@ public class ShowMeBot extends Bot {
 	}
 
 	@Override
-	public void messageRecieved(Message message) {
+	public void messageReceived(Message message) {
 		String query = hasTrigger(message.getMessage());
 		if (query == null) {
 			return;

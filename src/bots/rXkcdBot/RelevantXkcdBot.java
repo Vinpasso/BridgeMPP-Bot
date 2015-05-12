@@ -26,7 +26,7 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
     }
 
     @Override
-    public void messageRecieved(BotWrapper.Message message) {
+    public void messageReceived(BotWrapper.Message message) {
         if (message.getMessage().startsWith("?xkcd ")) {
             String argument = message.getMessage().substring(6);
             switch (argument) {

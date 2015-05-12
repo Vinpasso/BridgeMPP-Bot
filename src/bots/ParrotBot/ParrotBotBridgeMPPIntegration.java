@@ -22,7 +22,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	}
 
 	@Override
-	public void messageRecieved(Message message) {
+	public void messageReceived(Message message) {
 		StringBuilder strBuilder = new StringBuilder();
 		try {
 			String msg = message.getMessage().trim();

@@ -188,20 +188,42 @@ public class BotWrapper {
 		botProperties.put("botClass", "<FQ Class Name>");
 	}
 
+	/**
+	 * The Class to be implemented by a BridgeMPP Bot
+	 *
+	 */
 	public static abstract class Bot {
 
 		public String name;
 		Properties properties;
 		ChannelFuture channelFuture;
 
+		/**
+		 * Sets the Properties loaded from the Bot Configuration file
+		 * @param properties The Bots Parameters
+		 */
 		public final void setProperties(Properties properties) {
 			this.properties = properties;
 		}
 
+		/**
+		 * Initialize the Bot
+		 * Called when the Bot is loaded by the Botwrapper
+		 */
 		public abstract void initializeBot();
 
-		public abstract void messageRecieved(Message message);
+		/**
+		 * Message Received
+		 * Called when the Bot receives a BridgeMPP Message
+		 * @param message The BridgeMPP Message
+		 */
+		public abstract void messageReceived(Message message);
 
+		/**
+		 * Send Message
+		 * Sends this BridgeMPP Message to the target Group
+		 * @param message The BridgeMPP Message to send
+		 */
 		public void sendMessage(Message message) {
 			printMessage(message, this);
 		}
@@ -228,7 +250,7 @@ public class BotWrapper {
 				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service", "Plain Text"));
 			}
 			try {
-				bot.messageRecieved(message);
+				bot.messageReceived(message);
 			} catch (Exception e) {
 				printMessage(
 						new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n"
@@ -293,6 +315,14 @@ public class BotWrapper {
 		}
 	}
 	
+	/**
+	 * BridgeMPP Message class containing following attributes
+	 * String group The group the Message originated from/will be sent to
+	 * String sender The sender of this Message, will be auto-set/overridden
+	 * String target The destination of this Message, will be auto-set/overridden
+	 * String message The raw text version of this Message
+	 * String messageFormat The format in which this Message has been sent
+	 */
 	public static class Message {
 		private String group;
 		private String sender;
@@ -303,7 +333,25 @@ public class BotWrapper {
 		public Message() {
 
 		}
+		
+		/**
+		 * Reply to an existing Message (Does not send the message)
+		 * Send the message with sendMessage(message)
+		 * @param message The received Message to reply to
+		 * @param text The text of the reply Message
+		 * @param format The format of the reply Message
+		 * @return The new Message, to be passed to sendMessage
+		 */
+		static Message replyTo(Message message, String text, String format)
+		{
+			return new Message(message.getMessage(), text, format);
+		}
 
+		/**
+		 * Check whether this Message violates BridgeMPP Message Restrictions
+		 * Throws an exception which may or may not be caught at will
+		 * @throws Exception The Reason for the invalidation of this message
+		 */
 		public void validate() throws Exception {
 			if(getMessage().length() > 60000)
 			{
@@ -332,6 +380,12 @@ public class BotWrapper {
 			this("", sender, "", message, "Plain Text");
 		}
 
+		/**
+		 * Generate a new Message to be sent over BridgeMPP
+		 * @param group The group to which the Message will be sent (will usually be retrieved from old message)
+		 * @param message The message that will be sent to the group
+		 * @param messageFormat The format of the Message ("PLAINTEXT", "XHTML")
+		 */
 		public Message(String group, String message, String messageFormat) {
 			this(group, "", "", message, messageFormat);
 		}
@@ -359,12 +413,21 @@ public class BotWrapper {
 			return message;
 		}
 
+		/**
+		 * Generates an informative String representation of this Message
+		 * @return the String representation
+		 */
 		public String toComplexString() {
 			String messageFormat = getMessageFormat() + ": ";
 			String group = (getGroup() != null) ? (getGroup() + ": ") : "Direct Message: ";
 			String sender = (getSender() != null) ? getSender().toString() : "Unknown";
 			String target = (getTarget() != null) ? (getTarget().toString() + ": ") : ("Unknown: ");
 			return messageFormat + group + sender + " --> " + target + getMessage();
+		}
+
+		@Override
+		public String toString() {
+			return toComplexString();
 		}
 
 		/**

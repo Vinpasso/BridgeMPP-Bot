@@ -16,7 +16,7 @@ public class RegExBot extends Bot {
 	}
 
 	@Override
-	public void messageRecieved(Message message) {
+	public void messageReceived(Message message) {
 		if(message.getMessage().toLowerCase().startsWith("?regex"))
 		{
 			Matcher matcher = pattern.matcher(message.getMessage());

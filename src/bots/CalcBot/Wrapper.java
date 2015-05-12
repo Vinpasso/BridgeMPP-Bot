@@ -42,7 +42,7 @@ public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
 	}
 
 	@Override
-	public void messageRecieved(BotWrapper.Message message) {
+	public void messageReceived(BotWrapper.Message message) {
 		String botResponse = evaluateMessage(message.getMessage());
 		if (botResponse != null) {
 			sendMessage(new BotWrapper.Message(message.getTarget(), botResponse));

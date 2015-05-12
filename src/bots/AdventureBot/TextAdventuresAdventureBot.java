@@ -29,7 +29,7 @@ public class TextAdventuresAdventureBot extends Bot {
 	}
 
 	@Override
-	public void messageRecieved(Message message) {
+	public void messageReceived(Message message) {
 		if(message.getMessage().startsWith("?adventure "))
 		{
 			String command = message.getMessage().substring(11).trim();

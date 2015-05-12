@@ -22,7 +22,7 @@ public class HashBotBridgeMPPIntegration extends Bot{
 	}
 
 	@Override
-	public void messageRecieved(Message message) {
+	public void messageReceived(Message message) {
 		
 		String response = null;
 		if(hashPattern.matcher(message.getMessage()).find()){

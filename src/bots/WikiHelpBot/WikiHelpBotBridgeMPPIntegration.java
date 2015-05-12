@@ -28,7 +28,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 	}
 
 	@Override
-	public void messageRecieved(bridgempp.bot.wrapper.BotWrapper.Message message) {
+	public void messageReceived(bridgempp.bot.wrapper.BotWrapper.Message message) {
 		String wikiWis = new String();
 		try {
 			wikiWis = helpBot.getWikiBotWisdom(message.getMessage());

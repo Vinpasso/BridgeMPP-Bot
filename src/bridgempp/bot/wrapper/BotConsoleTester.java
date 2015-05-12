@@ -20,7 +20,7 @@ public class BotConsoleTester {
 			System.out.println("Bot loaded");
 			while(true)
 			{
-				bot.messageRecieved(new Message("TESTGROUP", scanner.nextLine(), "Plain Text"));
+				bot.messageReceived(new Message("TESTGROUP", scanner.nextLine(), "Plain Text"));
 				System.out.println("Bot Execution Completed");
 			}
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
