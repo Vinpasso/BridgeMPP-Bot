@@ -66,7 +66,7 @@ public class ChatterBot extends Bot {
 				}
 				}
 			if(strb.length() >= 1){
-			sendMessage(new Message(message.getGroup(), strb.delete(strb.length()-1, strb.length()-1).toString(), "Plaintext"));
+			sendMessage(new Message(message.getGroup(), strb.toString().trim(), "Plaintext"));
 			}
 		}
 		if(wrap != null && !wrap.name.trim().isEmpty() && !names.containsKey(wrap.name)){
