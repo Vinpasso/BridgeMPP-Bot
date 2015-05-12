@@ -241,7 +241,7 @@ public class BotWrapper {
 					protoMessage.getMessage(), protoMessage.getMessageFormat());
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Inbound: " + message.toComplexString());
 			if (message.getMessage().startsWith("?botwrapper reload")) {
-				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 60 seconds",
+				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 10 seconds",
 						"Plain Text"));
 				System.exit(0);
 			}
