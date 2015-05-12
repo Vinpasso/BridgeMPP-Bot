@@ -23,7 +23,7 @@ public class LyricsBot extends Bot {
 			if(message.getMessage().contains("?lyrics ") || (new Random()).nextInt(10) > 8)
 			{
 			sendMessage(new Message(message.getGroup(),
-					getSongData(message.getMessage().replaceAll("?lyrics ", "")), "Plain Text"));
+					getSongData(message.getMessage().replaceAll("\\?lyrics ", "")), "Plain Text"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
