@@ -1,4 +1,4 @@
-package bots.lyricsbot;
+package bots.LyricsBot;
 
 import java.net.URL;
 import java.net.URLConnection;
