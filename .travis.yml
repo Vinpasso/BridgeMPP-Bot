@@ -5,7 +5,8 @@ after_success:
    - pwd
    - ls
    - openssl aes-256-cbc -k "$KEY" -in deploy/id-rsa.enc -out deploy/id-rsa -d
-   - mkdir ~/.ssh/
+   - openssl aes-256-cbc -k "$KEY" -in deploy/id-rsa.pub.enc -out deploy/id-rsa.pub -d
    - cp deploy/id-rsa ~/.ssh/id-rsa
+   - cp deploy/id-rsa.pub ~/.ssh/id-rsa
    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
    - scp target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar $SSH_USER@$SSH_HOST:$UPLOAD_PATH
