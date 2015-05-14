@@ -7,11 +7,6 @@ import bridgempp.bot.wrapper.BotWrapper;
 public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
 	private NewsInterpreter ni;
 
-	public Wrapper() {
-		ni = new NewsInterpreter();
-		initializeBot();
-	}
-
 	public String evaluateMessage(String msg) {
 		if (!msg.startsWith("?")) {
 			return null;
@@ -38,6 +33,7 @@ public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
 
 	@Override
 	public void initializeBot() {
+		ni = new NewsInterpreter();
 		ErrorLogger.init();
 		ni.init();
 	}

@@ -9,7 +9,6 @@ package bridgempp.bot.wrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -26,9 +25,6 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.handler.timeout.WriteTimeoutException;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,7 +44,6 @@ import org.xml.sax.InputSource;
 
 /**
  *
- * @author Vincent Bode
  */
 public class BotWrapper {
 
@@ -167,12 +162,12 @@ public class BotWrapper {
 			protocol[0] = 0x32;
 			channelFuture.await();
 			channelFuture.channel().writeAndFlush(Unpooled.wrappedBuffer(protocol));
+			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
 			channelFuture.channel().pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
 			channelFuture.channel().pipeline()
 					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
 			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
-			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
 			channelFuture.channel().pipeline().addLast("keepAliveSender", new KeepAliveSender());
 			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
@@ -339,6 +334,20 @@ public class BotWrapper {
 		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
 					"Communications have broken down on a Connection due to Exception", cause);
+			System.exit(0);
+		}
+		
+		@Override
+		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					"Communications have broken down on a Connection due to Channel Deactivation");
+			System.exit(0);
+		}
+		
+		@Override
+		public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					"Communications have broken down on a Connection due to Channel Derigistration");
 			System.exit(0);
 		}
 	}
