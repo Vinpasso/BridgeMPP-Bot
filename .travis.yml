@@ -10,29 +10,29 @@ before_install:
    - chmod 600 ~/.ssh/id_rsa.pub
    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
    - ssh $SSH_USER@$SSH_HOST "echo '!usekey $BRIDGEMPP_KEY
-     !addalias Build Bot
-     !joingroup $BRIDGEMPP_GROUP
-     A build has been triggered and is now commencing' | nc -v 127.0.0.1 $BRIDGEMPP_PORT"
+   - !addalias Build Bot
+   - !joingroup $BRIDGEMPP_GROUP
+   - A build has been triggered and is now commencing' | nc -vw 10 127.0.0.1 $BRIDGEMPP_PORT"
 
 after_success:
    - scp target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar $SSH_USER@$SSH_HOST:$UPLOAD_PATH
    - ssh $SSH_USER@$SSH_HOST "echo '$TRAVIS_BUILD_NUMBER' > $UPLOAD_PATH/version.txt"
    - ssh $SSH_USER@$SSH_HOST "echo '0
-     !usekey $BRIDGEMPP_KEY
-     !addalias Build Bot
-     !joingroup $BRIDGEMPP_GROUP
-     A build has succeeded.
-     Upload Successful.
-     Will reload Botwrapper...
-     ?botwrapper reload
-     ' | nc -v 127.0.0.1 $BRIDGEMPP_PORT"
+   - !usekey $BRIDGEMPP_KEY
+   - !addalias Build Bot
+   - !joingroup $BRIDGEMPP_GROUP
+   - A build has succeeded.
+   - Upload Successful.
+   - Will reload Botwrapper...
+   - ?botwrapper reload
+   - ' | nc -vw 10 127.0.0.1 $BRIDGEMPP_PORT"
 
 after_failure:
    - ssh $SSH_USER@$SSH_HOST "echo '0
-     !usekey $BRIDGEMPP_KEY
-     !addalias Build Bot
-     !joingroup $BRIDGEMPP_GROUP
-     A build has failed.
-     No changes have been propagated to live.
-     ?botwrapper version
-     ' | nc -v 127.0.0.1 $BRIDGEMPP_PORT"
+   - !usekey $BRIDGEMPP_KEY
+   - !addalias Build Bot
+   - !joingroup $BRIDGEMPP_GROUP
+   - A build has failed.
+   - No changes have been propagated to live.
+   - ?botwrapper version
+   - ' | nc -vw 10 127.0.0.1 $BRIDGEMPP_PORT"
