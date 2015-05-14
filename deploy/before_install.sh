@@ -7,7 +7,7 @@ chmod 600 ~/.ssh/id_rsa.pub
 ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 ssh $SSH_USER@$SSH_HOST "echo '0
 !usekey $BRIDGEMPP_KEY
-!addalias Build Bot
-!joingroup $BRIDGEMPP_GROUP
-A build has been triggered and is now commencing
-' | nc -vw 10 127.0.0.1 $BRIDGEMPP_PORT"
+!createalias Build Bot
+!subscribegroup $BRIDGEMPP_GROUP
+A build has been triggered and is now commencing with build number: #$TRAVIS_BUILD_NUMBER
+' | nc -vw 5 127.0.0.1 $BRIDGEMPP_PORT"

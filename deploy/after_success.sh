@@ -7,5 +7,15 @@ ssh $SSH_USER@$SSH_HOST "echo '0
 A build has succeeded.
 Upload Successful.
 Will reload Botwrapper...
+New Version: $TRAVIS_BUILD_NUMBER
 ?botwrapper reload
-' | nc -vw 10 127.0.0.1 $BRIDGEMPP_PORT"
+' | nc -vw 5 127.0.0.1 $BRIDGEMPP_PORT"
+sleep 15
+ssh $SSH_USER@$SSH_HOST "echo '0
+!usekey $BRIDGEMPP_KEY
+!createalias Build Bot
+!subscribegroup $BRIDGEMPP_GROUP
+New Version has been loaded
+New Version: $TRAVIS_BUILD_NUMBER
+?botwrapper version
+' | nc -vw 5 127.0.0.1 $BRIDGEMPP_PORT"
