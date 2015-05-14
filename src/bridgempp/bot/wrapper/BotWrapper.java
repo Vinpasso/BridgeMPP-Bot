@@ -140,7 +140,24 @@ public class BotWrapper {
 				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
-			bot.initializeBot();
+			Thread initializeThread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					bot.initializeBot();
+				}
+			});
+			initializeThread.start();
+			while(true)
+			{
+				Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Sentinel: Syncing to Bot Initializer Thread");
+				initializeThread.join(10000);
+				if(!initializeThread.isAlive())
+				{
+					break;
+				}
+				initializeThread.interrupt();
+			}
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null) {
@@ -158,7 +175,7 @@ public class BotWrapper {
 					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
 			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
-			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(120, 60, 0));
+			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
 			channelFuture.channel().pipeline().addLast("keepAliveSender", new KeepAliveSender());
 			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
@@ -316,6 +333,12 @@ public class BotWrapper {
 				{
 					Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
 							"A Connection has died due to READER_IDLE");
+					System.exit(0);
+				}
+				else if(idleEvent.state() == IdleState.ALL_IDLE)
+				{
+					Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
+							"Communications have stalled on a connection due to ALL_IDLE");
 					System.exit(0);
 				}
 			}
