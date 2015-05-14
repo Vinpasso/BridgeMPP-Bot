@@ -257,7 +257,7 @@ public class BotWrapper {
 			{
 				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service", "Plain Text"));
 			}
-			if(message.getMessage().startsWith("?botwrapper ping"))
+			if(message.getMessage().startsWith("?botwrapper version"))
 			{
 				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " running on BridgeMPP-Bot-Wrapper Build: #" + build, "Plain Text"));
 			}
