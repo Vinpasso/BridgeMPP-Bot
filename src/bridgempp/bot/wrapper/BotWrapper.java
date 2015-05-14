@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,11 +53,20 @@ public class BotWrapper {
 
 	private static Bootstrap bootstrap;
 
+	private static String build;
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		if(args.length > 0)
+		{
+			build = args[0];
+		}
+		else
+		{
+			Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.WARNING, "No external build version supplied to BridgeMPP-Bot-Wrapper");
+		}
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);
@@ -248,6 +256,10 @@ public class BotWrapper {
 			if(message.getMessage().startsWith("?botwrapper ping"))
 			{
 				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service", "Plain Text"));
+			}
+			if(message.getMessage().startsWith("?botwrapper ping"))
+			{
+				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " running on BridgeMPP-Bot-Wrapper Build: #" + build, "Plain Text"));
 			}
 			try {
 				bot.messageReceived(message);
