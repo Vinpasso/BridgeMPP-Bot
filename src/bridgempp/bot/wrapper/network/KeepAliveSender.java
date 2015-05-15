@@ -10,6 +10,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.BotWrapper;
 
 public class KeepAliveSender extends ChannelDuplexHandler {
@@ -18,10 +19,7 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 		if (event instanceof IdleStateEvent) {
 			IdleStateEvent idleEvent = (IdleStateEvent) event;
 			if (idleEvent.state() == IdleState.WRITER_IDLE) {
-				Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
-						"A Connection is idle. Sending PING...");
-
-				ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat("PLAIN_TEXT")
+				ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(MessageFormat.PLAIN_TEXT.getName())
 						.setMessage("").setSender("").setTarget("").setGroup("").build();
 				ChannelFuture future = context.writeAndFlush(protoMessage);
 				future.addListener(new ChannelFutureListener() {
