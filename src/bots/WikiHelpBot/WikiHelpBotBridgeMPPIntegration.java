@@ -2,7 +2,7 @@ package bots.WikiHelpBot;
 
 import java.util.regex.Pattern;
 
-import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Message;
 
 /**
@@ -38,7 +38,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.Bot {
 		}
 		if (wikiWis != null) {
 			String xhtmlwikiWisdom = HTMLBrPattern.matcher(wikiWis).replaceAll("<br/>");
-			sendMessage(new Message("WikiBot", xhtmlwikiWisdom,"XHTML"));
+			sendMessage(new Message("WikiBot", xhtmlwikiWisdom,MessageFormat.XHTML));
 		}
 	}
 

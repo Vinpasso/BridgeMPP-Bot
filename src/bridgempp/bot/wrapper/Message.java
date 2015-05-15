@@ -9,6 +9,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.xml.sax.InputSource;
 
+import bridgempp.bot.messageformat.MessageFormat;
+
 /**
  * BridgeMPP Message class containing following attributes String group The
  * group the Message originated from/will be sent to String sender The
@@ -22,7 +24,7 @@ public class Message {
 	private String sender;
 	private String target;
 	String message;
-	private String messageFormat;
+	private MessageFormat messageFormat;
 
 	public Message() {
 
@@ -40,7 +42,7 @@ public class Message {
 	 *            The format of the reply Message
 	 * @return The new Message, to be passed to sendMessage
 	 */
-	static Message replyTo(Message message, String text, String format) {
+	static Message replyTo(Message message, String text, MessageFormat format) {
 		return new Message(message.getMessage(), text, format);
 	}
 
@@ -60,23 +62,15 @@ public class Message {
 					"Dangerous Control Characters detected! Access Denied!\nURL Encoded Original Message: "
 							+ URLEncoder.encode(getMessage(), "UTF-8"));
 		}
-		switch (messageFormat) {
-		case "XHTML":
+		if(messageFormat == MessageFormat.XHTML)
+		{
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
 			factory.setValidating(false);
 			factory.setExpandEntityReferences(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			builder.parse(new InputSource(new StringReader("<body>" + getMessage() + "</body>")));
-			break;
-		default:
-			break;
 		}
-	}
-
-	@Deprecated
-	public Message(String sender, String message) {
-		this("", sender, "", message, "Plain Text");
 	}
 
 	/**
@@ -90,11 +84,11 @@ public class Message {
 	 * @param messageFormat
 	 *            The format of the Message ("PLAINTEXT", "XHTML")
 	 */
-	public Message(String group, String message, String messageFormat) {
+	public Message(String group, String message, MessageFormat messageFormat) {
 		this(group, "", "", message, messageFormat);
 	}
 
-	public Message(String group, String sender, String target, String message, String messageFormat) {
+	public Message(String group, String sender, String target, String message, MessageFormat messageFormat) {
 		this.setGroup(group);
 		this.setSender(sender);
 		this.setTarget(target);
@@ -106,7 +100,7 @@ public class Message {
 		Message message = new Message();
 		String[] messageSplit = complexString.split("\\s*(?::| -->)\\s+", 5);
 		if (messageSplit.length == 5) {
-			message.setMessageFormat(messageSplit[0]);
+			message.setMessageFormat(MessageFormat.parseMessageFormat(messageSplit[0]));
 			message.setGroup(messageSplit[1]);
 			message.setSender(messageSplit[2]);
 			message.setTarget(messageSplit[3]);
@@ -198,7 +192,7 @@ public class Message {
 	/**
 	 * @return the messageFormat
 	 */
-	public String getMessageFormat() {
+	public MessageFormat getMessageFormat() {
 		return messageFormat;
 	}
 
@@ -206,7 +200,7 @@ public class Message {
 	 * @param messageFormat
 	 *            the messageFormat to set
 	 */
-	public void setMessageFormat(String messageFormat) {
+	public void setMessageFormat(MessageFormat messageFormat) {
 		this.messageFormat = messageFormat;
 	}
 

@@ -8,6 +8,7 @@ import java.util.Random;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -23,7 +24,7 @@ public class LyricsBot extends Bot {
 			if(message.getMessage().contains("?lyrics ") || (new Random()).nextInt(100) > 98)
 			{
 			sendMessage(new Message(message.getGroup(),
-					getSongData(message.getMessage().replaceAll("\\?lyrics ", "")), "Plain Text"));
+					getSongData(message.getMessage().replaceAll("\\?lyrics ", "")), MessageFormat.PLAIN_TEXT));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

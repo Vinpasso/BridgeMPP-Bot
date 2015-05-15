@@ -3,6 +3,7 @@ package bots.RegExBot;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -23,14 +24,14 @@ public class RegExBot extends Bot {
 			matcher.find();
 			if(matcher.groupCount() < 3)
 			{
-				sendMessage(new Message(message.getGroup(), "Not enough Arguments: Usage ?regex <regex> <matchstring>", "Plain Text"));
+				sendMessage(new Message(message.getGroup(), "Not enough Arguments: Usage ?regex <regex> <matchstring>", MessageFormat.PLAIN_TEXT));
 				return;
 			}
 			Pattern thisPattern = Pattern.compile(matcher.group(2));
 			Matcher thisMatcher = thisPattern.matcher(matcher.group(3));
 			while(thisMatcher.find())
 			{
-				sendMessage(new Message(message.getGroup(), thisMatcher.group(), "Plain Text"));
+				sendMessage(new Message(message.getGroup(), thisMatcher.group(), MessageFormat.PLAIN_TEXT));
 			}
 		}
 	}

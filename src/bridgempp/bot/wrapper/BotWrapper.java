@@ -11,6 +11,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -29,6 +30,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bridgempp.bot.messageformat.MessageFormat;
+import bridgempp.bot.wrapper.network.IncommingMessageHandler;
+import bridgempp.bot.wrapper.network.KeepAliveSender;
+import bridgempp.bot.wrapper.network.ProtoBuf;
+
 /**
  *
  */
@@ -36,7 +42,7 @@ public class BotWrapper {
 
 	private static Bootstrap bootstrap;
 
-	static String build;
+	public static String build;
 
 	/**
 	 * @param args
@@ -96,7 +102,7 @@ public class BotWrapper {
 			throw new InvalidMessageFormatException(e);
 		}
 
-		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat())
+		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat().getName())
 				.setMessage(message.getMessage()).setSender(message.getSender()).setTarget(message.getTarget())
 				.setGroup(message.group).build();
 		bot.channelFuture.channel().writeAndFlush(protoMessage);
@@ -104,7 +110,7 @@ public class BotWrapper {
 	}
 
 	public static void printCommand(String command, Bot bot) {
-		printMessage(new Message("operator", command), bot);
+		printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
 	}
 
 	private static void botInitialize(File botConfig) {
@@ -133,14 +139,14 @@ public class BotWrapper {
 			protocol[0] = 0x32;
 			channelFuture.await();
 			channelFuture.channel().writeAndFlush(Unpooled.wrappedBuffer(protocol));
-			channelFuture.channel().pipeline().addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
-			channelFuture.channel().pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-			channelFuture.channel().pipeline()
-					.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
-			channelFuture.channel().pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
-			channelFuture.channel().pipeline().addLast("protobufEncoder", new ProtobufEncoder());
-			channelFuture.channel().pipeline().addLast("keepAliveSender", new KeepAliveSender());
-			channelFuture.channel().pipeline().addLast(new IncommingMessageHandler(bot));
+			ChannelPipeline pipeline = channelFuture.channel().pipeline();
+			pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
+			pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
+			pipeline.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
+			pipeline.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+			pipeline.addLast("protobufEncoder", new ProtobufEncoder());
+			pipeline.addLast("keepAliveSender", new KeepAliveSender());
+			pipeline.addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
 			bot.setProperties(botProperties);
 

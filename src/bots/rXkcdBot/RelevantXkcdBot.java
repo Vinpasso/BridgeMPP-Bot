@@ -1,5 +1,6 @@
 package bots.rXkcdBot;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -32,7 +33,7 @@ public class RelevantXkcdBot extends Bot {
             String argument = message.getMessage().substring(6);
             switch (argument) {
                 case "explain":
-                    sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com/wiki/index.php/" + currComic, "Plain Text"));
+                    sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com/wiki/index.php/" + currComic, MessageFormat.PLAIN_TEXT));
                     break;
                 case "next":
                     try {
@@ -41,23 +42,23 @@ public class RelevantXkcdBot extends Bot {
                         comics.nextLine();
                         for (int i = 0; i < position; i++) {
                             if (!comics.hasNext()) {
-                                sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                                sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", MessageFormat.PLAIN_TEXT));
                                 comics.close();
                                 return;
                             }
                             comics.nextLine();
                         }
                         if (!comics.hasNext()) {
-                            sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                            sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", MessageFormat.PLAIN_TEXT));
                             comics.close();
                             return;
                         }
                         currComic = comics.nextInt();
-                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), MessageFormat.PLAIN_TEXT));
                         position++;
                         comics.close();
                     } catch (IOException e) {
-                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, MessageFormat.PLAIN_TEXT));
                     }
                     break;
                 default:
@@ -68,11 +69,11 @@ public class RelevantXkcdBot extends Bot {
                         comics.nextLine(); // Skip weight arguments
                         currComic = comics.nextInt(); //Skip first part
                         position = 0;
-                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), MessageFormat.PLAIN_TEXT));
                         position++;
                         comics.close();
                     } catch (IOException e) {
-                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, MessageFormat.PLAIN_TEXT));
                     }
                     break;
             }

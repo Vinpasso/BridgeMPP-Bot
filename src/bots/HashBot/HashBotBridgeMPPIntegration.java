@@ -2,6 +2,7 @@ package bots.HashBot;
 
 import java.util.regex.Pattern;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -59,7 +60,7 @@ public class HashBotBridgeMPPIntegration extends Bot{
 		}
 		
 		if(response != null){
-			sendMessage(new Message("HashBot", response, "XHTML"));
+			sendMessage(new Message("HashBot", response, MessageFormat.XHTML));
 		}
 	}
 

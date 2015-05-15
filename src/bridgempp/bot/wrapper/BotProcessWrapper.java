@@ -12,6 +12,8 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bridgempp.bot.messageformat.MessageFormat;
+
 /**
  *
  * @author Vincent Bode
@@ -64,7 +66,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
                 if (line.equals("null") || line.isEmpty()) {
                     continue;
                 }
-                sendMessage(new Message("operator", line));
+                sendMessage(new Message("", line, MessageFormat.PLAIN_TEXT));
             } catch (IOException ex) {
                 Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
             }

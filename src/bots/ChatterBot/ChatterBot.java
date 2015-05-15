@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotType;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -55,7 +56,7 @@ public class ChatterBot extends Bot {
 				strb.append("?chatter mute <name> - mutes <name>\n");
 				strb.append("?chatter unmute <name> - unmutes <name>\n");
 				strb.append("?chatter remove <name> - removes <name>\n");
-				sendMessage(new Message(message.getGroup(), strb.toString().trim(), "Plaintext"));
+				sendMessage(new Message(message.getGroup(), strb.toString().trim(), MessageFormat.PLAIN_TEXT));
 
 			}
 		}
@@ -67,7 +68,7 @@ public class ChatterBot extends Bot {
 				}
 				}
 			if(strb.length() >= 1){
-			sendMessage(new Message(message.getGroup(), strb.toString().trim(), "Plaintext"));
+			sendMessage(new Message(message.getGroup(), strb.toString().trim(), MessageFormat.PLAIN_TEXT));
 			}
 		}
 		if(wrap != null && !wrap.name.trim().isEmpty() && !names.containsKey(wrap.name)){

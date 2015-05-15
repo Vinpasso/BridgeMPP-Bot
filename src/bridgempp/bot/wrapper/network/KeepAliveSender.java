@@ -1,4 +1,4 @@
-package bridgempp.bot.wrapper;
+package bridgempp.bot.wrapper.network;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
@@ -9,6 +9,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import bridgempp.bot.wrapper.BotWrapper;
 
 public class KeepAliveSender extends ChannelDuplexHandler {
 	@Override

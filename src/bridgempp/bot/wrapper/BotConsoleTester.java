@@ -2,6 +2,8 @@ package bridgempp.bot.wrapper;
 
 import java.util.Scanner;
 
+import bridgempp.bot.messageformat.MessageFormat;
+
 
 
 
@@ -19,7 +21,7 @@ public class BotConsoleTester {
 			System.out.println("Bot loaded");
 			while(true)
 			{
-				bot.messageReceived(new Message("TESTGROUP", scanner.nextLine(), "Plain Text"));
+				bot.messageReceived(new Message("TESTGROUP", scanner.nextLine(), MessageFormat.PLAIN_TEXT));
 				System.out.println("Bot Execution Completed");
 			}
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {

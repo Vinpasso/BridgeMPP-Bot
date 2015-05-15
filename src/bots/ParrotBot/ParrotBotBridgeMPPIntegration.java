@@ -2,6 +2,7 @@ package bots.ParrotBot;
 
 import java.util.regex.Pattern;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -45,7 +46,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			e.printStackTrace();
 		}
 		if (!strBuilder.equals("")) {
-			sendMessage(new Message("Parrots", strBuilder.toString(),"XHTML"));
+			sendMessage(new Message("Parrots", strBuilder.toString(),MessageFormat.PLAIN_TEXT));
 		}
 	}
 }

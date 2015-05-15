@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.KeyboardEvent;
 import bots.AdventureBot.StringUtils.diff_match_patch;
 import bots.AdventureBot.StringUtils.diff_match_patch.Diff;
 import bots.AdventureBot.StringUtils.diff_match_patch.LinesToCharsResult;
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -43,7 +44,7 @@ public class TextAdventuresAdventureBot extends Bot {
 		{
 			String command = message.getMessage().substring(4).trim();
 			enterQuery(command);
-			sendMessage(new Message(message.getGroup(), getResponse(), "Plain Text"));
+			sendMessage(new Message(message.getGroup(), getResponse(), MessageFormat.PLAIN_TEXT));
 		}
 	}
 
@@ -53,8 +54,8 @@ public class TextAdventuresAdventureBot extends Bot {
 		case "play":
 			cached = "";
 			initializeGame(message.getMessage().substring(message.getMessage().lastIndexOf(" ") + 1));
-			sendMessage(new Message(message.getGroup(), "Welcome to TextAdventures", "Plain Text"));
-			sendMessage(new Message(message.getGroup(), getResponse(), "Plain Text"));
+			sendMessage(new Message(message.getGroup(), "Welcome to TextAdventures", MessageFormat.PLAIN_TEXT));
+			sendMessage(new Message(message.getGroup(), getResponse(), MessageFormat.PLAIN_TEXT));
 			break;
 		case "stop":
 			webclient.closeAllWindows();
@@ -62,7 +63,7 @@ public class TextAdventuresAdventureBot extends Bot {
 			webclient = null;
 			diff = null;
 			cached = null;
-			sendMessage(new Message(message.getGroup(), "A TextAdventure has been closed", "Plain Text"));
+			sendMessage(new Message(message.getGroup(), "A TextAdventure has been closed", MessageFormat.PLAIN_TEXT));
 		}
 		
 	}

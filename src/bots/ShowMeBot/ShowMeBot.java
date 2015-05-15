@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -53,12 +54,12 @@ public class ShowMeBot extends Bot {
 			if (image != null) {
 				sendMessage(new Message(message.getGroup(), "<img src=\"data:image/jpeg;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
-						+ "\" width=\"320\" height=\"240\"/>", "XHTML"));
+						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}
 			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), "XHTML"));
+					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), MessageFormat.XHTML));
 		} catch (Exception e) {
-			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), "Plain Text"));
+			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), MessageFormat.PLAIN_TEXT));
 		}
 	}
 
