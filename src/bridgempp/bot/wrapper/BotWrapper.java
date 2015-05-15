@@ -9,38 +9,25 @@ package bridgempp.bot.wrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.InetSocketAddress;
-import java.net.URLEncoder;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -49,7 +36,7 @@ public class BotWrapper {
 
 	private static Bootstrap bootstrap;
 
-	private static String build;
+	static String build;
 
 	/**
 	 * @param args
@@ -133,23 +120,7 @@ public class BotWrapper {
 				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
-			Thread initializeThread = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					bot.initializeBot();
-				}
-			});
-			initializeThread.start();
-			while (true) {
-				Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
-						"Sentinel: Syncing to Bot Initializer Thread");
-				initializeThread.join(10000);
-				if (!initializeThread.isAlive()) {
-					break;
-				}
-				initializeThread.interrupt();
-			}
+			bot.initializeBot();
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null) {
@@ -188,7 +159,7 @@ public class BotWrapper {
 			for (int i = 0; i < groups.length; i++) {
 				printCommand("!subscribegroup " + groups[i], bot);
 			}
-			System.out.println("Joined " + groups.length + " groups");
+			System.out.println("Sent request to join " + groups.length + " groups");
 
 		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
 				| InterruptedException ex) {
@@ -202,356 +173,5 @@ public class BotWrapper {
 		botProperties.put("groups", "<groupname1>; <groupname2>");
 		botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
 		botProperties.put("botClass", "<FQ Class Name>");
-	}
-
-	/**
-	 * The Class to be implemented by a BridgeMPP Bot
-	 *
-	 */
-	public static abstract class Bot {
-
-		public String name;
-		Properties properties;
-		ChannelFuture channelFuture;
-
-		/**
-		 * Sets the Properties loaded from the Bot Configuration file
-		 * 
-		 * @param properties
-		 *            The Bots Parameters
-		 */
-		public final void setProperties(Properties properties) {
-			this.properties = properties;
-		}
-
-		/**
-		 * Initialize the Bot Called when the Bot is loaded by the Botwrapper
-		 */
-		public abstract void initializeBot();
-
-		/**
-		 * Message Received Called when the Bot receives a BridgeMPP Message
-		 * 
-		 * @param message
-		 *            The BridgeMPP Message
-		 */
-		public abstract void messageReceived(Message message);
-
-		/**
-		 * Send Message Sends this BridgeMPP Message to the target Group
-		 * 
-		 * @param message
-		 *            The BridgeMPP Message to send
-		 */
-		public void sendMessage(Message message) {
-			printMessage(message, this);
-		}
-	}
-
-	public static class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBuf.Message> {
-		private Bot bot;
-
-		public IncommingMessageHandler(Bot bot) {
-			this.bot = bot;
-		}
-
-		protected void channelRead0(ChannelHandlerContext channelHandlerContext, ProtoBuf.Message protoMessage) {
-			Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(),
-					protoMessage.getMessage(), protoMessage.getMessageFormat());
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Inbound: " + message.toComplexString());
-			if (message.getMessage().startsWith("?botwrapper reload")) {
-				bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 10 seconds",
-						"Plain Text"));
-				System.exit(0);
-			}
-			if (message.getMessage().startsWith("?botwrapper ping")) {
-				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service",
-						"Plain Text"));
-			}
-			if (message.getMessage().startsWith("?botwrapper version")) {
-				bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name
-						+ " running on BridgeMPP-Bot-Wrapper Build: #" + build, "Plain Text"));
-			}
-			if (message.getMessage().length() == 0) {
-				return;
-			}
-			try {
-				bot.messageReceived(message);
-			} catch (Exception e) {
-				printMessage(
-						new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n"
-								+ e.getStackTrace()[0].toString(), "Plain Text"), bot);
-			}
-		}
-
-		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					"A Connection has been disconnected, exiting...", cause);
-			System.exit(0);
-		}
-
-	}
-
-	public static class KeepAliveSender extends ChannelDuplexHandler {
-		@Override
-		public void userEventTriggered(ChannelHandlerContext context, Object event) {
-			if (event instanceof IdleStateEvent) {
-				IdleStateEvent idleEvent = (IdleStateEvent) event;
-				if (idleEvent.state() == IdleState.WRITER_IDLE) {
-					Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO,
-							"A Connection is idle. Sending PING...");
-
-					ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat("PLAIN_TEXT")
-							.setMessage("").setSender("").setTarget("").setGroup("").build();
-					ChannelFuture future = context.writeAndFlush(protoMessage);
-					future.addListener(new ChannelFutureListener() {
-
-						@Override
-						public void operationComplete(ChannelFuture future) throws Exception {
-							if (!future.isSuccess()) {
-								Logger.getLogger(BotWrapper.class.getName()).log(
-										Level.SEVERE,
-										"A Connection has been disconnected after PING: " + future.toString()
-												+ ", exiting...");
-								System.exit(0);
-							}
-						}
-					});
-				} else if (idleEvent.state() == IdleState.READER_IDLE) {
-					Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-							"A Connection has died due to READER_IDLE");
-					System.exit(0);
-				} else if (idleEvent.state() == IdleState.ALL_IDLE) {
-					Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-							"Communications have stalled on a connection due to ALL_IDLE");
-					System.exit(0);
-				}
-			}
-		}
-
-		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					"Communications have broken down on a Connection due to Exception", cause);
-			System.exit(0);
-		}
-		
-		@Override
-		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					"Communications have broken down on a Connection due to Channel Deactivation");
-			System.exit(0);
-		}
-		
-		@Override
-		public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					"Communications have broken down on a Connection due to Channel Derigistration");
-			System.exit(0);
-		}
-	}
-
-	/**
-	 * BridgeMPP Message class containing following attributes String group The
-	 * group the Message originated from/will be sent to String sender The
-	 * sender of this Message, will be auto-set/overridden String target The
-	 * destination of this Message, will be auto-set/overridden String message
-	 * The raw text version of this Message String messageFormat The format in
-	 * which this Message has been sent
-	 */
-	public static class Message {
-		private String group;
-		private String sender;
-		private String target;
-		private String message;
-		private String messageFormat;
-
-		public Message() {
-
-		}
-
-		/**
-		 * Reply to an existing Message (Does not send the message) Send the
-		 * message with sendMessage(message)
-		 * 
-		 * @param message
-		 *            The received Message to reply to
-		 * @param text
-		 *            The text of the reply Message
-		 * @param format
-		 *            The format of the reply Message
-		 * @return The new Message, to be passed to sendMessage
-		 */
-		static Message replyTo(Message message, String text, String format) {
-			return new Message(message.getMessage(), text, format);
-		}
-
-		/**
-		 * Check whether this Message violates BridgeMPP Message Restrictions
-		 * Throws an exception which may or may not be caught at will
-		 * 
-		 * @throws Exception
-		 *             The Reason for the invalidation of this message
-		 */
-		public void validate() throws Exception {
-			if (getMessage().length() > 60000) {
-				throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
-			}
-			if (Pattern.compile("[\\x00-\\x08|\\x0E-\\x1F]").matcher(getMessage()).find()) {
-				throw new Exception(
-						"Dangerous Control Characters detected! Access Denied!\nURL Encoded Original Message: "
-								+ URLEncoder.encode(getMessage(), "UTF-8"));
-			}
-			switch (messageFormat) {
-			case "XHTML":
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				factory.setNamespaceAware(false);
-				factory.setValidating(false);
-				factory.setExpandEntityReferences(false);
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				builder.parse(new InputSource(new StringReader("<body>" + getMessage() + "</body>")));
-				break;
-			default:
-				break;
-			}
-		}
-
-		@Deprecated
-		public Message(String sender, String message) {
-			this("", sender, "", message, "Plain Text");
-		}
-
-		/**
-		 * Generate a new Message to be sent over BridgeMPP
-		 * 
-		 * @param group
-		 *            The group to which the Message will be sent (will usually
-		 *            be retrieved from old message)
-		 * @param message
-		 *            The message that will be sent to the group
-		 * @param messageFormat
-		 *            The format of the Message ("PLAINTEXT", "XHTML")
-		 */
-		public Message(String group, String message, String messageFormat) {
-			this(group, "", "", message, messageFormat);
-		}
-
-		public Message(String group, String sender, String target, String message, String messageFormat) {
-			this.setGroup(group);
-			this.setSender(sender);
-			this.setTarget(target);
-			this.setMessage(message);
-			this.setMessageFormat(messageFormat);
-		}
-
-		public static Message parseMessage(String complexString) {
-			Message message = new Message();
-			String[] messageSplit = complexString.split("\\s*(?::| -->)\\s+", 5);
-			if (messageSplit.length == 5) {
-				message.setMessageFormat(messageSplit[0]);
-				message.setGroup(messageSplit[1]);
-				message.setSender(messageSplit[2]);
-				message.setTarget(messageSplit[3]);
-				message.setMessage(messageSplit[4]);
-			} else {
-				message.setMessage(complexString);
-			}
-			return message;
-		}
-
-		/**
-		 * Generates an informative String representation of this Message
-		 * 
-		 * @return the String representation
-		 */
-		public String toComplexString() {
-			String messageFormat = getMessageFormat() + ": ";
-			String group = (getGroup() != null) ? (getGroup() + ": ") : "Direct Message: ";
-			String sender = (getSender() != null) ? getSender().toString() : "Unknown";
-			String target = (getTarget() != null) ? (getTarget().toString() + ": ") : ("Unknown: ");
-			return messageFormat + group + sender + " --> " + target + getMessage();
-		}
-
-		@Override
-		public String toString() {
-			return toComplexString();
-		}
-
-		/**
-		 * @return the group
-		 */
-		public String getGroup() {
-			return group;
-		}
-
-		/**
-		 * @param group
-		 *            the group to set
-		 */
-		public void setGroup(String group) {
-			this.group = group;
-		}
-
-		/**
-		 * @return the sender
-		 */
-		public String getSender() {
-			return sender;
-		}
-
-		/**
-		 * @param sender
-		 *            the sender to set
-		 */
-		public void setSender(String sender) {
-			this.sender = sender;
-		}
-
-		/**
-		 * @return the target
-		 */
-		public String getTarget() {
-			return target;
-		}
-
-		/**
-		 * @param target
-		 *            the target to set
-		 */
-		public void setTarget(String target) {
-			this.target = target;
-		}
-
-		/**
-		 * @return the message
-		 */
-		public String getMessage() {
-			return message;
-		}
-
-		/**
-		 * @param message
-		 *            the message to set
-		 */
-		public void setMessage(String message) {
-			this.message = message;
-		}
-
-		/**
-		 * @return the messageFormat
-		 */
-		public String getMessageFormat() {
-			return messageFormat;
-		}
-
-		/**
-		 * @param messageFormat
-		 *            the messageFormat to set
-		 */
-		public void setMessageFormat(String messageFormat) {
-			this.messageFormat = messageFormat;
-		}
-
 	}
 }

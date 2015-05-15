@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotType;
 
-import bridgempp.bot.wrapper.BotWrapper.Bot;
-import bridgempp.bot.wrapper.BotWrapper.Message;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
 public class ChatterBot extends Bot {
 

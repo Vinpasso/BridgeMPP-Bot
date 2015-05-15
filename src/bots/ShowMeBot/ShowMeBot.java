@@ -18,8 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import bridgempp.bot.wrapper.BotWrapper.Bot;
-import bridgempp.bot.wrapper.BotWrapper.Message;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
 public class ShowMeBot extends Bot {
 

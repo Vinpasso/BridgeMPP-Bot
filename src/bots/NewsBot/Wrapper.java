@@ -2,9 +2,10 @@ package bots.NewsBot;
 
 import bots.NewsBot.logger.ErrorLogger;
 import bots.NewsBot.news.NewsInterpreter;
-import bridgempp.bot.wrapper.BotWrapper;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
-public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
+public class Wrapper extends bridgempp.bot.wrapper.Bot {
 	private NewsInterpreter ni;
 
 	public String evaluateMessage(String msg) {
@@ -39,10 +40,10 @@ public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
 	}
 
 	@Override
-	public void messageReceived(BotWrapper.Message message) {
+	public void messageReceived(Message message) {
 		String botResponse = evaluateMessage(message.getMessage());
 		if (botResponse != null) {
-			sendMessage(new BotWrapper.Message(message.getTarget(), botResponse));
+			sendMessage(new Message(message.getTarget(), botResponse));
 		}
 	}
 }

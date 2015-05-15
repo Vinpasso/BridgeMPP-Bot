@@ -2,9 +2,10 @@ package bots.CalcBot;
 
 import bots.CalcBot.calc.CalculationInterpreter;
 import bots.CalcBot.logger.ErrorLogger;
-import bridgempp.bot.wrapper.BotWrapper;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
-public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
+public class Wrapper extends bridgempp.bot.wrapper.Bot {
 	private CalculationInterpreter ci;
 
 	public Wrapper() {
@@ -42,10 +43,10 @@ public class Wrapper extends bridgempp.bot.wrapper.BotWrapper.Bot {
 	}
 
 	@Override
-	public void messageReceived(BotWrapper.Message message) {
+	public void messageReceived(Message message) {
 		String botResponse = evaluateMessage(message.getMessage());
 		if (botResponse != null) {
-			sendMessage(new BotWrapper.Message(message.getTarget(), botResponse));
+			sendMessage(new Message(message.getTarget(), botResponse));
 		}
 	}
 }

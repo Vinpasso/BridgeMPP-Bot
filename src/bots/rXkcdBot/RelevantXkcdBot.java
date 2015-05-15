@@ -1,6 +1,7 @@
 package bots.rXkcdBot;
 
-import bridgempp.bot.wrapper.BotWrapper;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,7 +15,7 @@ import java.util.Scanner;
  * an array through http://relevantxkcd.appspot.com/process?action=xkcd&query=%s % input we can iterate through the
  * array skipping the int every step and display the image at http://www.explainxkcd.com/%s % value.
  */
-public class RelevantXkcdBot extends BotWrapper.Bot {
+public class RelevantXkcdBot extends Bot {
 
     private int position;
     private URL currUrl;
@@ -26,12 +27,12 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
     }
 
     @Override
-    public void messageReceived(BotWrapper.Message message) {
+    public void messageReceived(Message message) {
         if (message.getMessage().startsWith("?xkcd ")) {
             String argument = message.getMessage().substring(6);
             switch (argument) {
                 case "explain":
-                    sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com/wiki/index.php/" + currComic, "Plain Text"));
+                    sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com/wiki/index.php/" + currComic, "Plain Text"));
                     break;
                 case "next":
                     try {
@@ -40,23 +41,23 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
                         comics.nextLine();
                         for (int i = 0; i < position; i++) {
                             if (!comics.hasNext()) {
-                                sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                                sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
                                 comics.close();
                                 return;
                             }
                             comics.nextLine();
                         }
                         if (!comics.hasNext()) {
-                            sendMessage(new BotWrapper.Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
+                            sendMessage(new Message(message.getGroup(), "There are no more relevant comics!", "Plain Text"));
                             comics.close();
                             return;
                         }
                         currComic = comics.nextInt();
-                        sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
                         position++;
                         comics.close();
                     } catch (IOException e) {
-                        sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
                     }
                     break;
                 default:
@@ -67,11 +68,11 @@ public class RelevantXkcdBot extends BotWrapper.Bot {
                         comics.nextLine(); // Skip weight arguments
                         currComic = comics.nextInt(); //Skip first part
                         position = 0;
-                        sendMessage(new BotWrapper.Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "http://www.explainxkcd.com" + comics.nextLine().trim(), "Plain Text"));
                         position++;
                         comics.close();
                     } catch (IOException e) {
-                        sendMessage(new BotWrapper.Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
+                        sendMessage(new Message(message.getGroup(), "An error has ocurred: " + e, "Plain Text"));
                     }
                     break;
             }

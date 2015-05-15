@@ -13,8 +13,8 @@ import com.gargoylesoftware.htmlunit.javascript.host.KeyboardEvent;
 import bots.AdventureBot.StringUtils.diff_match_patch;
 import bots.AdventureBot.StringUtils.diff_match_patch.Diff;
 import bots.AdventureBot.StringUtils.diff_match_patch.LinesToCharsResult;
-import bridgempp.bot.wrapper.BotWrapper.Bot;
-import bridgempp.bot.wrapper.BotWrapper.Message;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
 public class TextAdventuresAdventureBot extends Bot {
 

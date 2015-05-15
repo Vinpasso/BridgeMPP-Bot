@@ -5,8 +5,6 @@
  */
 package bridgempp.bot.wrapper;
 
-import bridgempp.bot.wrapper.BotWrapper.Bot;
-import bridgempp.bot.wrapper.BotWrapper.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,7 +40,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
     }
 
     @Override
-    public void messageReceived(BotWrapper.Message message) {
+    public void messageReceived(Message message) {
         printStream.println(message.getMessage());
     }
 

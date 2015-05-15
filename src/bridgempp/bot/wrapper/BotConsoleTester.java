@@ -5,8 +5,7 @@ import java.util.Scanner;
 
 
 
-import bridgempp.bot.wrapper.BotWrapper.Bot;
-import bridgempp.bot.wrapper.BotWrapper.Message;
+
 
 public class BotConsoleTester {
 

@@ -2,7 +2,8 @@ package bots.WikiHelpBot;
 
 import java.util.regex.Pattern;
 
-import bridgempp.bot.wrapper.BotWrapper.Message;
+import bridgempp.bot.wrapper.Bot;
+import bridgempp.bot.wrapper.Message;
 
 /**
  * 
@@ -12,7 +13,7 @@ import bridgempp.bot.wrapper.BotWrapper.Message;
  *
  */
 
-public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWrapper.Bot {
+public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.Bot {
 
 	public static final String Name = "WikiHelpBot";
 	public static Pattern HTMLBrPattern = Pattern.compile("<br>");
@@ -28,7 +29,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.BotWr
 	}
 
 	@Override
-	public void messageReceived(bridgempp.bot.wrapper.BotWrapper.Message message) {
+	public void messageReceived(bridgempp.bot.wrapper.Message message) {
 		String wikiWis = new String();
 		try {
 			wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
