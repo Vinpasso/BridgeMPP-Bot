@@ -265,8 +265,6 @@ public class ParrotBot {
 	public static void main(String[] args) {
 		ParrotBot parrot1 = new ParrotBot("John");
 		Scanner reader = new Scanner(System.in);
-		boolean exit = false;
-
 		String line = reader.nextLine();
 		// exit = line.equals("exit");
 		String wikiHelp = parrot1.processMessage(line);

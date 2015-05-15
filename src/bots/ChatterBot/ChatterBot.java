@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.code.chatterbotapi.ChatterBotFactory;
-import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 
 import bridgempp.bot.wrapper.BotWrapper.Bot;
