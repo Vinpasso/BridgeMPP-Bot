@@ -26,7 +26,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	public void messageReceived(Message message) {
 		StringBuilder strBuilder = new StringBuilder();
 		try {
-			String msg = message.getMessage().trim();
+			String msg = message.getPlainTextMessage().trim();
 			strBuilder = new StringBuilder();
 
 			if(msg.length() > 10 && isBuyCommand.matcher(msg).find()){

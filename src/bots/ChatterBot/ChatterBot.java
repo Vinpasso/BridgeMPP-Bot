@@ -28,7 +28,7 @@ public class ChatterBot extends Bot {
 	@Override
 	public void messageReceived(Message message) {
 		try {
-		String msgText = message.getMessage();
+		String msgText = message.getPlainTextMessage();
 		ChatterSessionWrapper wrap = null;
 		if(msgText.startsWith("?chatter")){
 			if(msgText.startsWith("?chatter add Cleverbot ")){
