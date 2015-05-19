@@ -175,11 +175,25 @@ public class Message {
 	}
 
 	/**
+	 * Return the Message in the specified Format, or the Current Format if no Format is specified
 	 * @return the message
 	 */
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage(MessageFormat... formats)
+    {
+    	for(MessageFormat format : formats)
+    	{
+    		if(messageFormat.canConvertToFormat(format))
+    		{
+    			return messageFormat.convertToFormat(message, format);
+    		}
+    	}
+    	return message;
+    }
+    
+    public String getPlainTextMessage()
+    {
+    	return getMessage(MessageFormat.PLAIN_TEXT);
+    }
 
 	/**
 	 * @param message
