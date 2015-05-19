@@ -22,6 +22,9 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, ProtoBuf.Message protoMessage) {
 		Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(),
 				protoMessage.getMessage(), MessageFormat.parseMessageFormat(protoMessage.getMessageFormat()));
+		if (message.getMessage().length() == 0) {
+			return;
+		}
 		Logger.getLogger(BotWrapper.class.getName()).log(Level.INFO, "Inbound: " + message.toComplexString());
 		if (message.getMessage().startsWith("?botwrapper reload")) {
 			bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 10 seconds",
@@ -35,9 +38,6 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 		if (message.getMessage().startsWith("?botwrapper version")) {
 			bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name
 					+ " running on BridgeMPP-Bot-Wrapper Build: #" + BotWrapper.build, MessageFormat.PLAIN_TEXT));
-		}
-		if (message.getMessage().length() == 0) {
-			return;
 		}
 		try {
 			bot.messageReceived(message);
