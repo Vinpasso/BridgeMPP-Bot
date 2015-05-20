@@ -57,7 +57,7 @@ public class ShowMeBot extends Bot {
 						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}
 			sendMessage(new Message(message.getGroup(), "\n<img src=\"" + result.resultURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"100\" height=\"100\"/>\nSource (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString() + "\nQuery: " + result.queryURL.toString(), MessageFormat.XHTML));
+					+ "\" width=\"100\" height=\"100\"/>\nSource (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString() + "\nQuery: " + result.searchURL.toString(), MessageFormat.XHTML));
 		} catch (Exception e) {
 			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), MessageFormat.PLAIN_TEXT));
 		}
@@ -101,6 +101,7 @@ public class ShowMeBot extends Bot {
 	public QueryResult getGoogleImageSearchResult(String query, boolean random) throws IOException {
 		QueryResult result = new QueryResult();
 		result.queryURL = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query);
+		result.searchURL = new URL("https://www.google.com/search?tbm=isch&q=" + query);
 		URLConnection connection = result.queryURL.openConnection();
 		connection.addRequestProperty("Referer", "http://vinpasso.org");
 		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
