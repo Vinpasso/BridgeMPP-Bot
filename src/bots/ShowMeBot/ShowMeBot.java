@@ -38,7 +38,7 @@ public class ShowMeBot extends Bot {
 			return;
 		}
 		try {
-			query = URLEncoder.encode(query, "UTF-8");
+			query = URLEncoder.encode(query.trim(), "UTF-8");
 //			String htmlText = IOUtils.toString(new URL("http://www.google.com/search?q=" + query + "&tbm=isch"));
 //			htmlText = Pattern.compile("<!--.*?-->", Pattern.DOTALL).matcher(htmlText).replaceAll("");
 //			Matcher matcher = Pattern.compile("<img.*src=\"([^\"]*?)\".*/>").matcher(htmlText);
@@ -47,17 +47,17 @@ public class ShowMeBot extends Bot {
 //				return;
 //			}
 //			URL imageURL = new URL(matcher.group(1));
-			URL imageURL = new URL(getGoogleImageSearchResult(query, message.getMessage().toLowerCase().contains("random")));
-			URLConnection connection = imageURL.openConnection();
+			QueryResult result = getGoogleImageSearchResult(query, message.getMessage().toLowerCase().contains("random"));
+			URLConnection connection = result.resultURL.openConnection();
 			byte[] image;
 			image = resizeImage(connection, 100, 100);
 			if (image != null) {
-				sendMessage(new Message(message.getGroup(), "<img src=\"data:image/jpeg;base64,"
+				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/jpeg;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
 						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}
-			sendMessage(new Message(message.getGroup(), "<img src=\"" + imageURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"100\" height=\"100\"/> Source: " + imageURL.toString(), MessageFormat.XHTML));
+			sendMessage(new Message(message.getGroup(), "\n<img src=\"" + result.resultURL.toString() + "\" alt=\"" + query
+					+ "\" width=\"100\" height=\"100\"/>\nSource (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString() + "\nQuery: " + result.queryURL.toString(), MessageFormat.XHTML));
 		} catch (Exception e) {
 			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), MessageFormat.PLAIN_TEXT));
 		}
@@ -98,15 +98,18 @@ public class ShowMeBot extends Bot {
 		return null;
 	}
 
-	public String getGoogleImageSearchResult(String query, boolean random) throws IOException {
-		URL url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query);
-		URLConnection connection = url.openConnection();
+	public QueryResult getGoogleImageSearchResult(String query, boolean random) throws IOException {
+		QueryResult result = new QueryResult();
+		result.queryURL = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query);
+		URLConnection connection = result.queryURL.openConnection();
 		connection.addRequestProperty("Referer", "http://vinpasso.org");
 		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
 		JSONObject jsonQuery = new JSONObject(jsonSearchQuery);
 		JSONArray queryArray = jsonQuery.getJSONObject("responseData").getJSONArray("results");
-		int chooseQuery = (random)?new Random().nextInt(Math.max(queryArray.length(), 0)):0;
-		return queryArray.getJSONObject(chooseQuery).getString("unescapedUrl");
+		result.response = queryArray.length();
+		result.index = (random)?new Random().nextInt(Math.max(result.response, 0)):0;
+		result.resultURL = new URL(queryArray.getJSONObject(result.index).getString("unescapedUrl"));
+		return result;
 	}
 
 	public String hasTrigger(String message) {
