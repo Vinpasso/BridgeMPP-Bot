@@ -56,8 +56,8 @@ public class ShowMeBot extends Bot {
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
 						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}
-			sendMessage(new Message(message.getGroup(), "\n<img src=\"" + result.resultURL.toString() + "\" alt=\"" + query
-					+ "\" width=\"100\" height=\"100\"/>\nSource (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString().replaceAll("&", "&amp;") + "\nQuery: " + result.searchURL.toString().replaceAll("&", "&amp;"), MessageFormat.XHTML));
+			sendMessage(new Message(message.getGroup(), "<br/><img src=\"" + result.resultURL.toString() + "\" alt=\"" + query
+					+ "\" width=\"100\" height=\"100\"/><br/>Source (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString().replaceAll("&", "&amp;") + "<br/>Query: " + result.searchURL.toString().replaceAll("&", "&amp;"), MessageFormat.XHTML));
 		} catch (Exception e) {
 			sendMessage(new Message(message.getGroup(), "An error has occured loading the Image: " + e.toString(), MessageFormat.PLAIN_TEXT));
 		}

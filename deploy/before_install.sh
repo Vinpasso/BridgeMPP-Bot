@@ -12,4 +12,5 @@ ssh $SSH_USER@$SSH_HOST "echo '0
 A build has been triggered and is now commencing with build number: #$TRAVIS_BUILD_NUMBER
 This Repository on GitHub: https://github.com/Vinpasso/BridgeMPP-Bot
 This Repository on Travis: https://travis-ci.org/Vinpasso/BridgeMPP-Bot
+$(git log -n 1 --stat)
 ' | nc -vw 5 127.0.0.1 $BRIDGEMPP_PORT"
