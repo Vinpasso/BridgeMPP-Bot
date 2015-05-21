@@ -20,8 +20,6 @@ public class WikiHelpBot {
 		this.apiHandler = new WikipediaAPIHandler(wikiLangDomain);
 	}
 
-
-
 	private String getWikiHelp(String topic) {
 		String wikiResponseString = null;
 		for(int i = 0; i < wikiLangDomains.length && wikiResponseString == null;i++){
