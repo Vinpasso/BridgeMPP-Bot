@@ -44,7 +44,7 @@ public class WikiHelpBot {
 		Matcher askingMatcher = askingPattern.matcher(msg);
 		if (askingMatcher.find()) {
 			int IndexOfQMark = msg.indexOf('?');
-			int start = askingMatcher.group().length();
+			int start = askingMatcher.end();
 			return getWikiHelp(msg.substring(start - 1, IndexOfQMark > start ? IndexOfQMark : msg.length()).trim());
 		}
 		return null;
