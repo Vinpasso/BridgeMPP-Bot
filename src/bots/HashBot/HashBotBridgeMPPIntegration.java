@@ -26,7 +26,7 @@ public class HashBotBridgeMPPIntegration extends Bot{
 	public void messageReceived(Message message) {
 		
 		String response = null;
-		if(hashPattern.matcher(message.getMessage()).find()){
+		if(hashPattern.matcher(message.getPlainTextMessage()).find()){
 			if(enablePattern.matcher(message.getMessage()).find()){
 				response = "enabled HashTagging";
 			}

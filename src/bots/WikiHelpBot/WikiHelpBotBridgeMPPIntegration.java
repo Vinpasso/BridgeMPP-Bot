@@ -32,7 +32,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.Bot {
 	public void messageReceived(bridgempp.bot.wrapper.Message message) {
 		String wikiWis = new String();
 		try {
-			wikiWis = helpBot.getWikiBotWisdom(message.getMessage());
+			wikiWis = helpBot.getWikiBotWisdom(message.getPlainTextMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
