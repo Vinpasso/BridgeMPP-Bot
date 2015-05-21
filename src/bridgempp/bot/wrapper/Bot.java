@@ -30,6 +30,15 @@ public abstract class Bot {
 	public abstract void initializeBot();
 
 	/**
+	 * Overwrite this if you need a deinitialize as well
+	 * This will be run asynchronously
+	 */
+	public void deinitializeBot()
+	{
+		
+	}
+	
+	/**
 	 * Message Received Called when the Bot receives a BridgeMPP Message
 	 * 
 	 * @param message

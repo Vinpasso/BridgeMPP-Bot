@@ -26,6 +26,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -127,6 +130,24 @@ public class BotWrapper {
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
 			bot.initializeBot();
+			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						bot.deinitializeBot();
+					} catch(Exception e)
+					{
+						Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "Failed to deinitialize Bot! Data Loss possible");
+					}
+					try {
+						bot.properties.store(new FileOutputStream(botConfig), "Bot Properties saved at: " + new SimpleDateFormat("DD.WW.yyyy HH:mm:ss").format(Date.from(Instant.now())));
+					} catch (IOException e) {
+						Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "Failed to save Bot Config! Data Loss possible");
+					}
+				}
+				
+			}));
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null) {
