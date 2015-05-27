@@ -83,7 +83,15 @@ public class BotWrapper {
 			return;
 		}
 		for (File botConfig : botsDir.listFiles()) {
+			try
+			{
 			botInitialize(botConfig);
+			}
+			catch(Exception e)
+			{
+				Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.SEVERE,
+						"Bot Initialize failed in Config: " + botConfig.toString(), e);
+			}
 		}
 
 	}
@@ -105,18 +113,22 @@ public class BotWrapper {
 			throw new InvalidMessageFormatException(e);
 		}
 
-		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat().getName())
-				.setMessage(message.getMessage()).setSender(message.getSender()).setTarget(message.getTarget())
+		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder()
+				.setMessageFormat(message.getMessageFormat().getName())
+				.setMessage(message.getMessage())
+				.setSender(message.getSender()).setTarget(message.getTarget())
 				.setGroup(message.group).build();
 		bot.channelFuture.channel().writeAndFlush(protoMessage);
-		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO, "Outbound: " + message.toComplexString());
+		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO,
+				"Outbound: " + message.toComplexString());
 	}
 
 	public static void printCommand(String command, Bot bot) {
 		printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
 	}
 
-	private static void botInitialize(File botConfig) {
+	private static void botInitialize(File botConfig)
+			throws UnsupportedOperationException {
 		try {
 			Properties botProperties = new Properties();
 			if (!botConfig.exists()) {
@@ -126,7 +138,8 @@ public class BotWrapper {
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException("Bot Class is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException(
+						"Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
 			bot.initializeBot();
@@ -136,35 +149,49 @@ public class BotWrapper {
 				public void run() {
 					try {
 						bot.deinitializeBot();
-					} catch(Exception e)
-					{
-						Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "Failed to deinitialize Bot! Data Loss possible");
+					} catch (Exception e) {
+						Logger.getLogger(BotWrapper.class.getName())
+								.log(Level.SEVERE,
+										"Failed to deinitialize Bot! Data Loss possible");
 					}
 					try {
-						bot.properties.store(new FileOutputStream(botConfig), "Bot Properties saved at: " + new SimpleDateFormat("DD.WW.yyyy HH:mm:ss").format(Date.from(Instant.now())));
+						bot.properties
+								.store(new FileOutputStream(botConfig),
+										"Bot Properties saved at: "
+												+ new SimpleDateFormat(
+														"DD.WW.yyyy HH:mm:ss").format(Date
+														.from(Instant.now())));
 					} catch (IOException e) {
-						Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, "Failed to save Bot Config! Data Loss possible");
+						Logger.getLogger(BotWrapper.class.getName())
+								.log(Level.SEVERE,
+										"Failed to save Bot Config! Data Loss possible");
 					}
 				}
-				
+
 			}));
 			String serverAddress = botProperties.getProperty("serverAddress");
-			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
+			int portNumber = Integer.parseInt(botProperties
+					.getProperty("serverPort"));
 			if (serverAddress == null) {
 				writeDefaultConfig(botProperties);
 				throw new UnsupportedOperationException(
 						"Server Address is null, cannot execute BridgeMPP server commands");
 			}
-			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
+			ChannelFuture channelFuture = bootstrap
+					.connect(new InetSocketAddress(serverAddress, portNumber));
 			byte[] protocol = new byte[1];
 			protocol[0] = 0x32;
 			channelFuture.await();
-			channelFuture.channel().writeAndFlush(Unpooled.wrappedBuffer(protocol));
+			channelFuture.channel().writeAndFlush(
+					Unpooled.wrappedBuffer(protocol));
 			ChannelPipeline pipeline = channelFuture.channel().pipeline();
-			pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
+			pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60,
+					120));
 			pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-			pipeline.addLast("protobufDecoder", new ProtobufDecoder(ProtoBuf.Message.getDefaultInstance()));
-			pipeline.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+			pipeline.addLast("protobufDecoder", new ProtobufDecoder(
+					ProtoBuf.Message.getDefaultInstance()));
+			pipeline.addLast("frameEncoder",
+					new ProtobufVarint32LengthFieldPrepender());
 			pipeline.addLast("protobufEncoder", new ProtobufEncoder());
 			pipeline.addLast("keepAliveSender", new KeepAliveSender());
 			pipeline.addLast(new IncommingMessageHandler(bot));
@@ -174,7 +201,8 @@ public class BotWrapper {
 			String serverKey = botProperties.getProperty("serverKey");
 			if (serverKey == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException(
+						"Server Key is null, cannot execute BridgeMPP server commands");
 			}
 			printCommand("!usekey " + serverKey, bot);
 			String botAlias = botProperties.getProperty("botname");
@@ -186,15 +214,18 @@ public class BotWrapper {
 			for (int i = 0; i < groups.length; i++) {
 				printCommand("!subscribegroup " + groups[i], bot);
 			}
-			System.out.println("Sent request to join " + groups.length + " groups");
+			System.out.println("Sent request to join " + groups.length
+					+ " groups");
 
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
-				| InterruptedException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException | ClassNotFoundException | InstantiationException
+				| IllegalAccessException | InterruptedException ex) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					null, ex);
 		}
 	}
 
-	private static void writeDefaultConfig(Properties botProperties) throws IOException {
+	private static void writeDefaultConfig(Properties botProperties)
+			throws IOException {
 		botProperties.put("serverKey", "<insertserveraccesskey>");
 		botProperties.put("botname", "<Ahumanreadablebotname>");
 		botProperties.put("groups", "<groupname1>; <groupname2>");
