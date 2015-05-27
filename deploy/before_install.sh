@@ -5,7 +5,7 @@ cp deploy/id_rsa.pub ~/.ssh/id_rsa.pub
 chmod 600 ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa.pub
 ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-export COMMIT_MESSAGE="$(git log -n 1 --stat)"
+export COMMIT_MESSAGE="$(git log -n 1 --stat | tr -d \' )"
 ssh $SSH_USER@$SSH_HOST "echo '0
 !usekey $BRIDGEMPP_KEY
 !createalias Build Bot
