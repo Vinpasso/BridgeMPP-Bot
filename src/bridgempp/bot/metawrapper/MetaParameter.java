@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface MetaParameter {
 	String trigger() default "-$PARAMETERNAME ";
-	String description() default "";
+	String helpTopic() default "";
 }

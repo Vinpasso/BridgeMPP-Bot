@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface MetaClass {
 	String triggerPrefix() default "?$CLASSNAME ";
+	String helpTopic() default "This is $CLASSNAME Meta Bot";
 }

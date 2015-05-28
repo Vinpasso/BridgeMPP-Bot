@@ -1,24 +1,22 @@
 package bridgempp.bot.metawrapper;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
 public class MetaWrapper extends Bot {
 
-	private Class<MetaBot> metaClass;
-	private MetaBot metaInstance;
+	private Class<?> metaClass;
+	private Object metaInstance;
 	private Method[] metaMethods;
 	private Hashtable<String, Method> methods;
 	private MetaClass classAnnotation;
@@ -26,9 +24,11 @@ public class MetaWrapper extends Bot {
 	@Override
 	public void initializeBot()  {
 		try {
+			metaClass = MetaAnnotateTest.class;
 			metaInstance = metaClass.newInstance();
 			classAnnotation = metaClass.getAnnotation(MetaClass.class);
 			metaMethods = metaClass.getDeclaredMethods();
+			methods = new Hashtable<>();
 			for(Method method : metaMethods)
 			{
 				if(classAnnotation == null)
@@ -57,7 +57,7 @@ public class MetaWrapper extends Bot {
 
 	private String getDefaultTrigger(Method method) {
 		//?<classname> <methodname> 
-		return ("?" + metaClass.getName() + " " + method.getName() + " ").toLowerCase();
+		return ("?" + metaClass.getSimpleName() + " " + method.getName() + " ").toLowerCase();
 	}
 
 	@Override
@@ -66,22 +66,24 @@ public class MetaWrapper extends Bot {
 		while(keys.hasMoreElements())
 		{
 			String key = keys.nextElement();
-			if(message.getPlainTextMessage().startsWith(key))
+			if(message.getPlainTextMessage().toLowerCase().startsWith(key.toLowerCase()))
 			{
-				runMethod(methods.get(key), message.getPlainTextMessage());
+				runMethod(methods.get(key), message, message.getPlainTextMessage().substring(key.length()));
 			}
 		}
 	}
 
-	private void runMethod(Method method, String message) {
+	private void runMethod(Method method, Message message, String parameterString) {
 		Parameter[] parameters = method.getParameters();
-		Object[] arguments = new Object[parameters.length];
-		parseParametersCommandLineStyle(parameters);
+		Object[] arguments = parseParametersSpaceDelimited(parameters, parameterString);
 		try {
-			method.invoke(metaInstance, arguments);
+			Object returnObject = method.invoke(metaInstance, arguments);
+			if(returnObject != null)
+			{
+				sendMessage(new Message(message.getGroup(), returnObject.toString(), MessageFormat.PLAIN_TEXT));
+			}
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -108,6 +110,37 @@ public class MetaWrapper extends Bot {
 		DefaultParser parser = new DefaultParser();
 		throw new UnsupportedOperationException("Not Implemented");
 	}
-	
+
+	private Object[] parseParametersSpaceDelimited(Parameter[] parameters, String message)
+	{
+		if(parameters.length == 1 && parameters[0].getType().getName().equals("java.lang.String"))
+		{
+			return new Object[] { message };
+		}
+		String[] splittedString = message.split("\\s");
+		Object[] parameterObjects = new Object[parameters.length];
+		for(int i = 0; i < parameters.length; i++)
+		{
+			switch(parameters[i].getType().getName())
+			{
+			case "java.lang.String":
+				parameterObjects[i] = splittedString[i];
+				break;
+			case "boolean":
+				parameterObjects[i] = Boolean.parseBoolean(splittedString[i]);
+				break;
+			case "int":
+				parameterObjects[i] = Integer.parseInt(splittedString[i]);
+				break;
+			case "double":
+				parameterObjects[i] = Double.parseDouble(splittedString[i]);
+				break;
+			default:
+				parameterObjects[i] = splittedString[i];
+				break;
+			}
+		}
+		return parameterObjects;
+	}
 
 }

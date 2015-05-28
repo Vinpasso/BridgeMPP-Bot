@@ -5,10 +5,6 @@ import java.util.Scanner;
 import bridgempp.bot.messageformat.MessageFormat;
 
 
-
-
-
-
 public class BotConsoleTester {
 
 	public static void main(String[] args)

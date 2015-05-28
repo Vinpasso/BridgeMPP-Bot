@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface MetaMethod {
 	String trigger() default "$METHODNAME ";
+	String helpTopic() default "Usage: $RETURNTYPE $METHODNAME($PARAMETERS)";
 }
