@@ -2,6 +2,7 @@ package bridgempp.bot.wrapper;
 
 import java.io.StringReader;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,9 +58,10 @@ public class Message {
 		if (getMessage().length() > 60000) {
 			throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 		}
-		if (Pattern.compile("[\\x00-\\x08|\\x0E-\\x1F]").matcher(getMessage()).find()) {
+		Matcher matcher = Pattern.compile("[\\x00-\\x08|\\x0E-\\x1F]").matcher(getMessage());
+		if (matcher.find()) {
 			throw new Exception(
-					"Dangerous Control Characters detected! Access Denied!\nURL Encoded Original Message: "
+					"Dangerous Control Characters detected! Access Denied!\nAt position: " + matcher.start() + ", Character: " + URLEncoder.encode(getMessage().substring(matcher.start(), matcher.end()), "UTF-8") + "\nURL Encoded Original Message: "
 							+ URLEncoder.encode(getMessage(), "UTF-8"));
 		}
 		if(messageFormat == MessageFormat.XHTML)
