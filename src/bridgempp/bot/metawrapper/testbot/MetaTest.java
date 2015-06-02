@@ -1,4 +1,4 @@
-package bridgempp.bot.metawrapper;
+package bridgempp.bot.metawrapper.testbot;
 
 public class MetaTest {
 

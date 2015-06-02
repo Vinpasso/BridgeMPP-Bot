@@ -10,6 +10,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 
 import bridgempp.bot.messageformat.MessageFormat;
+import bridgempp.bot.metawrapper.testbot.MetaAnnotateTest;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
