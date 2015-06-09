@@ -142,6 +142,7 @@ public class BotWrapper {
 						"Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
+			bot.configFile = botConfig.getAbsolutePath();
 			bot.initializeBot();
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
@@ -154,18 +155,7 @@ public class BotWrapper {
 								.log(Level.SEVERE,
 										"Failed to deinitialize Bot! Data Loss possible");
 					}
-					try {
-						bot.properties
-								.store(new FileOutputStream(botConfig),
-										"Bot Properties saved at: "
-												+ new SimpleDateFormat(
-														"DD.WW.yyyy HH:mm:ss").format(Date
-														.from(Instant.now())));
-					} catch (IOException e) {
-						Logger.getLogger(BotWrapper.class.getName())
-								.log(Level.SEVERE,
-										"Failed to save Bot Config! Data Loss possible");
-					}
+					bot.saveProperties();
 				}
 
 			}));

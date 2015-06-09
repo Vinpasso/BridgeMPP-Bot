@@ -2,7 +2,14 @@ package bridgempp.bot.wrapper;
 
 import io.netty.channel.ChannelFuture;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The Class to be implemented by a BridgeMPP Bot
@@ -11,8 +18,9 @@ import java.util.Properties;
 public abstract class Bot {
 
 	public String name;
-	Properties properties;
-	ChannelFuture channelFuture;
+	public String configFile;
+	public Properties properties;
+	protected ChannelFuture channelFuture;
 
 	/**
 	 * Sets the Properties loaded from the Bot Configuration file
@@ -25,19 +33,34 @@ public abstract class Bot {
 	}
 
 	/**
+	 * Save this Bots Properties to File
+	 */
+	public final void saveProperties() {
+		try {
+			properties.store(
+					new FileOutputStream(configFile),
+					"Bot Properties saved at: "
+							+ new SimpleDateFormat("DD.WW.yyyy HH:mm:ss")
+									.format(Date.from(Instant.now())));
+		} catch (IOException e) {
+			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+					"Failed to save Bot Config! Data Loss possible");
+		}
+	}
+
+	/**
 	 * Initialize the Bot Called when the Bot is loaded by the Botwrapper
 	 */
 	public abstract void initializeBot();
 
 	/**
-	 * Overwrite this if you need a deinitialize as well
-	 * This will be run asynchronously
+	 * Overwrite this if you need a deinitialize as well This will be run
+	 * asynchronously
 	 */
-	public void deinitializeBot()
-	{
-		
+	public void deinitializeBot() {
+
 	}
-	
+
 	/**
 	 * Message Received Called when the Bot receives a BridgeMPP Message
 	 * 

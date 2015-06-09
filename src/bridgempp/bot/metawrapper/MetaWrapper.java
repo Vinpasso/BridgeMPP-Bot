@@ -10,7 +10,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 
 import bridgempp.bot.messageformat.MessageFormat;
-import bridgempp.bot.metawrapper.testbot.MetaAnnotateTest;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
@@ -22,10 +21,22 @@ public class MetaWrapper extends Bot {
 	private Hashtable<String, Method> methods;
 	private MetaClass classAnnotation;
 
+	public MetaWrapper(Class<?> metaClass)
+	{
+		this.metaClass = metaClass;
+	}
+	
 	@Override
 	public void initializeBot()  {
 		try {
-			metaClass = MetaAnnotateTest.class;
+			if(metaClass == null && properties.containsKey("metaClass"))
+			{
+				metaClass = Class.forName(properties.getProperty("metaClass"));
+			}
+			if(metaClass == null)
+			{
+				return;
+			}
 			metaInstance = metaClass.newInstance();
 			classAnnotation = metaClass.getAnnotation(MetaClass.class);
 			metaMethods = metaClass.getDeclaredMethods();
@@ -45,6 +56,10 @@ public class MetaWrapper extends Bot {
 					}
 					methods.put(getTrigger(methodAnnotation, method), method);
 				}
+			}
+			if(metaClass.getMethod("initializeBot", Bot.class) != null)
+			{
+				metaClass.getMethod("initializeBot", Bot.class).invoke(metaInstance, this);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
