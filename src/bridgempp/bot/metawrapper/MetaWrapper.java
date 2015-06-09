@@ -33,7 +33,7 @@ public class MetaWrapper extends Bot {
 	@Override
 	public void initializeBot()  {
 		try {
-			if(metaClass == null && properties.containsKey("metaclass"))
+			if(metaClass == null)
 			{
 				metaClass = Class.forName(properties.getProperty("metaclass"));
 			}
@@ -82,6 +82,10 @@ public class MetaWrapper extends Bot {
 
 	@Override
 	public void messageReceived(Message message) {
+		if(methods == null)
+		{
+			return;
+		}
 		Enumeration<String> keys = methods.keys();
 		while(keys.hasMoreElements())
 		{
