@@ -11,6 +11,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bridgempp.util.log.Log;
+
 /**
  * The Class to be implemented by a BridgeMPP Bot
  *
@@ -43,7 +45,7 @@ public abstract class Bot {
 							+ new SimpleDateFormat("DD.WW.yyyy HH:mm:ss")
 									.format(Date.from(Instant.now())));
 		} catch (IOException e) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
+			Log.log(Level.SEVERE,
 					"Failed to save Bot Config! Data Loss possible");
 		}
 	}

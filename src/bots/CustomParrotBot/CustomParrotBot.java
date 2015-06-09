@@ -7,14 +7,18 @@ import java.io.ObjectOutputStream;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.sun.istack.internal.logging.Logger;
+
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
 import bridgempp.bot.wrapper.Bot;
+import bridgempp.util.log.Log;
 
 
 /**
@@ -103,6 +107,7 @@ public class CustomParrotBot {
 		}
 		catch(Exception e)
 		{
+			Log.log(Level.SEVERE, "Failed to save List!", e);
 		}
 	}
 

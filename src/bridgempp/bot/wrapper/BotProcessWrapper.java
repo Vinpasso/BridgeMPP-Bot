@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import bridgempp.bot.messageformat.MessageFormat;
+import bridgempp.util.log.Log;
 
 /**
  *
@@ -37,7 +38,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             new Thread(this).start();
         } catch (IOException ex) {
-            Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -68,7 +69,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
                 }
                 sendMessage(new Message("", line, MessageFormat.PLAIN_TEXT));
             } catch (IOException ex) {
-                Logger.getLogger(BotProcessWrapper.class.getName()).log(Level.SEVERE, null, ex);
+                Log.log(Level.SEVERE, null, ex);
             }
         }
     }

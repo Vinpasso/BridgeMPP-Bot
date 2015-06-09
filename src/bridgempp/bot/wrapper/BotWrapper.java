@@ -37,6 +37,7 @@ import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.network.IncommingMessageHandler;
 import bridgempp.bot.wrapper.network.KeepAliveSender;
 import bridgempp.bot.wrapper.network.ProtoBuf;
+import bridgempp.util.log.Log;
 
 /**
  *
@@ -55,7 +56,7 @@ public class BotWrapper {
 		if (args.length > 0) {
 			build = args[0];
 		} else {
-			Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.WARNING,
+			Log.log(Level.WARNING,
 					"No external build version supplied to BridgeMPP-Bot-Wrapper");
 		}
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
@@ -75,7 +76,8 @@ public class BotWrapper {
 			Properties exampleBotProperties = new Properties();
 			try {
 				writeDefaultConfig(exampleBotProperties);
-				exampleBotProperties.store(new FileOutputStream("bots/exampleBot.config"), "Bot Wrapper Configuration");
+				exampleBotProperties.store(new FileOutputStream(
+						"bots/exampleBot.config"), "Bot Wrapper Configuration");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -83,14 +85,11 @@ public class BotWrapper {
 			return;
 		}
 		for (File botConfig : botsDir.listFiles()) {
-			try
-			{
-			botInitialize(botConfig);
-			}
-			catch(Exception e)
-			{
-				Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.SEVERE,
-						"Bot Initialize failed in Config: " + botConfig.toString(), e);
+			try {
+				botInitialize(botConfig);
+			} catch (Exception e) {
+				Log.log(Level.SEVERE, "Bot Initialize failed in Config: "
+						+ botConfig.toString(), e);
 			}
 		}
 
@@ -119,8 +118,7 @@ public class BotWrapper {
 				.setSender(message.getSender()).setTarget(message.getTarget())
 				.setGroup(message.group).build();
 		bot.channelFuture.channel().writeAndFlush(protoMessage);
-		Logger.getLogger(BotWrapper.class.getSimpleName()).log(Level.INFO,
-				"Outbound: " + message.toComplexString());
+		Log.log(Level.INFO, "Outbound: " + message.toComplexString());
 	}
 
 	public static void printCommand(String command, Bot bot) {
@@ -152,9 +150,8 @@ public class BotWrapper {
 					try {
 						bot.deinitializeBot();
 					} catch (Exception e) {
-						Logger.getLogger(BotWrapper.class.getName())
-								.log(Level.SEVERE,
-										"Failed to deinitialize Bot! Data Loss possible");
+						Log.log(Level.SEVERE,
+								"Failed to deinitialize Bot! Data Loss possible");
 					}
 					bot.saveProperties();
 				}
@@ -209,8 +206,7 @@ public class BotWrapper {
 
 		} catch (IOException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | InterruptedException ex) {
-			Logger.getLogger(BotWrapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Log.log(Level.SEVERE, null, ex);
 		}
 	}
 
