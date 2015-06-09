@@ -26,6 +26,10 @@ public class MetaWrapper extends Bot {
 		this.metaClass = metaClass;
 	}
 	
+	public MetaWrapper()
+	{
+	}
+	
 	@Override
 	public void initializeBot()  {
 		try {
