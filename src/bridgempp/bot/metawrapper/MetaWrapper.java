@@ -5,10 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-
+import java.util.LinkedList;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
@@ -112,26 +109,23 @@ public class MetaWrapper extends Bot {
 		}
 	}
 
-	private Object[] parseParametersCommandLineStyle(Parameter[] parameters) {
-		Options options = new Options();
+	private Object[] parseParametersCommandLineStyle(Parameter[] parameters, String message) {
+		LinkedList<String> splitArgumments = new LinkedList<>();
+		
 		for(Parameter parameter : parameters)
 		{
 			switch(parameter.getType().getName())
 			{
 			case "boolean":
-				options.addOption(parameter.getName(), false, "Boolean: " + parameter.getName());
 				break;
 			case "String":
-				options.addOption(parameter.getName(), true, "String: " + parameter.getName());
 				break;
 			case "int":
-				options.addOption(parameter.getName(), true, "Integer: " + parameter.getName());
 				break;
 			default:
 				return null;
 			}
 		}
-		DefaultParser parser = new DefaultParser();
 		throw new UnsupportedOperationException("Not Implemented");
 	}
 
