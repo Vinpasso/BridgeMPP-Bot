@@ -15,8 +15,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
-
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
 import bridgempp.bot.wrapper.Bot;
