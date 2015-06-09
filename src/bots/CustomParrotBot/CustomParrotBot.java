@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +14,8 @@ import java.util.logging.Level;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
@@ -48,9 +52,7 @@ public class CustomParrotBot {
 		byte[] objectData = Base64.getDecoder().decode(base64String);
 		ObjectInputStream objectInputStream = new ObjectInputStream(
 				new ByteArrayInputStream(objectData));
-		@SuppressWarnings("unchecked")
-		LinkedList<CustomParrot> list = (LinkedList<CustomParrot>) objectInputStream
-				.readObject();
+		LinkedList<CustomParrot> list = new LinkedList<CustomParrot>(Arrays.asList((CustomParrot[])objectInputStream.readObject()));
 		objectInputStream.close();
 		return list;
 	}
@@ -59,7 +61,7 @@ public class CustomParrotBot {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 				byteArrayOutputStream);
-		objectOutputStream.writeObject(list);
+		objectOutputStream.writeObject(list.toArray(new CustomParrot[list.size()]));
 		objectOutputStream.close();
 		return Base64.getEncoder().encodeToString(
 				byteArrayOutputStream.toByteArray());
@@ -111,7 +113,11 @@ public class CustomParrotBot {
 		}
 	}
 
-	class CustomParrot {
+	class CustomParrot implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5115649290689865574L;
 		String condition;
 		String operation;
 		String name;
