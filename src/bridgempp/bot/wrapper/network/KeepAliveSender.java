@@ -8,10 +8,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import bridgempp.bot.messageformat.MessageFormat;
-import bridgempp.bot.wrapper.BotWrapper;
 import bridgempp.util.log.Log;
 
 public class KeepAliveSender extends ChannelDuplexHandler {

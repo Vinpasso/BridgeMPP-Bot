@@ -11,6 +11,12 @@ public abstract class MessageFormat {
 	public abstract String getName();
 	public abstract String convertToParent(String message);
 	
+	@Override
+	public final String toString()
+	{
+		return getName();
+	}
+	
 	public final boolean canConvertToFormat(MessageFormat other)
 	{
 		if(other == null)
