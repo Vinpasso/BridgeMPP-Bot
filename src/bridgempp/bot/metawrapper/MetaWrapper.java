@@ -56,7 +56,7 @@ public class MetaWrapper extends Bot {
 					MetaMethod methodAnnotation = method.getAnnotation(MetaMethod.class);
 					if(methodAnnotation == null)
 					{
-						return;
+						continue;
 					}
 					methods.put(getTrigger(methodAnnotation, method), method);
 				}
