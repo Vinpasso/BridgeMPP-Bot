@@ -153,12 +153,13 @@ public class MetaWrapper extends Bot {
 					delimiter = ' ';
 				}
 			} else {
-				if (characters[i] == delimiter && characters[i - 1] == '\\') {
+				if (characters[i] == delimiter && characters[i - 1] != '\\') {
 					if (startSequence + 1 > i - 1) {
 						list.add("");
 					} else {
-						list.add(message.substring(startSequence + 1, i - 1).replace("\\" + delimiter, "" + delimiter));
+						list.add(message.substring(startSequence + 1, i).replace("\\" + delimiter, "" + delimiter));
 					}
+					delimiter = 0;
 				}
 			}
 		}
