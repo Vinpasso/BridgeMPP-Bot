@@ -33,13 +33,13 @@ public class MetaWrapper extends Bot {
 	@Override
 	public void initializeBot()  {
 		try {
-			if(metaClass == null && properties.containsKey("metaClass"))
+			if(metaClass == null && properties.containsKey("metaclass"))
 			{
-				metaClass = Class.forName(properties.getProperty("metaClass"));
+				metaClass = Class.forName(properties.getProperty("metaclass"));
 			}
 			if(metaClass == null)
 			{
-				return;
+				throw new Exception("No Meta Class loaded");
 			}
 			metaInstance = metaClass.newInstance();
 			classAnnotation = metaClass.getAnnotation(MetaClass.class);

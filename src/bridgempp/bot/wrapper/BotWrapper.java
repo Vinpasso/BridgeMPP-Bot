@@ -142,6 +142,7 @@ public class BotWrapper {
 						"Bot Class is null, cannot execute BridgeMPP server commands");
 			}
 			Bot bot = (Bot) Class.forName(botClass).newInstance();
+			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
 			bot.initializeBot();
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -186,7 +187,6 @@ public class BotWrapper {
 			pipeline.addLast("keepAliveSender", new KeepAliveSender());
 			pipeline.addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
-			bot.setProperties(botProperties);
 
 			String serverKey = botProperties.getProperty("serverKey");
 			if (serverKey == null) {
