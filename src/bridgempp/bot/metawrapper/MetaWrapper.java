@@ -135,7 +135,7 @@ public class MetaWrapper extends Bot {
 		return parameterObjects;
 	}
 
-	private String[] splitCommandLine(String message) {
+	public String[] splitCommandLine(String message) {
 		LinkedList<String> list = new LinkedList<>();
 		char[] characters = message.toCharArray();
 		char delimiter = 0;
@@ -145,21 +145,19 @@ public class MetaWrapper extends Bot {
 				if (Character.isWhitespace(characters[i])) {
 					continue;
 				}
-				startSequence = i;
 				if (characters[i] == '\'' || characters[i] == '\"') {
+					startSequence = i;
 					delimiter = characters[i];
 				} else {
+					startSequence = i - 1;
 					delimiter = ' ';
 				}
 			} else {
-				if (characters[i] == delimiter) {
-					if(characters[i - 1] == '\\') {
-						message = message.replaceFirst("\\\\\\" + delimiter, String.valueOf(delimiter));
-					}
+				if (characters[i] == delimiter && characters[i - 1] == '\\') {
 					if (startSequence + 1 > i - 1) {
 						list.add("");
 					} else {
-						list.add(message.substring(startSequence + 1, i - 1));
+						list.add(message.substring(startSequence + 1, i - 1).replace("\\" + delimiter, "" + delimiter));
 					}
 				}
 			}

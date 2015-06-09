@@ -23,7 +23,7 @@ public class Log {
 	
 	private static Class<?> getCallingClass()
 	{
-		return Thread.currentThread().getStackTrace()[3].getClass();
+		return Thread.currentThread().getStackTrace()[4].getClass();
 	}
 	
 }
