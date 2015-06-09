@@ -50,7 +50,11 @@ public class CustomParrotBot {
 		byte[] objectData = Base64.getDecoder().decode(base64String);
 		ObjectInputStream objectInputStream = new ObjectInputStream(
 				new ByteArrayInputStream(objectData));
-		LinkedList<CustomParrot> list = new LinkedList<CustomParrot>(Arrays.asList((CustomParrot[])objectInputStream.readObject()));
+		LinkedList<CustomParrot> list = new LinkedList<CustomParrot>();
+		while(objectInputStream.available() > 0)
+		{
+			list.add((CustomParrot)objectInputStream.readObject());
+		}
 		objectInputStream.close();
 		return list;
 	}
@@ -59,7 +63,9 @@ public class CustomParrotBot {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 				byteArrayOutputStream);
-		objectOutputStream.writeObject(list.toArray(new CustomParrot[list.size()]));
+		for (CustomParrot parrot : list) {
+			objectOutputStream.writeObject(parrot);
+		}
 		objectOutputStream.close();
 		return Base64.getEncoder().encodeToString(
 				byteArrayOutputStream.toByteArray());
@@ -84,7 +90,8 @@ public class CustomParrotBot {
 				result += parrot.name + ": " + parrotResult + "\n";
 			} catch (ScriptException e) {
 				result += parrot.name + " is rapidly loosing sanity...";
-				Log.log(Level.WARNING, "Parrot " + parrot.name + " Script Failure", e);
+				Log.log(Level.WARNING, "Parrot " + parrot.name
+						+ " Script Failure", e);
 			}
 		}
 		return result.trim();
