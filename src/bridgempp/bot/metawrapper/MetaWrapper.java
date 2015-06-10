@@ -158,6 +158,10 @@ public class MetaWrapper extends Bot {
 				&& parameters[0].getType().getName().equals("java.lang.String")) {
 			return new Object[] { message };
 		}
+		if(parameters.length == 1 && parameters[0].getClass().equals(Message.class))
+		{
+			return new Object[] { bridgemppMessage };
+		}
 		String[] splittedString = splitCommandLine(message);
 		Object[] parameterObjects = new Object[parameters.length];
 		if (splittedString.length != parameters.length) {
@@ -176,9 +180,6 @@ public class MetaWrapper extends Bot {
 				break;
 			case "double":
 				parameterObjects[i] = Double.parseDouble(splittedString[i]);
-				break;
-			case "bridgempp.bot.wrapper.Message":
-				parameterObjects[i] = bridgemppMessage;
 				break;
 			default:
 				parameterObjects[i] = splittedString[i];
