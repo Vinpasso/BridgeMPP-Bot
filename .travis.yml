@@ -6,7 +6,7 @@ cache:
        - '$HOME/.m2/repository'
 
 before_cache:
-   - rm -rfv '$HOME/.m2/repository/org/vinpasso/'
+   - mv -fv "$HOME/.m2/repository/org/vinpasso/" "$HOME"
 
 before_install:
    - source deploy/before_install.sh

@@ -28,6 +28,6 @@ public class CustomParrot implements Serializable {
 	
 	public String toString()
 	{
-		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation;
+		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation + " Active: " + active + " Birthday: " + birthday;
 	}
 }
