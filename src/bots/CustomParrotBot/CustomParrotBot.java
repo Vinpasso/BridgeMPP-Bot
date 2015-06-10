@@ -54,7 +54,8 @@ public class CustomParrotBot {
 		ObjectInputStream objectInputStream = new ObjectInputStream(
 				new ByteArrayInputStream(objectData));
 		Hashtable<String, CustomParrot> list = new Hashtable<String, CustomParrot>();
-		while (objectInputStream.available() > 0) {
+		int length = objectInputStream.readInt();
+		for(int i= 0; i < length; i++) {
 			CustomParrot parrot = (CustomParrot) objectInputStream.readObject();
 			list.put(parrot.name, parrot);
 		}
@@ -67,6 +68,7 @@ public class CustomParrotBot {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 				byteArrayOutputStream);
+		objectOutputStream.writeInt(list.size());
 		Enumeration<CustomParrot> elements = list.elements();
 		while (elements.hasMoreElements()) {
 			objectOutputStream.writeObject(elements.nextElement());
@@ -161,6 +163,7 @@ public class CustomParrotBot {
 		CustomParrot parrot = table.remove(oldName);
 		parrot.name = newName;
 		table.put(parrot.name.toLowerCase(), parrot);
+		saveList();
 		return "Parrot " + oldName + " is now known as " + newName;
 	}
 
