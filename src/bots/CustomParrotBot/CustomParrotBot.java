@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -137,34 +136,6 @@ public class CustomParrotBot {
 			metaBot.saveProperties();
 		} catch (Exception e) {
 			Log.log(Level.SEVERE, "Failed to save List!", e);
-		}
-	}
-
-	class CustomParrot implements Serializable {
-		private static final long serialVersionUID = -1431976079784905003L;
-		/**
-		 * 
-		 */
-		boolean active;
-		String condition;
-		String operation;
-		String name;
-
-		public CustomParrot(String name, String condition, String operation) {
-			this(true, name, condition, operation);
-		}
-		
-		public CustomParrot(boolean active, String name, String condition, String operation)
-		{
-			this.name = name;
-			this.condition = condition;
-			this.operation = operation;
-			this.active = true;
-		}
-		
-		public String toString()
-		{
-			return "Parrot: " + name + ": " + condition + ": " + operation;
 		}
 	}
 }
