@@ -1,4 +1,4 @@
-package bridgempp.util.log;
+package bridgempp.util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

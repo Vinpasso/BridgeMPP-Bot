@@ -11,21 +11,23 @@ public class CustomParrot implements Serializable {
 	String condition;
 	String operation;
 	String name;
+	public long birthday;
 
 	public CustomParrot(String name, String condition, String operation) {
-		this(true, name, condition, operation);
+		this(true, name, condition, operation, System.currentTimeMillis());
 	}
 	
-	public CustomParrot(boolean active, String name, String condition, String operation)
+	public CustomParrot(boolean active, String name, String condition, String operation, long birthday)
 	{
 		this.name = name;
 		this.condition = condition;
 		this.operation = operation;
 		this.active = true;
+		this.birthday = birthday;
 	}
 	
 	public String toString()
 	{
-		return "Parrot: " + name + ": " + condition + ": " + operation;
+		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation;
 	}
 }

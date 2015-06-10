@@ -1,11 +1,11 @@
 package bridgempp.bot.metawrapper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
@@ -92,28 +92,77 @@ public class MetaWrapper extends Bot {
 			String parameterString) {
 		Parameter[] parameters = method.getParameters();
 		Object[] arguments = parseParametersCommandLineStyle(parameters,
-				parameterString);
+				parameterString, message);
+		if (arguments == null) {
+			sendMessage(new Message(message.getGroup(), getHelpTopic(),
+					MessageFormat.PLAIN_TEXT));
+		}
 		try {
 			Object returnObject = method.invoke(metaInstance, arguments);
 			if (returnObject != null) {
 				sendMessage(new Message(message.getGroup(),
 						returnObject.toString(), MessageFormat.PLAIN_TEXT));
 			}
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (Exception e) {
+			sendMessage(new Message(message.getGroup(),
+					"A Meta Error has ocurred: " + e.toString(),
+					MessageFormat.PLAIN_TEXT));
 			e.printStackTrace();
 		}
 	}
 
+	private String getHelpTopic() {
+		String helpTopic = "Man Page for " + metaClass.getSimpleName() + " at "
+				+ metaClass.getName() + "\n";
+		if (metaClass.getAnnotation(MetaClass.class) != null) {
+			helpTopic += metaClass.getAnnotation(MetaClass.class).helpTopic()
+					+ "\n";
+		}
+		Enumeration<Method> elements = methods.elements();
+		while (elements.hasMoreElements()) {
+			Method method = elements.nextElement();
+
+			helpTopic += "Method: "
+					+ method.getName()
+					+ " Usage: "
+					+ getTrigger(method.getAnnotation(MetaMethod.class), method);
+			for (Parameter parameter : method.getParameters()) {
+				helpTopic += "<" + parameter.getType() + " "
+						+ parameter.getName() + "> ";
+			}
+			helpTopic += "\n";
+			if (method.getAnnotation(MetaMethod.class) != null
+					&& !method.getAnnotation(MetaMethod.class).equals("")) {
+				helpTopic += method.getAnnotation(MetaMethod.class).helpTopic()
+						+ "\n";
+			}
+			for (Parameter parameter : method.getParameters()) {
+				if (parameter.getAnnotation(MetaParameter.class) != null) {
+					helpTopic += "<" + parameter.getType() + " "
+							+ parameter.getName() + ">: " + parameter.getAnnotation(MetaParameter.class)
+							.helpTopic() + "\n";
+				}
+			}
+		}
+		return helpTopic;
+	}
+
 	private Object[] parseParametersCommandLineStyle(Parameter[] parameters,
-			String message) {
+			String message, Message bridgemppMessage) {
+		if(parameters.length == 0)
+		{
+			return new Object[0];
+		}
 		if (parameters.length == 1
 				&& parameters[0].getType().getName().equals("java.lang.String")) {
 			return new Object[] { message };
 		}
 		String[] splittedString = splitCommandLine(message);
 		Object[] parameterObjects = new Object[parameters.length];
-		for (int i = 0; i < parameters.length; i++) {
+		if (splittedString.length != parameters.length) {
+			return null;
+		}
+		for (int i = 0; i < splittedString.length; i++) {
 			switch (parameters[i].getType().getName()) {
 			case "java.lang.String":
 				parameterObjects[i] = splittedString[i];
@@ -126,6 +175,9 @@ public class MetaWrapper extends Bot {
 				break;
 			case "double":
 				parameterObjects[i] = Double.parseDouble(splittedString[i]);
+				break;
+			case "bridgempp.bot.wrapper.Message":
+				parameterObjects[i] = bridgemppMessage;
 				break;
 			default:
 				parameterObjects[i] = splittedString[i];
@@ -157,7 +209,8 @@ public class MetaWrapper extends Bot {
 					if (startSequence + 1 > i - 1) {
 						list.add("");
 					} else {
-						list.add(message.substring(startSequence + 1, i).replace("\\" + delimiter, "" + delimiter));
+						list.add(message.substring(startSequence + 1, i)
+								.replace("\\" + delimiter, "" + delimiter));
 					}
 					delimiter = 0;
 				}

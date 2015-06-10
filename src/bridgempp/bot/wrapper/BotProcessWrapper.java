@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.logging.Level;
+
 import bridgempp.bot.messageformat.MessageFormat;
-import bridgempp.util.log.Log;
+import bridgempp.util.Log;
 
 /**
  *

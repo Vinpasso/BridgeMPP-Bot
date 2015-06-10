@@ -28,11 +28,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Properties;
 import java.util.logging.Level;
+
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.network.IncommingMessageHandler;
 import bridgempp.bot.wrapper.network.KeepAliveSender;
 import bridgempp.bot.wrapper.network.ProtoBuf;
-import bridgempp.util.log.Log;
+import bridgempp.util.Log;
 
 /**
  *

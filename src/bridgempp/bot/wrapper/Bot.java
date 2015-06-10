@@ -9,7 +9,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
-import bridgempp.util.log.Log;
+
+import bridgempp.util.Log;
 
 /**
  * The Class to be implemented by a BridgeMPP Bot
