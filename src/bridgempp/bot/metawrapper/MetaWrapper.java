@@ -158,7 +158,7 @@ public class MetaWrapper extends Bot {
 				&& parameters[0].getType().getName().equals("java.lang.String")) {
 			return new Object[] { message };
 		}
-		if(parameters.length == 1 && parameters[0].getClass().equals(Message.class))
+		if(parameters.length == 1 && parameters[0].getType().equals(Message.class))
 		{
 			return new Object[] { bridgemppMessage };
 		}
