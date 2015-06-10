@@ -5,10 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.logging.Level;
 
 import javax.script.ScriptEngine;
@@ -26,7 +25,7 @@ import bridgempp.util.log.Log;
  */
 @MetaClass(triggerPrefix = "", helpTopic = "The Parrot cage for custom Parrots")
 public class CustomParrotBot {
-	private LinkedList<CustomParrot> list;
+	private Hashtable<String, CustomParrot> table;
 	private ScriptEngine scriptEngine;
 	private Bot metaBot;
 
@@ -35,36 +34,39 @@ public class CustomParrotBot {
 		this.metaBot = metaBot;
 		if (metaBot.properties.containsKey("parrotlist")) {
 			try {
-				list = decodeList(metaBot.properties.get("parrotlist")
+				table = decodeList(metaBot.properties.get("parrotlist")
 						.toString());
 			} catch (Exception e) {
-				list = new LinkedList<>();
+				table = new Hashtable<>();
 			}
 		} else {
-			list = new LinkedList<>();
+			table = new Hashtable<>();
 		}
 	}
 
-	private LinkedList<CustomParrot> decodeList(String base64String)
+	private Hashtable<String, CustomParrot> decodeList(String base64String)
 			throws Exception {
 		byte[] objectData = Base64.getDecoder().decode(base64String);
 		ObjectInputStream objectInputStream = new ObjectInputStream(
 				new ByteArrayInputStream(objectData));
-		LinkedList<CustomParrot> list = new LinkedList<CustomParrot>();
+		Hashtable<String, CustomParrot> list = new Hashtable<String, CustomParrot>();
 		while(objectInputStream.available() > 0)
 		{
-			list.add((CustomParrot)objectInputStream.readObject());
+			CustomParrot parrot = (CustomParrot)objectInputStream.readObject();
+			list.put(parrot.name, parrot);
 		}
 		objectInputStream.close();
 		return list;
 	}
 
-	private String encodeList(LinkedList<CustomParrot> list) throws Exception {
+	private String encodeList(Hashtable<String, CustomParrot> list) throws Exception {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 				byteArrayOutputStream);
-		for (CustomParrot parrot : list) {
-			objectOutputStream.writeObject(parrot);
+		Enumeration<CustomParrot> elements = list.elements();
+		while(elements.hasMoreElements())
+		{
+			objectOutputStream.writeObject(elements.nextElement());
 		}
 		objectOutputStream.close();
 		return Base64.getEncoder().encodeToString(
@@ -74,9 +76,13 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "", helpTopic = "Process the custom Parrots")
 	public String processParrots(String message) {
 		String result = "";
-		Iterator<CustomParrot> iterator = list.iterator();
-		while (iterator.hasNext()) {
-			CustomParrot parrot = iterator.next();
+		Enumeration<CustomParrot> elements = table.elements();
+		while (elements.hasMoreElements()) {
+			CustomParrot parrot = elements.nextElement();
+			if(!parrot.active)
+			{
+				continue;
+			}
 			scriptEngine.put("parrotName", parrot.name);
 			scriptEngine.put("message", message);
 			try {
@@ -104,14 +110,30 @@ public class CustomParrotBot {
 	public String newCustomParrot(String name, String condition,
 			String operation) {
 		CustomParrot parrot = new CustomParrot(name, condition, operation);
-		list.add(parrot);
+		table.put(parrot.name, parrot);
 		saveList();
 		return "Created new custom Parrot: " + parrot.name;
+	}
+	
+	@MetaMethod(trigger = "?parrot custom mute ", helpTopic = "Mute a Custom Parrot")
+	public String muteCustomParrot(String name)
+	{
+		table.get(name).active = false;
+		saveList();
+		return "Parrot " + name + " muted.";
+	}
+	
+	@MetaMethod(trigger = "?parrot custom unmute ", helpTopic = "Unmute a Custom Parrot")
+	public String unmuteCustomParrot(String name)
+	{
+		table.get(name).active = true;
+		saveList();
+		return "Parrot " + name + " unmuted.";
 	}
 
 	private void saveList() {
 		try {
-			metaBot.properties.put("parrotlist", encodeList(list));
+			metaBot.properties.put("parrotlist", encodeList(table));
 			metaBot.saveProperties();
 		} catch (Exception e) {
 			Log.log(Level.SEVERE, "Failed to save List!", e);
@@ -119,18 +141,30 @@ public class CustomParrotBot {
 	}
 
 	class CustomParrot implements Serializable {
+		private static final long serialVersionUID = -1431976079784905003L;
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 5115649290689865574L;
+		boolean active;
 		String condition;
 		String operation;
 		String name;
 
 		public CustomParrot(String name, String condition, String operation) {
+			this(true, name, condition, operation);
+		}
+		
+		public CustomParrot(boolean active, String name, String condition, String operation)
+		{
 			this.name = name;
 			this.condition = condition;
 			this.operation = operation;
+			this.active = true;
+		}
+		
+		public String toString()
+		{
+			return "Parrot: " + name + ": " + condition + ": " + operation;
 		}
 	}
 }
