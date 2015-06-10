@@ -2,6 +2,8 @@ package bots.CustomParrotBot;
 
 import java.io.Serializable;
 
+import bridgempp.util.Util;
+
 public class CustomParrot implements Serializable {
 	private static final long serialVersionUID = -1431976079784905003L;
 	/**
@@ -28,6 +30,6 @@ public class CustomParrot implements Serializable {
 	
 	public String toString()
 	{
-		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation + " Active: " + active + " Birthday: " + birthday;
+		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation + " Active: " + active + " Age: " + Util.timeDeltaNow(birthday);
 	}
 }

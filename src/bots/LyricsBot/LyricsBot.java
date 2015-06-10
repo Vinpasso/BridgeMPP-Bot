@@ -21,7 +21,7 @@ public class LyricsBot extends Bot {
 	@Override
 	public void messageReceived(Message message) {
 		try {
-			if(message.getMessage().contains("?lyrics ") || (new Random()).nextInt(100) > 98)
+			if(message.getMessage().contains("?lyrics "))
 			{
 			sendMessage(new Message(message.getGroup(),
 					getSongData(message.getMessage().replaceAll("\\?lyrics ", "")), MessageFormat.PLAIN_TEXT));
