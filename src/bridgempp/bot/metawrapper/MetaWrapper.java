@@ -96,6 +96,7 @@ public class MetaWrapper extends Bot {
 		if (arguments == null) {
 			sendMessage(new Message(message.getGroup(), getHelpTopic(),
 					MessageFormat.PLAIN_TEXT));
+			return;
 		}
 		try {
 			Object returnObject = method.invoke(metaInstance, arguments);
