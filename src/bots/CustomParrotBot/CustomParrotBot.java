@@ -40,6 +40,7 @@ public class CustomParrotBot {
 				table = decodeList(metaBot.properties.get("parrotlist")
 						.toString());
 			} catch (Exception e) {
+				e.printStackTrace();
 				table = new Hashtable<>();
 			}
 		} else {
