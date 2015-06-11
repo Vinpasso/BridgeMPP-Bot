@@ -27,7 +27,7 @@ public class Util {
 	public static String timeDelta(long then, long now)
 	{
 		Duration duration = Duration.ofMillis(now-then);
-		return duration.toDays() + " days " + duration.toHours() + " hours " + duration.toMinutes() + " minutes " + duration.getSeconds() + " seconds";
+		return duration.toDays() + " days " + duration.toHours() % 24 + " hours " + duration.toMinutes() % 60 + " minutes " + duration.getSeconds() % 60 + " seconds";
 	}
 	
 }

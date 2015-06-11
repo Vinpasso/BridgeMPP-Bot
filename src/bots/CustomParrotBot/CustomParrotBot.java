@@ -122,7 +122,7 @@ public class CustomParrotBot {
 			@MetaParameter(helpTopic = "The Javascript code to determine whether a Parrot wants to reply to this message. Should evaluate to either true or false") String condition,
 			@MetaParameter(helpTopic = "The Javascript code to formulate a Parrot Message. A String representation of the returned Object will be sent in the message") String operation) {
 		CustomParrot parrot = new CustomParrot(name, condition, operation);
-		table.put(parrot.name, parrot);
+		table.put(parrot.name.toLowerCase(), parrot);
 		saveList();
 		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.name + " has been created";
 	}
@@ -131,7 +131,7 @@ public class CustomParrotBot {
 	public String removeCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot") String name)
 			{
-		CustomParrot parrot = table.remove(name);
+		CustomParrot parrot = table.remove(name.toLowerCase());
 		saveList();
 		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.name + " has deceased at the age of " + Util.timeDeltaNow(parrot.birthday) + ". Long may he be remembered.";
 	}
@@ -139,7 +139,7 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "?parrot custom mute ", helpTopic = "Mute a Custom Parrot so that it will no longer respond to messages while it is muted")
 	public String muteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
-		table.get(name).active = false;
+		table.get(name.toLowerCase()).active = false;
 		saveList();
 		return "Parrot " + name + " has been gagged.";
 	}
@@ -147,7 +147,7 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "?parrot custom unmute ", helpTopic = "Unmute a Custom Parrot so that it will resume responding to messages while it is active")
 	public String unmuteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
-		table.get(name).active = true;
+		table.get(name.toLowerCase()).active = true;
 		saveList();
 		return "Parrot " + name + " has been ungagged.";
 	}
@@ -160,7 +160,7 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "?parrot custom set name ", helpTopic="Overwrite a Parrots name and set a new one")
 	public String setNameCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String oldName, @MetaParameter(helpTopic="The new name of the Parrot")String newName)
 	{
-		CustomParrot parrot = table.remove(oldName);
+		CustomParrot parrot = table.remove(oldName.toLowerCase());
 		parrot.name = newName;
 		table.put(parrot.name.toLowerCase(), parrot);
 		saveList();
