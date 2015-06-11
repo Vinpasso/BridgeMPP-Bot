@@ -50,36 +50,6 @@ public class CustomParrotBot {
 		}
 	}
 
-	private Hashtable<String, CustomParrot> decodeList(String base64String)
-			throws Exception {
-		byte[] objectData = Base64.getDecoder().decode(base64String);
-		ObjectInputStream objectInputStream = new ObjectInputStream(
-				new ByteArrayInputStream(objectData));
-		Hashtable<String, CustomParrot> list = new Hashtable<String, CustomParrot>();
-		int length = objectInputStream.readInt();
-		for(int i= 0; i < length; i++) {
-			CustomParrot parrot = (CustomParrot) objectInputStream.readObject();
-			list.put(parrot.name, parrot);
-		}
-		objectInputStream.close();
-		return list;
-	}
-
-	private String encodeList(Hashtable<String, CustomParrot> list)
-			throws Exception {
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-				byteArrayOutputStream);
-		objectOutputStream.writeInt(list.size());
-		Enumeration<CustomParrot> elements = list.elements();
-		while (elements.hasMoreElements()) {
-			objectOutputStream.writeObject(elements.nextElement());
-		}
-		objectOutputStream.close();
-		return Base64.getEncoder().encodeToString(
-				byteArrayOutputStream.toByteArray());
-	}
-
 	@MetaMethod(trigger = "", helpTopic = "Any message will trigger a check whether Custom Parrots wish to reply to the message")
 	public String processParrots(Message message) {
 		String result = "";
@@ -195,4 +165,35 @@ public class CustomParrotBot {
 			Log.log(Level.SEVERE, "Failed to save List!", e);
 		}
 	}
+	
+	private Hashtable<String, CustomParrot> decodeList(String base64String)
+			throws Exception {
+		byte[] objectData = Base64.getDecoder().decode(base64String);
+		ObjectInputStream objectInputStream = new ObjectInputStream(
+				new ByteArrayInputStream(objectData));
+		Hashtable<String, CustomParrot> list = new Hashtable<String, CustomParrot>();
+		int length = objectInputStream.readInt();
+		for(int i= 0; i < length; i++) {
+			CustomParrot parrot = (CustomParrot) objectInputStream.readObject();
+			list.put(parrot.name, parrot);
+		}
+		objectInputStream.close();
+		return list;
+	}
+
+	private String encodeList(Hashtable<String, CustomParrot> list)
+			throws Exception {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+				byteArrayOutputStream);
+		objectOutputStream.writeInt(list.size());
+		Enumeration<CustomParrot> elements = list.elements();
+		while (elements.hasMoreElements()) {
+			objectOutputStream.writeObject(elements.nextElement());
+		}
+		objectOutputStream.close();
+		return Base64.getEncoder().encodeToString(
+				byteArrayOutputStream.toByteArray());
+	}
+
 }
