@@ -13,6 +13,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Enumerator;
+
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
 import bridgempp.bot.metawrapper.MetaParameter;
@@ -172,6 +174,17 @@ public class CustomParrotBot {
 	{
 		this.debugParrots = debug;
 		return debug?"The bugs feel threatened as they start to feel the effects of the debug spray":"The bugs crawl back under he feathers of their parrot";
+	}
+	
+	@MetaMethod(trigger = "?parrot custom emergency brake", helpTopic="halt all Parrots using setActive in an emergency")
+	public String emergencyBrake()
+	{
+		Enumeration<CustomParrot> enumerator = table.elements();
+		while(enumerator.hasMoreElements())
+		{
+			enumerator.nextElement().active = false;
+		}
+		return "The Parrot Cage screeches to a halt!";
 	}
 	
 	private void saveList() {
