@@ -154,6 +154,25 @@ public class CustomParrotBot {
 		return "Parrot " + oldName + " is now known as " + newName;
 	}
 
+	@MetaMethod(trigger = "?parrot custom set condition ", helpTopic="Overwrite a Parrots condition and set a new one")
+	public String setConditionCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="The new condition of the Parrot")String newcondition)
+	{
+		CustomParrot parrot = getParrot(name);
+		parrot.condition = newcondition;
+		saveList();
+		return "Parrot " + name + " has had brain surgery";
+	}
+	
+	@MetaMethod(trigger = "?parrot custom set operation ", helpTopic="Overwrite a Parrots operation and set a new one")
+	public String setOperationCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="The new operation of the Parrot")String newOperation)
+	{
+		CustomParrot parrot = getParrot(name);
+		parrot.operation = newOperation;
+		saveList();
+		return "Parrot " + name + " has had tongue surgery";
+	}
+	
+	
 	@MetaMethod(trigger = "?parrot custom debug ", helpTopic="Set the debug status of the Parrot Cage (true: Print Errors, false: Ignore Errors")
 	public String setDebugStatus(@MetaParameter(helpTopic="The new debug status") boolean debug)
 	{
