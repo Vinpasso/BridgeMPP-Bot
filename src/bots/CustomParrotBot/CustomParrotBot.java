@@ -190,7 +190,7 @@ public class CustomParrotBot {
 		int length = objectInputStream.readInt();
 		for(int i= 0; i < length; i++) {
 			CustomParrot parrot = (CustomParrot) objectInputStream.readObject();
-			list.put(parrot.name, parrot);
+			list.put(parrot.name.toLowerCase(), parrot);
 		}
 		objectInputStream.close();
 		return list;
