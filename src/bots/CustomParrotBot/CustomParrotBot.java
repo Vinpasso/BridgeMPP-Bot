@@ -13,10 +13,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Enumerator;
-
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
+import bridgempp.bot.metawrapper.MetaNotifyException;
 import bridgempp.bot.metawrapper.MetaParameter;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
@@ -105,13 +104,18 @@ public class CustomParrotBot {
 			{
 		CustomParrot parrot = table.remove(name.toLowerCase());
 		saveList();
+		if(parrot == null)
+		{
+			return "The parrot could not be found while searching the Parrot Cage";
+		}
 		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.name + " has deceased at the age of " + Util.timeDeltaNow(parrot.birthday) + ". Long may he be remembered.";
 	}
 
 	@MetaMethod(trigger = "?parrot custom mute ", helpTopic = "Mute a Custom Parrot so that it will no longer respond to messages while it is muted")
 	public String muteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
-		table.get(name.toLowerCase()).active = false;
+		CustomParrot parrot = getParrot(name);
+		parrot.active = false;
 		saveList();
 		return "Parrot " + name + " has been gagged.";
 	}
@@ -119,9 +123,19 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "?parrot custom unmute ", helpTopic = "Unmute a Custom Parrot so that it will resume responding to messages while it is active")
 	public String unmuteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
-		table.get(name.toLowerCase()).active = true;
+		CustomParrot parrot = getParrot(name);
+		parrot.active = true;
 		saveList();
 		return "Parrot " + name + " has been ungagged.";
+	}
+
+	private CustomParrot getParrot(String name) {
+		CustomParrot customParrot = table.get(name.toLowerCase());
+		if(customParrot == null)
+		{
+			throw new MetaNotifyException("The parrot could not be found while searching the Parrot Cage");
+		}
+		return customParrot;
 	}
 
 	@MetaMethod(trigger = "?parrot custom list", helpTopic = "List all the Parrots, including their Conditions and Operators")
@@ -132,6 +146,7 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "?parrot custom set name ", helpTopic="Overwrite a Parrots name and set a new one")
 	public String setNameCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String oldName, @MetaParameter(helpTopic="The new name of the Parrot")String newName)
 	{
+		getParrot(oldName);
 		CustomParrot parrot = table.remove(oldName.toLowerCase());
 		parrot.name = newName;
 		table.put(parrot.name.toLowerCase(), parrot);

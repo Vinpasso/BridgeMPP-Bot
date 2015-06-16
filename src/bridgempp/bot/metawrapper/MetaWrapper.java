@@ -104,6 +104,11 @@ public class MetaWrapper extends Bot {
 				sendMessage(new Message(message.getGroup(),
 						returnObject.toString(), MessageFormat.PLAIN_TEXT));
 			}
+		} catch(MetaNotifyException e)
+		{
+			sendMessage(new Message(message.getGroup(),
+					e.getMessage(),
+					MessageFormat.PLAIN_TEXT));
 		} catch (Exception e) {
 			sendMessage(new Message(message.getGroup(),
 					"A Meta Error has ocurred: " + e.toString(),
@@ -186,6 +191,7 @@ public class MetaWrapper extends Bot {
 	}
 
 	public String[] splitCommandLine(String message) {
+		message = message + " ";
 		LinkedList<String> list = new LinkedList<>();
 		char[] characters = message.toCharArray();
 		char delimiter = 0;
