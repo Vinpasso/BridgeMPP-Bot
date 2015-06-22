@@ -44,8 +44,6 @@ public class BotWrapper {
 
 	public static String build;
 
-	private static volatile int messageSquelch;
-
 	/**
 	 * @param args
 	 *            the command line arguments
@@ -117,7 +115,6 @@ public class BotWrapper {
 				.setGroup(message.group).build();
 		bot.channelFuture.channel().writeAndFlush(protoMessage);
 		Log.log(Level.INFO, "Outbound: " + message.toComplexString());
-		messageSquelch = message.message.hashCode();
 	}
 
 	public static void printCommand(String command, Bot bot) {
@@ -206,14 +203,6 @@ public class BotWrapper {
 		} catch (IOException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | InterruptedException ex) {
 			Log.log(Level.SEVERE, null, ex);
-		}
-	}
-	
-	public static void messageInbound(Message message)
-	{
-		if(message.message.hashCode() != messageSquelch)
-		{
-			Log.log(Level.INFO, "Inbound: " + message.toComplexString());
 		}
 	}
 
