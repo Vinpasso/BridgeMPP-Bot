@@ -29,7 +29,7 @@ public class IncommingMessageHandler extends
 		if (message.getMessage().length() == 0) {
 			return;
 		}
-		Log.log(Level.INFO, "Inbound: " + message.toComplexString());
+		BotWrapper.messageInbound(message);
 		if (message.getMessage().startsWith("?botwrapper reload")) {
 			bot.sendMessage(new Message(message.getGroup(),
 					"Bot Wrapper reloading. Respawn Throttle 10 seconds",
