@@ -42,7 +42,7 @@ public class CalendarBot extends Bot {
 		firstYear = 1970;
 		
 		calendars = new LinkedList<Calendar>();
-		File file = new File(filepath + "calendarBot" + ".properties");
+		File file = new File(filepath + "calendarbot" + ".properties");
 		if (file.exists()) {
 			if (!loadCalendars()) {
 				printMessage("Error: Could not load Calendars\nType \"reset\" to try again");
