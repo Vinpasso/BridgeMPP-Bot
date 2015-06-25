@@ -58,7 +58,7 @@ public class Message {
 		if (getMessage().length() > 60000) {
 			throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 		}
-		Matcher matcher = Pattern.compile("[\\x00-\\x08|\\x0E-\\x1F]").matcher(getMessage());
+		Matcher matcher = Pattern.compile("[\\x00-\\x08\\x0E-\\x1F]").matcher(getMessage());
 		if (matcher.find()) {
 			throw new Exception(
 					"Dangerous Control Characters detected! Access Denied!\nAt position: " + matcher.start() + ", Character: " + URLEncoder.encode(getMessage().substring(matcher.start(), matcher.end()), "UTF-8") + "\nURL Encoded Original Message: "
