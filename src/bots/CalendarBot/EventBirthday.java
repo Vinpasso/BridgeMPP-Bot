@@ -8,7 +8,7 @@ public class EventBirthday extends Event {
 	
 	@Override
 	public String toStringRepeat (int firstYear) {
-		return new WishChooser().toString() + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday(firstYear);
+		return "show me birthday\n" + new WishChooser().toString() + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday(firstYear);
 	}
 	
 	@Override
@@ -20,5 +20,10 @@ public class EventBirthday extends Event {
 		int currentYear = CurrentDate.getYear();
 		return wat + ((wat.charAt(wat.length() - 1) != 's' || wat.charAt(wat.length() - 1) != 'x') ? "s " : "\' ")
 		+ (currentYear - CalDateFormat.minToDateSplitted(date, firstYear)[2]) + ". Geburtstag";
+	}
+	
+	private String toStringShowMe (int firstYear) {
+		int currentYear = CurrentDate.getYear();
+		return "show me " + (currentYear - CalDateFormat.minToDateSplitted(date, firstYear)[2]) + " birthday";
 	}
 }
