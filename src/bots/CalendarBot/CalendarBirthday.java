@@ -12,7 +12,7 @@ import java.util.Properties;
 public class CalendarBirthday extends Calendar{
 
 	public CalendarBirthday(int firstYear, String filepath) {
-		super("birthday", firstYear, filepath, 365, 1440);
+		super("birthday", firstYear, filepath, 360, 1440);
 	}
 	
 	public CalendarBirthday () {
@@ -22,7 +22,7 @@ public class CalendarBirthday extends Calendar{
 	@Override
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
-		EventBirthday event = new EventBirthday(wat, date, repeat, remind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
+		EventBirthday event = new EventBirthday(wat, date + 720, DefaultRepeat, DefaultRemind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
 		if (!existsEvent(event)) {
 			insert(event);
 			added = save();
