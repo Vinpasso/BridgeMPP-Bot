@@ -17,7 +17,7 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	static String version = "1.0.3";
+	static String version = "1.0.4";
 	LinkedList<Calendar> calendars;
 	RunCommand runCmd;
 	Reminder reminder;

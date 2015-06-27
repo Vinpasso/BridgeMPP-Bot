@@ -51,7 +51,7 @@ public class CalendarBirthday extends Calendar{
 	
 	@Override
 	public boolean add (String name, int date) {
-		return super.add(name, date, DefaultRepeat, DefaultRemind);
+		return add(name, date, DefaultRepeat, DefaultRemind);
 	}
 	
 	@Override
