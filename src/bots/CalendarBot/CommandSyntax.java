@@ -254,6 +254,7 @@ public class CommandSyntax {
 		case "aiuto":
 		case "ayuda":
 		case "ivastehnix":
+		case "auxilium":
 			return true;
 		}
 		return false;
