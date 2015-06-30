@@ -12,7 +12,7 @@ import java.util.Properties;
 public class CalendarBirthday extends Calendar{
 
 	public CalendarBirthday(int firstYear, String filepath) {
-		super("birthday", firstYear, filepath, 360, 1440);
+		super("birthday", firstYear, filepath, 360, 10080);
 	}
 	
 	public CalendarBirthday () {
