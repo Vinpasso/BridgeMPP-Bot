@@ -13,7 +13,7 @@ public class RegExBot extends Bot {
 	
 	@Override
 	public void initializeBot() {
-		pattern = Pattern.compile("\\?regex\\s+?(.+?)\\s+?(.+)");
+		pattern = Pattern.compile("(\\?regex)\\s+?(.+?)\\s+?(.+)");
 	}
 
 	@Override
