@@ -13,7 +13,6 @@ import bridgempp.bot.wrapper.Message;
 /**
  * 
  * @author Bernie
- * @version Beta 9.0
  *
  */
 public class CalendarBot extends Bot {

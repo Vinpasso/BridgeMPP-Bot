@@ -8,7 +8,7 @@ public class EventBirthday extends Event {
 	
 	@Override
 	public String toStringRepeat (int firstYear) {
-		return "show me birthday\n" + new WishChooser().toString() + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday(firstYear);
+		return new WishChooser().toString() + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday(firstYear) + "\nshow me birthday cake" + wat;
 	}
 	
 	@Override
