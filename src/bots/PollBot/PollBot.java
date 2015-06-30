@@ -39,17 +39,20 @@ public class PollBot extends Bot {
         String messageText = message.getMessage().toLowerCase();
 
         if (messageText.endsWith("?") && (messageText.startsWith("soll") || messageText.startsWith("?poll "))) {
-            if (poll != null) {
+            if (poll == null) {
                 createPoll(message.getMessage(), message.getSender());
-            } else
+            } else {
                 sendMessage(new Message(GROUP, message.getMessage() + POLL_ALREADY_EXISTS, MessageFormat.PLAIN_TEXT));
+            }
         } else if (poll == null) return;
 
         //Poll is not null, modify it
         if (messageText.equals("aye")) {
             poll.vote(message.getSender(), true);
+            sendMessage(new Message(GROUP, message.getSender() + " voted yes", MessageFormat.PLAIN_TEXT));
         } else if (messageText.equals("nay")) {
             poll.vote(message.getSender(), false);
+            sendMessage(new Message(GROUP, message.getSender() + " voted no", MessageFormat.PLAIN_TEXT));
         } else if (messageText.startsWith("?result") || messageText.startsWith("?end")) {
             if (message.getSender().equals(poll.creator)) endPoll();
             else sendMessage(new Message(GROUP, POLL_END_DENIED, MessageFormat.PLAIN_TEXT));
@@ -63,7 +66,7 @@ public class PollBot extends Bot {
         sendMessage(new Message(GROUP, message + POLL_CREATED, MessageFormat.PLAIN_TEXT));
     }
 
-    public void endPoll() {
+    public synchronized void endPoll() {
         if (pollEnd.isAlive()) {
             pollEnd.interrupt();
         }
