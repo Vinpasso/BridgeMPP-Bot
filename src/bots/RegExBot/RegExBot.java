@@ -13,12 +13,12 @@ public class RegExBot extends Bot {
 	
 	@Override
 	public void initializeBot() {
-		pattern = Pattern.compile("(.+?)\\s+?(.+?)\\s+?(.+)");
+		pattern = Pattern.compile("\\?regex\\s+?(.+?)\\s+?(.+)");
 	}
 
 	@Override
 	public void messageReceived(Message message) {
-		if(message.getMessage().toLowerCase().startsWith("?regex"))
+		if(message.getMessage().toLowerCase().indexOf("?regex") > -1)
 		{
 			Matcher matcher = pattern.matcher(message.getMessage());
 			matcher.find();
