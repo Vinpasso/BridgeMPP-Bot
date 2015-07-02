@@ -158,7 +158,7 @@ public class Event {
 	}
 	
 	public String toStringList (int firstYear) {
-		return CalDateFormat.minToDate(date, firstYear) + " " + wat + " " + repeat + " " + remind;
+		return CalDateFormat.minToDate(date, firstYear) + ": " + wat + ", repeat: " + repeatToString() + ", remind: " + remindToString();
 	}
 	
 	/**
@@ -177,5 +177,37 @@ public class Event {
 	 */
 	public String toStringRepeat (int firstYear) {
 		return "Today " + CalDateFormat.minToDate(nextRepeat, firstYear).substring(11, 16) + ": " + wat;
+	}
+	
+	protected String repeatToString () {
+		if (repeat % 360 == 0) {
+			return (repeat / 360) + (repeat == 360 ? " year" : " years");
+		}
+		if (repeat % 30 == 0) {
+			return (repeat / 30) + (repeat == 30 ? " month" : " months");
+		}
+		if (repeat % 7 == 0) {
+			return (repeat / 7) + (repeat == 7 ? " week" : " weeks");
+		}
+		return repeat + " days";		
+	}
+	
+	protected String remindToString () {
+		if (remind % 525600 == 0) {
+			return "" + (remind / 525600) + (remind == 525600 ? " year" : " years");
+		}
+		if (remind % 43200 == 0) {
+			return "" + (remind / 43200) + (remind == 43200 ? " month" : " months");
+		}
+		if (remind % 10080 == 0) {
+			return "" + (remind / 10080) + (remind == 10080 ? " week" : " weeks");
+		}
+		if (remind % 1440 == 0) {
+			return "" + (remind / 1440) + (remind == 1440 ? " day" : " days");
+		}
+		if (remind % 60 == 0) {
+			return "" + (remind / 60) + (remind == 60 ? " hour" : " hours");
+		}
+		return remind + " minutes";
 	}
 }
