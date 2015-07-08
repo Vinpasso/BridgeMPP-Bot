@@ -161,6 +161,10 @@ public class Event {
 		return CalDateFormat.minToDate(date, firstYear) + ": " + wat + ", repeat: " + repeatToString() + ", remind: " + remindToString();
 	}
 	
+	public String toStringNext (int firstYear) {
+		return CalDateFormat.minToDate(nextRepeat, firstYear) + ": " + wat + ", repeat: " + repeatToString() + ", remind: " + remindToString();
+	}
+	
 	/**
 	 * 
 	 * @param firstYear
@@ -181,13 +185,13 @@ public class Event {
 	
 	protected String repeatToString () {
 		if (repeat % 360 == 0) {
-			return (repeat / 360) + (repeat == 360 ? " year" : " years");
+			return "" + (repeat / 360) + (repeat == 360 ? " year" : " years");
 		}
 		if (repeat % 30 == 0) {
-			return (repeat / 30) + (repeat == 30 ? " month" : " months");
+			return "" + (repeat / 30) + (repeat == 30 ? " month" : " months");
 		}
 		if (repeat % 7 == 0) {
-			return (repeat / 7) + (repeat == 7 ? " week" : " weeks");
+			return "" + (repeat / 7) + (repeat == 7 ? " week" : " weeks");
 		}
 		return repeat + " days";		
 	}

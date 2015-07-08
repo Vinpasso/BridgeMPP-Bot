@@ -238,10 +238,19 @@ public class Calendar {
 	 * @return next event after {@code currentDate} or null if there is no next date
 	 */
 	public Event[] getNext (int currentDate) {
-		LinkedList<Event> nextEvents = new LinkedList<Event>();
+		LinkedList<Event> nextEvents = new LinkedList<>();
 		for (int i = 0; i < events.size(); i++) {
 			if (events.get(i).getNextRepeat() > currentDate) {
-				if ((nextEvents.size() > 0 && nextEvents.get(0).getNextRepeat() == events.get(i).getNextRepeat()) || nextEvents.size() == 0) {
+				if (nextEvents.size() > 0) {
+					if (nextEvents.get(0).getNextRepeat() == events.get(i).getNextRepeat()) {
+						nextEvents.add(events.get(i));
+					}
+					else if (nextEvents.get(0).getNextRepeat() > events.get(i).getNextRepeat()) {
+						nextEvents = new LinkedList<>();
+						nextEvents.add(events.get(i));
+					}
+				}
+				else {
 					nextEvents.add(events.get(i));
 				}
 			}
