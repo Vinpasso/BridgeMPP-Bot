@@ -1,3 +1,5 @@
+echo "The current Branch is $TRAVIS_BRANCH"
+echo "The current Pull Request is $TRAVIS_BRANCH"
 if [ $TRAVIS_PULL_REQUEST == "false" -a $TRAVIS_BRANCH == "master" ]
 then
 scp target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar $SSH_USER@$SSH_HOST:$UPLOAD_PATH
