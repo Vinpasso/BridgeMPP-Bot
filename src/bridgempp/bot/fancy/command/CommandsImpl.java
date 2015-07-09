@@ -49,14 +49,20 @@ public class CommandsImpl implements Commands {
             throw new IllegalStateException(commandPrefix + ": Error during onMessage: Accepted unmatched group");
         }
         for (int i = 0; i < argNames.length; i++) {
-            arg.put(argNames[i], matcher.group(i+1));
+            String group = matcher.group(i + 1);
+            if (group != null && group.equals("")) {
+                group = null;
+            }
+            arg.put(argNames[i], group);
         }
         return cmd.handle(message, arg);
     }
 
     @Override
     public void addCommand(Class<? extends Command> command) {
-        commands.add(injector.getInstance(command));
+        Command instance = injector.getInstance(command);
+        instance.init();
+        commands.add(instance);
     }
 
     @Override
