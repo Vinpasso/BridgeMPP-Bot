@@ -1,49 +1,55 @@
 package bots.NewsBot;
 
-import bots.NewsBot.logger.ErrorLogger;
-import bots.NewsBot.news.NewsInterpreter;
+import bots.NewsBot.commands.*;
+import bots.config.MainModule;
+import bridgempp.bot.fancy.FancyAsyncBot;
+import bridgempp.bot.fancy.FancyBot;
+import bridgempp.bot.fancy.basecommands.Help;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Message;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
-public class Wrapper extends bridgempp.bot.wrapper.Bot {
-	private NewsInterpreter ni;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-	public String evaluateMessage(String msg) {
-		if (!msg.startsWith("?")) {
-			return null;
-		}
-		int commandEnd = msg.indexOf(" ");
-		String command;
-		String args = null;
-		if (commandEnd > 0) {
-			command = msg.substring(1, commandEnd);
-			args = msg.substring(commandEnd+1);
-		} else {
-			command = msg.substring(1);
-		}
+/**
+ * @author <a href="mailto:jaro.fietz@uniscon.de">Jaro Fietz</a>.
+ */
+public class Wrapper extends FancyAsyncBot {
+    public Wrapper() {
+        super("news");
+    }
 
-		switch (command) {
-			case "reload":
-				initializeBot();
-				return "Successfully reloaded.";
-			case "news":
-				return ni.getAnswer(args);
-		}
-		return null;
-	}
+    @Override
+    public void init() {
+        addCommand(Help.class);
+        addCommand(ShowArticle.class);
+        addCommand(ShowCategories.class);
+        addCommand(ShowCultures.class);
+        addCommand(ShowTitles.class);
+        addCommand(ShowTitlesComplex.class);
+    }
 
-	@Override
-	public void initializeBot() {
-		ni = new NewsInterpreter();
-		ErrorLogger.init();
-		ni.init();
-	}
-
-	@Override
-	public void messageReceived(Message message) {
-		String botResponse = evaluateMessage(message.getMessage());
-		if (botResponse != null) {
-			sendMessage(new Message(message.getGroup(), botResponse, MessageFormat.PLAIN_TEXT));
-		}
-	}
+    public static void main(String[] args) {
+        Injector i = Guice.createInjector(new MainModule());
+        class WrapperTest extends Wrapper {
+            @Override
+            public void sendMessage(Message message) {
+                System.out.println(message.getMessage());
+            }
+        }
+        Wrapper wrapper = new WrapperTest();
+        i.injectMembers(wrapper);
+        wrapper.initializeBot();
+        Scanner scan = new Scanner(System.in);
+        String line;
+        while (!(line = scan.nextLine()).equals("exit")) {
+            wrapper.messageReceived(new Message("uiae", line, MessageFormat.PLAIN_TEXT));
+        }
+    }
 }
