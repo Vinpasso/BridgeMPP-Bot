@@ -191,6 +191,14 @@ public class Message {
     	}
     	return message;
     }
+
+	/**
+	 *
+	 * @return the plain typed message
+	 */
+	public String getMessage() {
+		return message;
+	}
     
     public String getPlainTextMessage()
     {
