@@ -6,6 +6,10 @@ package bridgempp.bot.wrapper;
  * and open the template in the editor.
  */
 
+import bots.config.BotsModule;
+import bots.config.MainModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -44,6 +48,8 @@ public class BotWrapper {
 
 	public static String build;
 
+	private static Injector injector;
+
 	/**
 	 * @param args
 	 *            the command line arguments
@@ -66,6 +72,9 @@ public class BotWrapper {
 
 			}
 		});
+		// init Guice Injector
+		initGuice();
+
 		File botsDir = new File("bots/");
 		if (!botsDir.exists()) {
 			botsDir.mkdir();
@@ -89,6 +98,10 @@ public class BotWrapper {
 			}
 		}
 
+	}
+
+	private static void initGuice() {
+		injector = Guice.createInjector(new MainModule());
 	}
 
 	public static void printMessage(Message message, Bot bot) {
@@ -135,7 +148,12 @@ public class BotWrapper {
 				throw new UnsupportedOperationException(
 						"Bot Class is null, cannot execute BridgeMPP server commands");
 			}
-			Bot bot = (Bot) Class.forName(botClass).newInstance();
+			Class<?> clazz = Class.forName(botClass);
+            if (!Bot.class.isAssignableFrom(clazz)) {
+                throw new IllegalArgumentException("Bot class " + clazz.toString() + " not instance of Bot");
+            }
+            @SuppressWarnings("unchecked")
+            Bot bot = injector.getInstance((Class<Bot>)clazz);
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
 			bot.initializeBot();
@@ -200,8 +218,7 @@ public class BotWrapper {
 			System.out.println("Sent request to join " + groups.length
 					+ " groups");
 
-		} catch (IOException | ClassNotFoundException | InstantiationException
-				| IllegalAccessException | InterruptedException ex) {
+		} catch (IOException | ClassNotFoundException | InterruptedException ex) {
 			Log.log(Level.SEVERE, null, ex);
 		}
 	}
