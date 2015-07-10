@@ -37,6 +37,10 @@ public abstract class Bot {
 	 * Save this Bots Properties to File
 	 */
 	public final void saveProperties() {
+		if(properties == null || properties.isEmpty())
+		{
+			return;
+		}
 		try {
 			properties.store(
 					new FileOutputStream(configFile),
