@@ -6,7 +6,6 @@ package bridgempp.bot.wrapper;
  * and open the template in the editor.
  */
 
-import bots.config.BotsModule;
 import bots.config.MainModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -145,12 +144,13 @@ public class BotWrapper {
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Bot Class is null, cannot execute BridgeMPP server commands");
+				Log.log(Level.SEVERE, "Bot Class is null, cannot execute BridgeMPP server commands");
+				fail();
 			}
 			Class<?> clazz = Class.forName(botClass);
             if (!Bot.class.isAssignableFrom(clazz)) {
-                throw new IllegalArgumentException("Bot class " + clazz.toString() + " not instance of Bot");
+                Log.log(Level.SEVERE, "Bot class " + clazz.toString() + " not instance of Bot");
+                fail();
             }
             @SuppressWarnings("unchecked")
             Bot bot = injector.getInstance((Class<Bot>)clazz);
@@ -176,8 +176,8 @@ public class BotWrapper {
 					.getProperty("serverPort"));
 			if (serverAddress == null) {
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Server Address is null, cannot execute BridgeMPP server commands");
+						Log.log(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
+						fail();
 			}
 			ChannelFuture channelFuture = bootstrap
 					.connect(new InetSocketAddress(serverAddress, portNumber));
@@ -221,6 +221,10 @@ public class BotWrapper {
 		} catch (IOException | ClassNotFoundException | InterruptedException ex) {
 			Log.log(Level.SEVERE, null, ex);
 		}
+	}
+
+	private static void fail() {
+		System.exit(1);
 	}
 
 	private static void writeDefaultConfig(Properties botProperties)
