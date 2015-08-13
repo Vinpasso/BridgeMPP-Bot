@@ -208,12 +208,12 @@ public class BotWrapper {
 			printCommand("!usekey " + serverKey, bot);
 			String botAlias = botProperties.getProperty("botname");
 			if (botAlias != null) {
-				printCommand("!createalias " + botAlias, bot);
+				printCommand("!createalias \"" + botAlias + "\"", bot);
 			}
 			bot.name = botAlias;
 			String[] groups = botProperties.getProperty("groups").split("; ");
 			for (int i = 0; i < groups.length; i++) {
-				printCommand("!subscribegroup " + groups[i], bot);
+				printCommand("!subscribegroup \"" + groups[i] + "\"", bot);
 			}
 			System.out.println("Sent request to join " + groups.length
 					+ " groups");
