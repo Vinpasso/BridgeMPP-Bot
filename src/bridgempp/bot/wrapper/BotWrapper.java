@@ -144,7 +144,7 @@ public class BotWrapper {
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null) {
 				writeDefaultConfig(botProperties);
-				Log.log(Level.SEVERE, "Bot Class is null, cannot execute BridgeMPP server commands");
+				Log.log(Level.SEVERE, "Bot Class is null, cannot execute BridgeMPP server commands in file: " + botConfig.getName());
 				fail();
 			}
 			Class<?> clazz = Class.forName(botClass);
