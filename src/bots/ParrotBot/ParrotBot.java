@@ -26,6 +26,7 @@ public class ParrotBot {
 	private final Random r;
 	private double feediness = 0.5;
 	private boolean dead = false;
+	private boolean atomicSurviver = false;
 	private String colouredName;
 	private String name;
 	private long lastUpdate;
@@ -135,7 +136,7 @@ public class ParrotBot {
 		}
 
 		colouredName = getColouredName(name);
-		if (r.nextInt(100) >= 20) {
+		if (!atomicSurviver && r.nextInt(100) >= 20) {
 			statusqeue.add("Parrot " + colouredName + " turns into dust");
 			statusqeue.add("Parrot " + colouredName + "'s dust gets slowly blown away by the wind.");
 			statusqeue.add("You watch Parrot " + colouredName + "'s dust slowly fading off into the distance as he is no more...");
@@ -143,6 +144,7 @@ public class ParrotBot {
 		} else {
 			statusqeue.add("Parrot " + colouredName + " is glowing green.");
 			statusqeue.add("Parrot " + colouredName + " seems to have survived the atomic blast...");
+			atomicSurviver = true;
 		}
 	}
 
@@ -242,12 +244,25 @@ public class ParrotBot {
 		for (int i = 0; i < r.nextInt(ParrotBotMessages.stage2KillMessages.length); i++) {
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage2KillMessages[r.nextInt(ParrotBotMessages.stage2KillMessages.length)]);
 		}
+		if(r.nextInt(100) >= 20){
 		statusqeue.add("Parrot " + colouredName + " is turning into a pool of blood.");
 		dead = true;
 		for (int i = 0; i < r.nextInt(ParrotBotMessages.stage3KillMessages.length); i++) {
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage3KillMessages[r.nextInt(ParrotBotMessages.stage3KillMessages.length)]);
 		}
 		statusqeue.add("Parrot " + colouredName + " is no more....");
+		}
+		else{
+			statusqeue.add("parrot" + colouredName + "errupts into a fireburst");
+			statusqeue.add("parrot" + colouredName + "actually was a phoenix");
+			int coloursLength = colours.size();
+			colours.clear();
+			for (int i = 0; i < coloursLength; i++) {
+				colours.add("FF0000");
+			}
+
+			colouredName = getColouredName(name);
+		}
 	}
 
 	public boolean isDone() {
