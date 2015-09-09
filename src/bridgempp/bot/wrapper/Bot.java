@@ -2,8 +2,11 @@ package bridgempp.bot.wrapper;
 
 import io.netty.channel.ChannelFuture;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
@@ -42,11 +45,17 @@ public abstract class Bot {
 			return;
 		}
 		try {
+			File tempFile = new File(configFile + ".tmp");
 			properties.store(
-					new FileOutputStream(configFile),
+					new FileOutputStream(tempFile),
 					"Bot Properties saved at: "
 							+ new SimpleDateFormat("DD.WW.yyyy HH:mm:ss")
 									.format(Date.from(Instant.now())));
+			if(tempFile.length() == 0)
+			{
+				throw new IOException("Write failed, temp file is length 0 after save");
+			}
+			Files.move(tempFile.toPath(), new File(configFile).toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
 		} catch (IOException e) {
 			Log.log(Level.SEVERE,
 					"Failed to save Bot Config! Data Loss possible");
