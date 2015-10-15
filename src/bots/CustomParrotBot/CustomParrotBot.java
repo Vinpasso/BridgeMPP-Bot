@@ -192,7 +192,7 @@ public class CustomParrotBot {
 	}
 	
 	@MetaMethod(trigger = "?parrot custom emergency start", helpTopic="Restart all Parrots using setActive in an emergency")
-	public String emergencyBrake()
+	public String emergencyStart()
 	{
 		Enumeration<CustomParrot> enumerator = table.elements();
 		while(enumerator.hasMoreElements())
