@@ -14,11 +14,11 @@ Will reload Botwrapper...
 New Version: $TRAVIS_BUILD_NUMBER
 ?botwrapper reload
 ' | nc -vw 5 127.0.0.1 $BRIDGEMPP_PORT"
-sleep 15
+sleep 65
 ssh $SSH_USER@$SSH_HOST "echo '0
-!usekey $BRIDGEMPP_KEY
-!createalias Build Bot
-!subscribegroup $BRIDGEMPP_GROUP
+!botusekey $BRIDGEMPP_KEY
+!botcreatealias Build Bot
+!botsubscribegroup $BRIDGEMPP_GROUP
 New Version has been loaded
 New Version: $TRAVIS_BUILD_NUMBER
 ?botwrapper version
