@@ -191,6 +191,17 @@ public class CustomParrotBot {
 		return "The Parrot Cage screeches to a halt!";
 	}
 	
+	@MetaMethod(trigger = "?parrot custom emergency start", helpTopic="Restart all Parrots using setActive in an emergency")
+	public String emergencyBrake()
+	{
+		Enumeration<CustomParrot> enumerator = table.elements();
+		while(enumerator.hasMoreElements())
+		{
+			enumerator.nextElement().active = true;
+		}
+		return "The Parrot Cage signals full steam ahead!";
+	}
+	
 	private void saveList() {
 		try {
 			metaBot.properties.put("parrotlist", encodeList(table));
