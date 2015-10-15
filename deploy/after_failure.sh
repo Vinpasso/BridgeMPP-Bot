@@ -1,7 +1,7 @@
 ssh $SSH_USER@$SSH_HOST "echo '0
-!usekey $BRIDGEMPP_KEY
-!createalias Build\ Bot
-!subscribegroup $BRIDGEMPP_GROUP
+!botusekey $BRIDGEMPP_KEY
+!botcreatealias Build\ Bot
+!botsubscribegroup $BRIDGEMPP_GROUP
 A build has failed.
 No changes have been propagated to live.
 ?botwrapper version
