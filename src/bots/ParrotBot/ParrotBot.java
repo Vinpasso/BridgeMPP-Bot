@@ -209,7 +209,7 @@ public class ParrotBot {
 	}
 
 	public String getStatus() {
-		return statusqeue.isEmpty() ? null : statusqeue.remove(0);
+		return statusqeue.isEmpty() ? null : statusqeue.remove(0) + " \n";
 	}
 
 	public void hunger() {
@@ -253,8 +253,8 @@ public class ParrotBot {
 		statusqeue.add("Parrot " + colouredName + " is no more....");
 		}
 		else{
-			statusqeue.add("parrot" + colouredName + "errupts into a fireburst");
-			statusqeue.add("parrot" + colouredName + "actually was a phoenix");
+			statusqeue.add("Parrot " + colouredName + " errupts into a fireburst");
+			statusqeue.add("Parrot " + colouredName + " actually was a phoenix");
 			int coloursLength = colours.size();
 			colours.clear();
 			for (int i = 0; i < coloursLength; i++) {
