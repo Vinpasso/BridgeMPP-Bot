@@ -13,7 +13,8 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	public static Pattern isKillCommand = Pattern.compile("\\A\\?parrot kill");
 	public static Pattern isFeedCommand = Pattern.compile("\\A\\?parrot feed");
 	public static Pattern isBuyCommand =  Pattern.compile("\\A\\?parrot buy");
-
+	public static Pattern isDeadAmountCommand = Pattern.compile("\\A\\?parrot show killed");
+	
 	public ParrotBotBridgeMPPIntegration() {
 		cage = new ParrotCage();
 	}
@@ -21,7 +22,7 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 	@Override
 	public void initializeBot() {
 	}
-
+	
 	@Override
 	public void messageReceived(Message message) {
 		StringBuilder strBuilder = new StringBuilder();
@@ -37,6 +38,9 @@ public class ParrotBotBridgeMPPIntegration extends Bot {
 			}
 			else if(msg.length() > 13 && isKillCommand.matcher(msg).find()){
 				cage.killParrot(msg.substring(13));
+			}
+			else if(msg.length() > 18 && isDeadAmountCommand.matcher(msg).find()){
+				sendMessage(new Message("Parrots","Amount of killed Parrots: " + cage.deadParrotCount,MessageFormat.PLAIN_TEXT));
 			}
 
 			cage.updateParrots();
