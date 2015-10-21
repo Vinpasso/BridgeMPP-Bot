@@ -236,6 +236,17 @@ public class ParrotBot {
 	}
 
 	public void kill() {
+		boolean phoenix = r.nextInt(100) <= 20;
+		
+		if(phoenix){
+			int coloursLength = colours.size();
+			colours.clear();
+			for (int i = 0; i < coloursLength; i++) {
+				colours.add("FF0000");
+			}
+
+			colouredName = getColouredName(name);
+		}
 		statusqeue.add("Parrot " + colouredName + " screams in pain.");
 		for (int i = 0; i < r.nextInt(ParrotBotMessages.stage1KillMessages.length); i++) {
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage1KillMessages[r.nextInt(ParrotBotMessages.stage1KillMessages.length)]);
@@ -244,7 +255,7 @@ public class ParrotBot {
 		for (int i = 0; i < r.nextInt(ParrotBotMessages.stage2KillMessages.length); i++) {
 			statusqeue.add("Parrot " + colouredName + ParrotBotMessages.stage2KillMessages[r.nextInt(ParrotBotMessages.stage2KillMessages.length)]);
 		}
-		if(r.nextInt(100) >= 20){
+		if(!phoenix){
 		statusqeue.add("Parrot " + colouredName + " is turning into a pool of blood.");
 		dead = true;
 		for (int i = 0; i < r.nextInt(ParrotBotMessages.stage3KillMessages.length); i++) {
@@ -255,13 +266,6 @@ public class ParrotBot {
 		else{
 			statusqeue.add("Parrot " + colouredName + " errupts into a fireburst");
 			statusqeue.add("Parrot " + colouredName + " actually was a phoenix");
-			int coloursLength = colours.size();
-			colours.clear();
-			for (int i = 0; i < coloursLength; i++) {
-				colours.add("FF0000");
-			}
-
-			colouredName = getColouredName(name);
 		}
 	}
 
