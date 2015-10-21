@@ -55,8 +55,10 @@ public class ParrotCage {
 			}
 		}
 		for (String doneParrot : doneParrots) {
+			if(parrots.containsKey(doneParrot)){
 			parrots.remove(doneParrot);
 			deadParrotCount++;
+			}
 		}
 	}
 
