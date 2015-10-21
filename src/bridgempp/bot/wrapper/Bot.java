@@ -45,7 +45,7 @@ public abstract class Bot {
 			return;
 		}
 		try {
-			File tempFile = new File(configFile + ".tmp");
+			File tempFile = File.createTempFile("customParrot_" + configFile, ".parrot.tmp");
 			properties.store(
 					new FileOutputStream(tempFile),
 					"Bot Properties saved at: "
