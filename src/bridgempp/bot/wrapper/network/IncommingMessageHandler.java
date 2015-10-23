@@ -34,7 +34,7 @@ public class IncommingMessageHandler extends
 			bot.sendMessage(new Message(message.getGroup(),
 					"Bot Wrapper reloading. Respawn Throttle 60 seconds",
 					MessageFormat.PLAIN_TEXT));
-			System.exit(0);
+			BotWrapper.shutdown();
 		}
 		if (message.getMessage().startsWith("?botwrapper ping")) {
 			bot.sendMessage(new Message(message.getGroup(), "This is "
@@ -60,7 +60,7 @@ public class IncommingMessageHandler extends
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		Log.log(Level.SEVERE, "A Connection has been disconnected, exiting...",
 				cause);
-		System.exit(0);
+		BotWrapper.shutdown();
 	}
 
 }

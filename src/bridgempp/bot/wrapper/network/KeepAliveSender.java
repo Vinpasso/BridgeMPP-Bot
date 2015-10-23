@@ -10,6 +10,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import java.util.logging.Level;
 
 import bridgempp.bot.messageformat.MessageFormat;
+import bridgempp.bot.wrapper.BotWrapper;
 import bridgempp.util.Log;
 
 public class KeepAliveSender extends ChannelDuplexHandler {
@@ -33,18 +34,18 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 									"A Connection has been disconnected after PING: "
 											+ future.toString()
 											+ ", exiting...");
-							System.exit(0);
+							BotWrapper.shutdown();
 						}
 					}
 				});
 			} else if (idleEvent.state() == IdleState.READER_IDLE) {
 				Log.log(Level.SEVERE,
 						"A Connection has died due to READER_IDLE");
-				System.exit(0);
+				BotWrapper.shutdown();
 			} else if (idleEvent.state() == IdleState.ALL_IDLE) {
 				Log.log(Level.SEVERE,
 								"Communications have stalled on a connection due to ALL_IDLE");
-				System.exit(0);
+				BotWrapper.shutdown();
 			}
 		}
 	}
@@ -55,20 +56,20 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Exception",
 						cause);
-		System.exit(0);
+		BotWrapper.shutdown();
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Channel Deactivation");
-		System.exit(0);
+		BotWrapper.shutdown();
 	}
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Channel Derigistration");
-		System.exit(0);
+		BotWrapper.shutdown();
 	}
 }

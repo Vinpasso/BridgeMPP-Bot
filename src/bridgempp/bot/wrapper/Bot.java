@@ -43,6 +43,7 @@ public abstract class Bot {
 		Log.log(Level.INFO, "Saving Properties for: " + name);
 		if(properties == null || properties.isEmpty())
 		{
+			Log.log(Level.INFO, "Empty Bot Properties, aborted Save: " + name);
 			return;
 		}
 		try {

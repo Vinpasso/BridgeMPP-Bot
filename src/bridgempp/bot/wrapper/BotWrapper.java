@@ -48,6 +48,8 @@ public class BotWrapper {
 	public static String build;
 
 	private static Injector injector;
+	
+	private static volatile boolean isShuttingDown = false;
 
 	/**
 	 * @param args
@@ -162,6 +164,7 @@ public class BotWrapper {
 				@Override
 				public void run() {
 					Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
+					isShuttingDown = true;
 					try {
 						bot.deinitializeBot();
 						Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
@@ -172,6 +175,7 @@ public class BotWrapper {
 					}
 					Log.log(Level.INFO, "Saving Bot: " + bot.name);
 					bot.saveProperties();
+					bot.channelFuture.channel().close();
 					Log.log(Level.INFO, "Saved Bot: " + bot.name);
 				}
 
@@ -228,8 +232,23 @@ public class BotWrapper {
 		}
 	}
 
+
+
+	private static void systemExit(int status)
+	{
+		if(isShuttingDown)
+		{
+			return;
+		}
+		isShuttingDown = true;
+		System.exit(status);
+	}
+	
+	public static void shutdown() {
+		systemExit(0);
+	}
 	private static void fail() {
-		System.exit(1);
+		systemExit(1);
 	}
 
 	private static void writeDefaultConfig(Properties botProperties)
