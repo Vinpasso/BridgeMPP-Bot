@@ -40,12 +40,13 @@ public abstract class Bot {
 	 * Save this Bots Properties to File
 	 */
 	public final void saveProperties() {
+		Log.log(Level.INFO, "Saving Properties for: " + name);
 		if(properties == null || properties.isEmpty())
 		{
 			return;
 		}
 		try {
-			File tempFile = new File(configFile + ".tmp");
+			File tempFile = File.createTempFile("customParrot_" + configFile, ".parrot.tmp");
 			properties.store(
 					new FileOutputStream(tempFile),
 					"Bot Properties saved at: "
@@ -56,6 +57,7 @@ public abstract class Bot {
 				throw new IOException("Write failed, temp file is length 0 after save");
 			}
 			Files.move(tempFile.toPath(), new File(configFile).toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+			Log.log(Level.INFO, "Saved Properties for: " + name + " to: " + configFile);
 		} catch (IOException e) {
 			Log.log(Level.SEVERE,
 					"Failed to save Bot Config! Data Loss possible");

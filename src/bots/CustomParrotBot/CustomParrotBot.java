@@ -188,6 +188,7 @@ public class CustomParrotBot {
 		{
 			enumerator.nextElement().active = false;
 		}
+		saveList();
 		return "The Parrot Cage screeches to a halt!";
 	}
 	
@@ -199,6 +200,7 @@ public class CustomParrotBot {
 		{
 			enumerator.nextElement().active = true;
 		}
+		saveList();
 		return "The Parrot Cage signals full steam ahead!";
 	}
 	

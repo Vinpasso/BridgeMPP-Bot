@@ -10,6 +10,7 @@ public class ParrotCage {
 	Map<String, ParrotBot> parrots;
 	List<String> doneParrots;
 	public static int maxParrotCount = -1;
+	public int deadParrotCount = 0;
 
 	public ParrotCage() {
 		parrots = new HashMap<String, ParrotBot>();
@@ -54,7 +55,10 @@ public class ParrotCage {
 			}
 		}
 		for (String doneParrot : doneParrots) {
+			if(parrots.containsKey(doneParrot)){
 			parrots.remove(doneParrot);
+			deadParrotCount++;
+			}
 		}
 	}
 
