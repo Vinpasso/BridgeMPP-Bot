@@ -161,13 +161,18 @@ public class BotWrapper {
 
 				@Override
 				public void run() {
+					Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
 					try {
 						bot.deinitializeBot();
+						Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
+
 					} catch (Exception e) {
 						Log.log(Level.SEVERE,
 								"Failed to deinitialize Bot! Data Loss possible");
 					}
+					Log.log(Level.INFO, "Saving Bot: " + bot.name);
 					bot.saveProperties();
+					Log.log(Level.INFO, "Saved Bot: " + bot.name);
 				}
 
 			}));
