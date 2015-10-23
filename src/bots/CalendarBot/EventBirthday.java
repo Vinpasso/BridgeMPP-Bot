@@ -27,7 +27,7 @@ public class EventBirthday extends Event {
 		+ (currentYear - CalDateFormat.minToDateSplitted(date, firstYear)[2]) + ". Geburtstag";
 	}
 	private String watWithS () {
-		return wat + ((wat.charAt(wat.length() - 1) != 's' || wat.charAt(wat.length() - 1) != 'x') ? "s " : "\' ");
+		return wat + ((wat.charAt(wat.length() - 1) != 's' && wat.charAt(wat.length() - 1) != 'x') ? "s " : "\' ");
 	}
 	
 	
