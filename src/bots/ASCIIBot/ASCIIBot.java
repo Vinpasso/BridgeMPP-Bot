@@ -9,7 +9,7 @@ import bridgempp.bot.wrapper.Message;
 
 public class ASCIIBot extends Bot {
 
-	Pattern largeText = Pattern.compile("?ascii large (.*)");
+	Pattern largeText = Pattern.compile("\\?ascii large (.*)");
 	
 	@Override
 	public void initializeBot() {
