@@ -63,7 +63,7 @@ public class ShowMeBot extends Bot {
 		}
 	}
 
-	private byte[] resizeImage(URLConnection connection, int width, int height) {
+	public byte[] resizeImage(URLConnection connection, int width, int height) {
 		try {
 			BufferedImage originalImage = ImageIO.read(connection.getInputStream());
 			BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
