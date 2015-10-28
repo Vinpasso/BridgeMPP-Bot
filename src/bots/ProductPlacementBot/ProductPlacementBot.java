@@ -17,7 +17,7 @@ public class ProductPlacementBot extends Bot {
 	AdvertisementSearcher advertSearcher;
 	
 	public void initializeBot() {
-		repeatTime = 1;
+		repeatTime = 1000;
 		repeatTimeTags = 1;
 		lastPlayed = 0;
 		playList = new Advertisements().getAdvertisements();
