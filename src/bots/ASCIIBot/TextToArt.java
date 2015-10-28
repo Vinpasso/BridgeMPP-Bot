@@ -8,7 +8,7 @@ public class TextToArt {
 
 	public static String textToArt(String text)
 	{
-		String result = "";
+		String result = "\n";
 		BufferedImage renderBuffer = new BufferedImage(12, 12, BufferedImage.TYPE_INT_ARGB);
 		Graphics graphics = renderBuffer.createGraphics();
 		for(int character = 0; character < text.length(); character++)
@@ -21,9 +21,9 @@ public class TextToArt {
 			{
 				for(int x = 0; x < renderBuffer.getWidth(); x++)
 				{
-					result += (renderBuffer.getRGB(x, y)==0x00FFFFFF)?" ":"*";
+					result += (renderBuffer.getRGB(x, y)==0xFF000000)?"#":" ";
 				}
-				result += "\n";
+				//result += "\n";
 			}
 		}
 		return result;
