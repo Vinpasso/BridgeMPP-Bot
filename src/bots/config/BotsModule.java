@@ -1,5 +1,6 @@
 package bots.config;
 
+import bots.MemeBot.config.MemeBotModule;
 import bots.NewsBot.config.NewsBotModule;
 import com.google.inject.AbstractModule;
 
@@ -10,5 +11,6 @@ public class BotsModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new NewsBotModule());
+        install(new MemeBotModule());
     }
 }
