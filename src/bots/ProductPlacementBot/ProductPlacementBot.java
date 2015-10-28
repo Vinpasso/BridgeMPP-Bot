@@ -18,7 +18,7 @@ public class ProductPlacementBot extends Bot {
 	
 	public void initializeBot() {
 		repeatTime = 1000;
-		repeatTimeTags = 1;
+		repeatTimeTags = 1000;
 		lastPlayed = 0;
 		playList = new Advertisements().getAdvertisements();
 		Mix.mergeMix(playList);
