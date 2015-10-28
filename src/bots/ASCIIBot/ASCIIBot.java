@@ -11,6 +11,7 @@ public class ASCIIBot extends Bot {
 
 	Pattern largeText = Pattern.compile("\\?ascii large (.*)");
 	Pattern styleText = Pattern.compile("\\?ascii style \\\"([^\"]+)\\\" (.*)");
+	Pattern artText = Pattern.compile("\\?ascii art (.*)");
 	
 	@Override
 	public void initializeBot() {
@@ -29,6 +30,11 @@ public class ASCIIBot extends Bot {
 		{
 			applyStyleMessage(styleTextMatcher.group(1), styleTextMatcher.group(2), message);
 		}
+		Matcher artTextMatcher = artText.matcher(original);
+		if(artTextMatcher.find())
+		{
+			applyArt(artTextMatcher.group(1), message);
+		}
 	}
 
 	private void largeText(String text, Message message) {
@@ -43,6 +49,11 @@ public class ASCIIBot extends Bot {
 	private String applyFontStyle(String style, String content)
 	{
 		return "<p/><span style='" + style + "'>"+content+"</span>";
+	}
+	
+	private void applyArt(String art, Message message)
+	{
+		sendMessage(new Message(message.getGroup(), TextToArt.textToArt(art), MessageFormat.PLAIN_TEXT));
 	}
 
 }
