@@ -30,7 +30,7 @@ public class ParrotBotMessages {
 		"'s pool of blood seems to grow larger",
 		" smiles as he though about all the happy moments in his life",
 		" smiles as he thinks about all the happy moments he had with you",
-		" looks sad and you belive he is thinking about his wife and his kids"
+		" starts to cry uncontrollably and you belive he is thinking about his wife and his kids"
 	};
 	
 }

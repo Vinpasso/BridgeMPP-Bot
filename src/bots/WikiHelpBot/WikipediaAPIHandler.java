@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -50,7 +51,7 @@ public class WikipediaAPIHandler {
 	}
 
 	private String buildWikiSourceURL() {
-		return new StringBuilder().append("http://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic).toString();
+		return new StringBuilder().append("https://").append(wikiLangDomain).append(".wikipedia.org/wiki/" + topic).toString();
 	}
 
 	public InputStream readURL(String topic) {
@@ -113,6 +114,7 @@ public class WikipediaAPIHandler {
 		try {
 			db = dbf.newDocumentBuilder();
 			Document doc;
+			System.out.println(IOUtils.toString(WikiXml, "UTF-8"));
 			doc = db.parse(WikiXml);
 
 			doc.normalize();
