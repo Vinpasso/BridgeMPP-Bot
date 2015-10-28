@@ -3,6 +3,7 @@ package bots.WikiHelpBot;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -47,7 +48,7 @@ public class WikipediaAPIHandler {
 	}
 
 	private String buildWikiParseURL(String topic) {
-		return "http://" + wikiLangDomain + ".wikipedia.org/w/api.php?action=query&prop=extracts&format=xml&exintro=&exsectionformat=plain&rawcontinue=&titles=" + topic + "&redirects=true";
+		return "https://" + wikiLangDomain + ".wikipedia.org/w/api.php?action=query&prop=extracts&format=xml&exintro=&exsectionformat=plain&rawcontinue=&titles=" + topic + "&redirects=true";
 	}
 
 	private String buildWikiSourceURL() {
@@ -58,7 +59,8 @@ public class WikipediaAPIHandler {
 		InputStream wikiResponse = null;
 		try {
 			URL wikiurl = new URL(buildWikiParseURL(topic));
-			wikiResponse = wikiurl.openStream();
+			HttpURLConnection wikiconnection = (HttpURLConnection) wikiurl.openConnection();
+			wikiResponse = wikiconnection.getInputStream();
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -114,7 +116,7 @@ public class WikipediaAPIHandler {
 		try {
 			db = dbf.newDocumentBuilder();
 			Document doc;
-			System.out.println(IOUtils.toString(WikiXml, "UTF-8"));
+			//System.out.println(IOUtils.toString(WikiXml, "UTF-8"));
 			doc = db.parse(WikiXml);
 
 			doc.normalize();
