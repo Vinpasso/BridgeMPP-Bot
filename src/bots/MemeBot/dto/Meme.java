@@ -32,7 +32,7 @@ public class Meme {
 			connection = url.openConnection();
 			byte[] image;
 			image = resizeImage(connection, 100, 100);
-			return "<img src='" + url + "' width=" + width + " height=" + height + "/>";
+			return "<img src=\"data:image/jpeg;base64," + url + "\" width=\"320\" height=\"240\"/>";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
