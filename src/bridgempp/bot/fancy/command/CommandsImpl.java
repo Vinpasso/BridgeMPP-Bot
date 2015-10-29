@@ -26,7 +26,7 @@ public class CommandsImpl implements Commands {
     @Override
     public boolean accept(Message msg) {
         String message = msg.getMessage();
-        if (!message.startsWith(botPrefix + commandPrefix)) {
+        if (!message.startsWith(botPrefix + commandPrefix + " ")) {
             return false;
         }
         String args = message.substring(botPrefix.length() + commandPrefix.length()).trim();
