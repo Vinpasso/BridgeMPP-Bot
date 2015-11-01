@@ -111,13 +111,7 @@ public class BotWrapper {
 
 			@Override
 			public void run() {
-				try
-				{
-					loopGroup.shutdownGracefully().await();
-				} catch (InterruptedException e1)
-				{
-					Log.log(Level.WARNING, "Interrupted NIO Thread Shutdown", e1);
-				}
+				loopGroup.shutdownGracefully();
 				Iterator<Bot> botIterator = bots.iterator();
 				while (botIterator.hasNext())
 				{
@@ -303,8 +297,8 @@ public class BotWrapper {
 	{
 		return "There are " + bots.size() + " Bots loaded in Memory\n" + 
 				"There are " + botsDir.listFiles().length + " config files present\n" +
-				"The current Memory usage is " + Runtime.getRuntime().totalMemory() + "/" + Runtime.getRuntime().totalMemory() + "\n"+
-				"There are " + Runtime.getRuntime().freeMemory() + " bytes of free Memory\n" + 
+				"The current Memory usage is " + (Runtime.getRuntime().totalMemory() / 1000000L) + "MB/" + (Runtime.getRuntime().totalMemory() / 1000000L) + "\n"+
+				"There are " + (Runtime.getRuntime().freeMemory() / 1000000L) + " bytes of free Memory\n" + 
 				"There are " + Thread.activeCount() + " threads running in the BotWrapper";
 	}
 }
