@@ -7,8 +7,10 @@ package bridgempp.bot.wrapper;
  */
 
 import bots.config.MainModule;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -23,6 +25,8 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -190,11 +194,11 @@ public class BotWrapper {
 			}
 			ChannelFuture channelFuture = bootstrap
 					.connect(new InetSocketAddress(serverAddress, portNumber));
-			byte[] protocol = new byte[1];
-			protocol[0] = 0x32;
-			channelFuture.await();
-			channelFuture.channel().writeAndFlush(
-					Unpooled.wrappedBuffer(protocol));
+//			byte[] protocol = new byte[1];
+//			protocol[0] = 0x32;
+//			channelFuture.await();
+//			channelFuture.channel().writeAndFlush(
+//					Unpooled.wrappedBuffer(protocol));
 			ChannelPipeline pipeline = channelFuture.channel().pipeline();
 			pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60,
 					120));
@@ -207,6 +211,19 @@ public class BotWrapper {
 			pipeline.addLast("keepAliveSender", new KeepAliveSender());
 			pipeline.addLast(new IncommingMessageHandler(bot));
 			bot.channelFuture = channelFuture;
+			
+			channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+
+				@Override
+				public void operationComplete(Future<? super Void> future) throws Exception
+				{
+					if(!future.isSuccess())
+					{
+						Log.log(Level.WARNING, "Connection could not be Established");
+						BotWrapper.shutdown();
+					}
+				}
+			});
 
 			String serverKey = botProperties.getProperty("serverKey");
 			if (serverKey == null) {
@@ -227,7 +244,7 @@ public class BotWrapper {
 			System.out.println("Sent request to join " + groups.length
 					+ " groups");
 
-		} catch (IOException | ClassNotFoundException | InterruptedException ex) {
+		} catch (Exception ex) {
 			Log.log(Level.SEVERE, null, ex);
 		}
 	}
@@ -254,6 +271,8 @@ public class BotWrapper {
 	private static void writeDefaultConfig(Properties botProperties)
 			throws IOException {
 		botProperties.put("serverKey", "<insertserveraccesskey>");
+		botProperties.put("serverAddress", "<insertserveraddress>");
+		botProperties.put("serverPort", "<insertserverport>");
 		botProperties.put("botname", "<Ahumanreadablebotname>");
 		botProperties.put("groups", "<groupname1>; <groupname2>");
 		botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
