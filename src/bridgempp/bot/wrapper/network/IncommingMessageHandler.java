@@ -45,6 +45,12 @@ public class IncommingMessageHandler extends
 					+ bot.name + " running on BridgeMPP-Bot-Wrapper Build: #"
 					+ BotWrapper.build, MessageFormat.PLAIN_TEXT));
 		}
+		if(message.getMessage().startsWith("?botwrapper status"))
+		{
+			bot.sendMessage(new Message(message.getGroup(), "This is Status Check triggered by "
+					+ bot.name + "\nResult:\n"
+					+ BotWrapper.statusCheck(), MessageFormat.PLAIN_TEXT));
+		}
 		try {
 			bot.messageReceived(message);
 		} catch (Exception e) {

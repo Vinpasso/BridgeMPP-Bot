@@ -33,6 +33,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -54,6 +56,8 @@ public class BotWrapper {
 	private static Injector injector;
 	
 	private static volatile boolean isShuttingDown = false;
+	private static ArrayList<Bot> bots;
+	private static File botsDir;
 
 	/**
 	 * @param args
@@ -66,6 +70,7 @@ public class BotWrapper {
 			Log.log(Level.WARNING,
 					"No external build version supplied to BridgeMPP-Bot-Wrapper");
 		}
+		bots = new ArrayList<>();
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);
@@ -80,7 +85,7 @@ public class BotWrapper {
 		// init Guice Injector
 		initGuice();
 
-		File botsDir = new File("bots/");
+		botsDir = new File("bots/");
 		if (!botsDir.exists()) {
 			botsDir.mkdir();
 			Properties exampleBotProperties = new Properties();
@@ -102,6 +107,40 @@ public class BotWrapper {
 						+ botConfig.toString(), e);
 			}
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try
+				{
+					loopGroup.shutdownGracefully().await();
+				} catch (InterruptedException e1)
+				{
+					Log.log(Level.WARNING, "Interrupted NIO Thread Shutdown", e1);
+				}
+				Iterator<Bot> botIterator = bots.iterator();
+				while (botIterator.hasNext())
+				{
+					Bot bot = botIterator.next();
+					Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
+					isShuttingDown = true;
+					try
+					{
+						bot.deinitializeBot();
+						Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
+
+					} catch (Exception e)
+					{
+						Log.log(Level.SEVERE, "Failed to deinitialize Bot! Data Loss possible");
+					}
+					Log.log(Level.INFO, "Saving Bot: " + bot.name);
+					bot.saveProperties();
+					bot.channelFuture.channel().close();
+					Log.log(Level.INFO, "Saved Bot: " + bot.name);
+				}
+			}
+
+		}));
 
 	}
 
@@ -163,27 +202,7 @@ public class BotWrapper {
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
 			bot.initializeBot();
-			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
-				@Override
-				public void run() {
-					Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
-					isShuttingDown = true;
-					try {
-						bot.deinitializeBot();
-						Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
-
-					} catch (Exception e) {
-						Log.log(Level.SEVERE,
-								"Failed to deinitialize Bot! Data Loss possible");
-					}
-					Log.log(Level.INFO, "Saving Bot: " + bot.name);
-					bot.saveProperties();
-					bot.channelFuture.channel().close();
-					Log.log(Level.INFO, "Saved Bot: " + bot.name);
-				}
-
-			}));
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties
 					.getProperty("serverPort"));
@@ -243,6 +262,7 @@ public class BotWrapper {
 			}
 			System.out.println("Sent request to join " + groups.length
 					+ " groups");
+			bots.add(bot);
 
 		} catch (Exception ex) {
 			Log.log(Level.SEVERE, null, ex);
@@ -277,5 +297,14 @@ public class BotWrapper {
 		botProperties.put("groups", "<groupname1>; <groupname2>");
 		botProperties.put("process", "<BotProcessWrapperLaunchCommand>");
 		botProperties.put("botClass", "<FQ Class Name>");
+	}
+
+	public static String statusCheck()
+	{
+		return "There are " + bots.size() + " Bots loaded in Memory\n" + 
+				"There are " + botsDir.listFiles().length + " config files present\n" +
+				"The current Memory usage is " + Runtime.getRuntime().totalMemory() + "/" + Runtime.getRuntime().totalMemory() + "\n"+
+				"There are " + Runtime.getRuntime().freeMemory() + " bytes of free Memory\n" + 
+				"There are " + Thread.activeCount() + " threads running in the BotWrapper";
 	}
 }
