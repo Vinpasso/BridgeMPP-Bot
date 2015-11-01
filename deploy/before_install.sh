@@ -7,7 +7,7 @@ chmod 600 ~/.ssh/id_rsa.pub
 ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 export COMMIT_MESSAGE="$(git log -n 1 --stat | tr -d \'\"\$ )"
 echo $COMMIT_MESSAGE
-echo echo '0
+echo '0
 !botusekey $BRIDGEMPP_KEY
 !botcreatealias Build\ Bot
 !botsubscribegroup $BRIDGEMPP_GROUP
@@ -16,4 +16,6 @@ This Repository on GitHub: https://github.com/Vinpasso/BridgeMPP-Bot
 This Repository on Travis: https://travis-ci.org/Vinpasso/BridgeMPP-Bot
 $COMMIT_MESSAGE
 ' > message.txt
-scp message.txt $SSH_USER@$SSH_HOST/bots-upload/
+sftp $SSH_USER@$SSH_HOST <<EOF
+put message.txt /bots-upload/message.txt
+EOF

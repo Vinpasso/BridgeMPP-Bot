@@ -6,4 +6,6 @@ A build has failed.
 No changes have been propagated to live.
 ?botwrapper version
 ' > message.txt
-scp message.txt $SSH_USER@$SSH_HOST/bots-upload/
+sftp $SSH_USER@$SSH_HOST <<EOF
+put message.txt /bots-upload/message.txt
+EOF
