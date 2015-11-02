@@ -5,11 +5,11 @@ then
 sftp $SSH_USER@$SSH_HOST <<EOF
 put target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar /bots-upload/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar
 EOF
-echo '$TRAVIS_BUILD_NUMBER' > version.txt
+echo "$TRAVIS_BUILD_NUMBER" > version.txt
 sftp $SSH_USER@$SSH_HOST <<EOF
 put version.txt /bots-upload/version.txt
 EOF
-echo '0
+echo "0
 !botusekey $BRIDGEMPP_KEY
 !botcreatealias Build\ Bot
 !botsubscribegroup $BRIDGEMPP_GROUP
@@ -18,19 +18,19 @@ Upload Successful.
 Will reload Botwrapper...
 New Version: $TRAVIS_BUILD_NUMBER
 ?botwrapper reload
-' > message.txt
+" > message.txt
 sftp $SSH_USER@$SSH_HOST <<EOF
 put message.txt /bots-upload/message.txt
 EOF
 sleep 60
-echo '0
+echo "0
 !botusekey $BRIDGEMPP_KEY
 !botcreatealias Build Bot
 !botsubscribegroup $BRIDGEMPP_GROUP
 New Version has been loaded
 New Version: $TRAVIS_BUILD_NUMBER
 ?botwrapper version
-' > message.txt
+" > message.txt
 sftp $SSH_USER@$SSH_HOST <<EOF
 put message.txt /bots-upload/message.txt
 EOF
