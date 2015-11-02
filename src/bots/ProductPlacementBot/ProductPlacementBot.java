@@ -17,13 +17,14 @@ public class ProductPlacementBot extends Bot {
 	AdvertisementSearcher advertSearcher;
 	
 	public void initializeBot() {
-		repeatTime = 1000;
-		repeatTimeTags = 1000;
+		repeatTime = 30;
+		repeatTimeTags = 10;
 		lastPlayed = 0;
 		playList = new Advertisements().getAdvertisements();
 		Mix.mergeMix(playList);
 		currentIndex = 0;
 		advertSearcher = new AdvertisementSearcher(playList);
+		sendMessage(new Message("tumspam", "Product Placement Bot: Wenig Publikum aber viel Werbung.", MessageFormat.PLAIN_TEXT));
 	}
 	
 	public void messageReceived (Message message) {
@@ -49,6 +50,7 @@ public class ProductPlacementBot extends Bot {
 					else {
 						repeatTime = newRepeatTime;
 					}
+					sendMessage(new Message(message.getGroup(), "Mission accomplished", MessageFormat.PLAIN_TEXT));
 				}
 				// change repeat time of product placements by tags
 				if (newRepeatTime != -2 && msg.charAt(11) == 't') {
@@ -58,6 +60,7 @@ public class ProductPlacementBot extends Bot {
 					else {
 						repeatTimeTags = newRepeatTime;
 					}
+					sendMessage(new Message(message.getGroup(), "Mission accomplished", MessageFormat.PLAIN_TEXT));
 				}
 			}
 			else {
@@ -72,15 +75,20 @@ public class ProductPlacementBot extends Bot {
 		
 		//play Product Placement by Tag
 		Advertisement advertisement = advertSearcher.searchAdvertisement(msg);
-		if (advertisement != null && ((advertisement.getLastPlayed() + repeatTimeTags) <= currentTime())) {
-			sendMessage(advertisement, message);
+		if (advertisement != null && ((advertisement.getLastPlayed() + repeatTimeTags) <= currentTime())) {			
+			lastPlayed = currentTime();
 			advertisement.setLastPlayed(currentTime());
+			if (advertisement.numberOfTags() == 2) {
+				advertisement.setLastPlayed(currentTime() - repeatTimeTags + 1);
+			}
+			sendMessage(advertisement, message);
 		}
 		
 		//play Product Placement by playList
-		else if ((lastPlayed + repeatTime) <= currentTime()) {
-			sendMessage(playList[currentIndex], message);
+		else if ((lastPlayed + repeatTime) <= currentTime()) {			
 			lastPlayed = currentTime();
+			playList[currentIndex].setLastPlayed(currentTime());
+			sendMessage(playList[currentIndex], message);
 			if (currentIndex < playList.length - 1) {
 				currentIndex++;
 			}

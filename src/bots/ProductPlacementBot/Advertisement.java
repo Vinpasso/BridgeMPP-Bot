@@ -43,7 +43,7 @@ public class Advertisement {
 		try {
 			URLConnection connection = image.openConnection();
 			byte[] image;
-			image = new ShowMeBot().resizeImage(connection, 100, 100);
+			image = new ShowMeBot().resizeImage(connection, 150, 150);
 			return image;
 		} catch (Exception e) {
 			return null;
