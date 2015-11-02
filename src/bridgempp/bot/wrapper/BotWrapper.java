@@ -297,8 +297,8 @@ public class BotWrapper {
 	{
 		return "There are " + bots.size() + " Bots loaded in Memory\n" + 
 				"There are " + botsDir.listFiles().length + " config files present\n" +
-				"The current Memory usage is " + (Runtime.getRuntime().totalMemory() / 1000000L) + "MB/" + (Runtime.getRuntime().totalMemory() / 1000000L) + "\n"+
-				"There are " + (Runtime.getRuntime().freeMemory() / 1000000L) + " bytes of free Memory\n" + 
+				"The current Memory usage is " + (Runtime.getRuntime().totalMemory() / 1000000L) + "/" + (Runtime.getRuntime().maxMemory() / 1000000L) + "MB\n"+
+				"There are " + (Runtime.getRuntime().freeMemory() / 1000000L) + " MB of free Memory\n" + 
 				"There are " + Thread.activeCount() + " threads running in the BotWrapper";
 	}
 }
