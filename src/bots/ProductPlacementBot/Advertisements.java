@@ -38,7 +38,7 @@ public class Advertisements {
 			}),
 			
 			//pesto
-			new Advertisement(null, "Rache ist Pesto! Raeche dich jetzt mit Adrians Pesto und eine Lebensmittelvergiftung ist garantiert! \(Kann toedlich sein\)",
+			new Advertisement(null, "Rache ist Pesto! Raeche dich jetzt mit Adrians Pesto und eine Lebensmittelvergiftung ist garantiert! (Kann toedlich sein)",
 					new String[] {
 					"pesto",
 					"rache",
