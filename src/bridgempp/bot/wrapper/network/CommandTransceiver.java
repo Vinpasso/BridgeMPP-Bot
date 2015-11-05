@@ -100,7 +100,7 @@ public class CommandTransceiver extends SimpleChannelInboundHandler<ProtoBuf.Mes
 	protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception
 	{
 		String confirmation = msg.getMessage();
-		if(confirmation.equalsIgnoreCase("command status success"))
+		if(confirmation.equalsIgnoreCase("BridgeMPP: command status success"))
 		{
 			Log.log(Level.INFO, "Status success for Bot: " + bot.name + " for status: " + state.toString());
 			switch(state)
