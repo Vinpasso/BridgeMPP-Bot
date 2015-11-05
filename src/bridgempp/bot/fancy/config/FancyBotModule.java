@@ -1,9 +1,6 @@
 package bridgempp.bot.fancy.config;
 
 import bridgempp.bot.fancy.command.Commands;
-import bridgempp.bot.fancy.command.CommandsImpl;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import lombok.AllArgsConstructor;
 

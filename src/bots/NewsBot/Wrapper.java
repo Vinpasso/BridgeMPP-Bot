@@ -3,19 +3,13 @@ package bots.NewsBot;
 import bots.NewsBot.commands.*;
 import bots.config.MainModule;
 import bridgempp.bot.fancy.FancyAsyncBot;
-import bridgempp.bot.fancy.FancyBot;
 import bridgempp.bot.fancy.basecommands.Help;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Message;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:jaro.fietz@uniscon.de">Jaro Fietz</a>.

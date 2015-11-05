@@ -1,7 +1,6 @@
 package bridgempp.bot.wrapper;
 
-import io.netty.channel.ChannelFuture;
-
+import io.netty.channel.Channel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,7 +23,7 @@ public abstract class Bot {
 	public String name;
 	public String configFile;
 	public Properties properties;
-	protected ChannelFuture channelFuture;
+	protected Channel channel;
 
 	/**
 	 * Sets the Properties loaded from the Bot Configuration file

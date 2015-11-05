@@ -5,16 +5,12 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
-import org.apache.http.protocol.HTTP;
-
-import bridgempp.bot.wrapper.Message;
 import lombok.Data;
 
 @Data

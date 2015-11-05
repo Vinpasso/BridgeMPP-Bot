@@ -10,21 +10,15 @@ import bots.config.MainModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -39,8 +33,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import bridgempp.bot.messageformat.MessageFormat;
-import bridgempp.bot.wrapper.network.IncommingMessageHandler;
-import bridgempp.bot.wrapper.network.KeepAliveSender;
+import bridgempp.bot.wrapper.network.CommandTransceiver;
 import bridgempp.bot.wrapper.network.ProtoBuf;
 import bridgempp.util.Log;
 
@@ -129,29 +122,52 @@ public class BotWrapper {
 					}
 					Log.log(Level.INFO, "Saving Bot: " + bot.name);
 					bot.saveProperties();
-					bot.channelFuture.channel().close();
+					bot.channel.close();
 					Log.log(Level.INFO, "Saved Bot: " + bot.name);
 				}
 			}
 
 		}));
-
+		
+		Log.log(Level.INFO, "Waiting 60 seconds for Authentication to complete");
+		try
+		{
+			Thread.sleep(60000);
+		} catch (InterruptedException e)
+		{
+			Log.log(Level.INFO, "Interrupt while waiting for Authentication to complete", e);
+		}
+		Log.log(Level.INFO, "Checking for Status of Bot authentications");
+		Iterator<Bot> iterator = bots.iterator();
+		while(iterator.hasNext())
+		{
+			Bot bot = iterator.next();
+			if(bot.channel.pipeline().last() instanceof CommandTransceiver)
+			{
+				Log.log(Level.SEVERE, "Bot: " + bot.name + " did not autheticate within the specified Timeout, exiting");
+				shutdown();
+			}
+			else
+			{
+				Log.log(Level.INFO, "Bot: " + bot.name + " appears to be authenticated");
+			}
+		}
 	}
 
 	private static void initGuice() {
 		injector = Guice.createInjector(new MainModule());
 	}
 
-	public static void printMessage(Message message, Bot bot) {
-		if (bot.channelFuture == null) {
+	public static ChannelFuture printMessage(Message message, Bot bot) {
+		if (bot.channel == null) {
 			if (message.message.length() == 0) {
 				System.out.println("CONSOLE BOT: Empty Message");
 			}
 			System.out.println("CONSOLE BOT: " + message.toComplexString());
-			return;
+			return null;
 		}
 		if (message.message.length() == 0) {
-			return;
+			return null;
 		}
 		try {
 			message.validate();
@@ -164,12 +180,13 @@ public class BotWrapper {
 				.setMessage(message.getMessage())
 				.setSender(message.getSender()).setTarget(message.getTarget())
 				.setGroup(message.group).build();
-		bot.channelFuture.channel().writeAndFlush(protoMessage);
+		ChannelFuture future = bot.channel.writeAndFlush(protoMessage);
 		Log.log(Level.INFO, "Outbound: " + message.toComplexString());
+		return future;
 	}
 
-	public static void printCommand(String command, Bot bot) {
-		printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
+	public static ChannelFuture printCommand(String command, Bot bot) {
+		return printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
 	}
 
 	private static void botInitialize(File botConfig)
@@ -205,6 +222,24 @@ public class BotWrapper {
 						Log.log(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
 						fail();
 			}
+			String serverKey = botProperties.getProperty("serverKey");
+			if (serverKey == null) {
+				writeDefaultConfig(botProperties);
+				throw new UnsupportedOperationException(
+						"Server Key is null, cannot execute BridgeMPP server commands");
+			}
+			String botAlias = botProperties.getProperty("botname");
+			if (botAlias != null) {
+				printCommand("!botcreatealias \"" + botAlias + "\"", bot);
+			}
+			bot.name = botAlias;
+			String[] groups = botProperties.getProperty("groups").split("; ");
+			if(groups.length == 0)
+			{
+				throw new UnsupportedOperationException("No Groups declared. Please specify at least one Group to join");
+			}
+			
+			
 			ChannelFuture channelFuture = bootstrap
 					.connect(new InetSocketAddress(serverAddress, portNumber));
 //			byte[] protocol = new byte[1];
@@ -212,18 +247,6 @@ public class BotWrapper {
 //			channelFuture.await();
 //			channelFuture.channel().writeAndFlush(
 //					Unpooled.wrappedBuffer(protocol));
-			ChannelPipeline pipeline = channelFuture.channel().pipeline();
-			pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60,
-					120));
-			pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-			pipeline.addLast("protobufDecoder", new ProtobufDecoder(
-					ProtoBuf.Message.getDefaultInstance()));
-			pipeline.addLast("frameEncoder",
-					new ProtobufVarint32LengthFieldPrepender());
-			pipeline.addLast("protobufEncoder", new ProtobufEncoder());
-			pipeline.addLast("keepAliveSender", new KeepAliveSender());
-			pipeline.addLast(new IncommingMessageHandler(bot));
-			bot.channelFuture = channelFuture;
 			
 			channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
 
@@ -235,29 +258,15 @@ public class BotWrapper {
 						Log.log(Level.WARNING, "Connection could not be Established");
 						BotWrapper.shutdown();
 					}
+					else
+					{
+						bot.channel = channelFuture.channel();
+						new CommandTransceiver(bot.channel, bot.name, serverKey, groups, bot).initializeCommands();
+					}
 				}
 			});
 
-			String serverKey = botProperties.getProperty("serverKey");
-			if (serverKey == null) {
-				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Server Key is null, cannot execute BridgeMPP server commands");
-			}
-			printCommand("!botusekey " + serverKey, bot);
-			String botAlias = botProperties.getProperty("botname");
-			if (botAlias != null) {
-				printCommand("!botcreatealias \"" + botAlias + "\"", bot);
-			}
-			bot.name = botAlias;
-			String[] groups = botProperties.getProperty("groups").split("; ");
-			for (int i = 0; i < groups.length; i++) {
-				printCommand("!botsubscribegroup \"" + groups[i] + "\"", bot);
-			}
-			System.out.println("Sent request to join " + groups.length
-					+ " groups");
 			bots.add(bot);
-
 		} catch (Exception ex) {
 			Log.log(Level.SEVERE, null, ex);
 		}

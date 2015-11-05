@@ -3,8 +3,6 @@ package bots.MemeBot;
 import bots.MemeBot.dto.Meme;
 import bots.MemeBot.service.MemeService;
 import bots.config.MainModule;
-import bridgempp.bot.fancy.FancyAsyncBot;
-import bridgempp.bot.fancy.basecommands.Help;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;

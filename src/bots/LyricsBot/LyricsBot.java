@@ -3,8 +3,6 @@ package bots.LyricsBot;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Random;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 
