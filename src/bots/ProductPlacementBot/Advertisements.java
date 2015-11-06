@@ -22,15 +22,11 @@ public class Advertisements {
 					"europa"
 			}),
 			
-			//Bernie
-			new Advertisement(null, "Unwitzige Witze gesucht? Bernie hat auch welche für dich auf Lager!",
+			//witze
+			new Advertisement(null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWolltest du schon immer Leute nerven? Dann schalte jetzt Werbung ueber Product Placement Bot mit vielen Leerzeilen davor!\nProduct Placement Bot: Wenig Publikum aber viel Werbung.",
 					new String[] {
-					"alex",
-					"gaida",
 					"thole",
-					"bernie",
-					"witz",
-					"lager"
+					"werbung"
 			}),
 			
 			//unfall
@@ -72,20 +68,8 @@ public class Advertisements {
 					"sleep",
 					"schlafen"
 			}),
-			//Witzige Sachen
-			new Advertisement(null, "Lust auf Rindfleisch? Bernie hat auch Beef mit dir!",
-					new String[]{
-						"bernie",
-						"bernhard",
-						"gaida",
-						"beef",
-						"rindfleisch"
-			}),
-			new Advertisement(null, "Lust auf Turbinengeräusche? Bernie stellt seinen Rechner auch gerne bei dir auf!",
-				new String[]{
-						"bernie",
-						"bernhard",
-						"gaida",
+			new Advertisement(null, "Lust auf Turbinengeräusche? Bernie stellt seinen Rechner auch gerne bei dir auf! (Mit der Hoffnung, dass Alex irgendwann versehentlich hineingeraet)",
+				new String[] {
 						"flugzeug",
 						"turbine",
 						"fliegen"
