@@ -5,10 +5,12 @@ import java.lang.reflect.Parameter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
+import bridgempp.util.Log;
 
 public class MetaWrapper extends Bot
 {
@@ -60,9 +62,12 @@ public class MetaWrapper extends Bot
 					methods.put(getTrigger(methodAnnotation, method), method);
 				}
 			}
-			if (metaClass.getMethod("initializeBot", Bot.class) != null)
+			try
 			{
-				metaClass.getMethod("initializeBot", Bot.class).invoke(metaInstance, this);
+			metaClass.getMethod("initializeBot", Bot.class).invoke(metaInstance, this);
+			} catch (NoSuchMethodException e)
+			{
+				Log.log(Level.INFO, "Meta Wrapper: Bot does not have an initialize Method");
 			}
 		} catch (Exception e)
 		{
