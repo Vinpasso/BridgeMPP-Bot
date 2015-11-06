@@ -2,6 +2,7 @@ package bots.ProductPlacementBot;
 
 /**
  * This class adds all advertisements to the Product Placement Bot
+ * 
  * @author Bernie
  *
  */
@@ -21,20 +22,21 @@ public class Advertisements {
 					"europa"
 			}),
 			
-			//Alex
-			new Advertisement(null, "Nutten gesucht! Du bist sexgeil, schamlos und auf der Suche nach dem grossen Geld, dann bewirb dich jetzt als Prostituierte bei Zuhaelter Alex.",
+			//witze
+			new Advertisement(null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWolltest du schon immer Leute nerven? Dann schalte jetzt Werbung ueber Product Placement Bot mit vielen Leerzeilen davor!\nProduct Placement Bot: Wenig Publikum aber viel Werbung.",
 					new String[] {
-					"alex",
-					"thole"
+					"thole",
+					"werbung"
 			}),
 			
 			//unfall
-			new Advertisement(null, "Unfaelle passieren alltaeglich. Jaro sorgt dafuer, dass es auch so bleibt. Jetzt anfragen und der naechste Unfall passiert schon morgen.",
+			new Advertisement(null, "Sicherheitslücken passieren alltaeglich. Jaro sorgt dafuer, dass sie gefunden werden. Jetzt anfragen und der naechste Exploit kommt schon morgen.",
 					new String[] {
-					"unfall",
-					"kill",
-					"dead",
-					"professional"					
+					"sicherheit",
+					"bug",
+					"jaro",
+					"professional",
+					"exploit"
 			}),
 			
 			//pesto
@@ -65,9 +67,49 @@ public class Advertisements {
 					"bed",
 					"sleep",
 					"schlafen"
-			})
+			}),
+			new Advertisement(null, "Lust auf Turbinengeräusche? Bernie stellt seinen Rechner auch gerne bei dir auf! (Mit der Hoffnung, dass Alex irgendwann versehentlich hineingeraet)",
+				new String[] {
+						"flugzeug",
+						"turbine",
+						"fliegen"
+			}),
+			new Advertisement(null, "Keine Ahnung was ein Callstack ist? Prof. Brüggeman-Klein erklärt es dir!",
+				new String[]{
+						"callstack",
+						"brüggeman",
+						"klein",
+						"java",
+						"programmieren",
+						"hacken"
+			}),
+			new Advertisement(null, "Lust auf Papageien, die ohne Unterlass plappern? tippe nun ?parrot buy und du bekommst deinen Papageien für umsonst!",
+				new String[]{
+						"papagei",
+						"plappern",
+						"spam",
+						"parrot"
+			}),
+			new Advertisement(null, "Süchtig nach Klebstoff und du kommst davon nicht mehr weg? Lösungsmittel in Familiengröße jetzt reduziert!",
+				new String[]{
+						"klebstoff",
+						"lösungsmittel",
+						"sucht",
+			}),
+			new Advertisement(null, "Probleme beim Einschlafen? Mathevorlesungen an der Universität helfen, sagen Studenten",
+				new String[]{
+						"einschlafen",
+						"mathe",
+			}),
+			new Advertisement(null, "Haben sie ein unendliches Programm? Fragen sie Christian und er wird es zum terminieren bringen!",
+				new String[]{
+						"unendlich",
+						"programm",
+						"christian",
+						"terminieren"
+			}),
 	};
-	
+
 	public Advertisement[] getAdvertisements() {
 		return adverts;
 	}
