@@ -12,3 +12,5 @@ nbproject
 build.xml
 manifest.mf
 config.txt
+/bridgedb-bots/
+derby.log

@@ -200,6 +200,9 @@ public class MetaWrapper extends Bot
 				case "double":
 					parameterObjects[i] = Double.parseDouble(splittedString[i]);
 					break;
+				case "float":
+					parameterObjects[i] = Float.parseFloat(splittedString[i]);
+					break;
 				default:
 					parameterObjects[i] = splittedString[i];
 					break;

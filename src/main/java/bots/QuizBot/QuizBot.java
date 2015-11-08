@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import bridgempp.bot.database.PersistenceManager;
 import bridgempp.bot.metawrapper.MetaClass;
 import bridgempp.bot.metawrapper.MetaMethod;
 import bridgempp.bot.wrapper.Message;
@@ -14,34 +15,49 @@ import bridgempp.bot.wrapper.Message;
 @MetaClass(triggerPrefix="?quiz ", helpTopic="Quiz Bot. Asks you Questions. Gives you Money.")
 public class QuizBot
 {
-	private HashMap<String, Quiz> quizes = new HashMap<String, Quiz>();
 	private HashMap<String, Integer> points;
 	private Quiz activeQuiz;
 	private QuizQuestion activeQuestion;
 	private int questionNumber;
 	private int maxQuestionNumber;
 	
-	@MetaMethod(trigger="import ",helpTopic ="Import a Quiz in CSV Format. Requires Name and Quiz Table Height. First Row are Headers")
-	public String importQuiz(String name, int height, String headerString)
+	@MetaMethod(trigger="new ",helpTopic ="Create a new Quiz with name. Requires the Quiz Name")
+	public String importQuiz(String name)
 	{
 		Quiz quiz = new Quiz(name);
 
-		String[] headers = headerString.split(";");
-		if(headers.length < 2)
-		{
-			return "Not enough Arguments, a Quiz Table row of headers must contain at least 2 columns";
-		}
-		quiz.setDataSize(headers.length, height);
-		quiz.setHeaders(headers);
-
-		quizes.put(quiz.getName(), quiz);
-		return "Quiz successfully imported";
+		PersistenceManager.getForCurrentThread().updateState(quiz);
+		return "Quiz successfully created";
 	}
 	
-	@MetaMethod(trigger="data ", helpTopic="Import a row of Data in CSV. Requires Name, Row, Values")
-	public String rowData(String name, int row, String data)
+	@MetaMethod(trigger="remove ",helpTopic ="Remove a new Quiz with name. Requires the Quiz Name")
+	public String removeQuiz(String name)
 	{
-		Quiz quiz = quizes.get(name);
+		Quiz quiz = PersistenceManager.getForCurrentThread().getFromPrimaryKey(Quiz.class, name);
+		if(quiz == null)
+		{
+			return "Quiz not found";
+		}
+		PersistenceManager.getForCurrentThread().removeState(quiz);
+		return "Quiz successfully removed";
+	}
+	
+	@MetaMethod(trigger="header ", helpTopic="Import a header of Data in CSV. Requires Quiz Name, Header Name, isQuestion, isAnswer, Precision")
+	public String headerData(String name, String headerName, boolean isQuestion, boolean isAnswer, float precision)
+	{
+		Quiz quiz = PersistenceManager.getForCurrentThread().getFromPrimaryKey(Quiz.class, name);
+		if(quiz == null)
+		{
+			return "Quiz not found";
+		}
+		quiz.addHeader(headerName, isQuestion, isAnswer, precision);
+		return "Successfully imported Header";
+	}
+	
+	@MetaMethod(trigger="data ", helpTopic="Import a row of Data in CSV. Requires Name, Values")
+	public String rowData(String name, String data)
+	{
+		Quiz quiz = PersistenceManager.getForCurrentThread().getFromPrimaryKey(Quiz.class, name);
 		if(quiz == null)
 		{
 			return "Quiz not found";
@@ -51,14 +67,14 @@ public class QuizBot
 		{
 			return "Invalid number of Columns";
 		}
-		quiz.addData(columns, row);
+		quiz.addData(columns);
 		return "Successfully imported Row";
 	}
 	
 	@MetaMethod(trigger = "start ", helpTopic="Start a Quiz. Requires name and number of questions")
 	public String startQuiz(String quizName, int numberOfQuestions)
 	{
-		activeQuiz = quizes.get(quizName);
+		activeQuiz = PersistenceManager.getForCurrentThread().getFromPrimaryKey(Quiz.class, quizName);
 		points = new HashMap<String, Integer>();
 		if(activeQuiz == null)
 		{
@@ -91,7 +107,7 @@ public class QuizBot
 	}
 	
 	@MetaMethod(trigger="skip", helpTopic="Skip this stupid question")
-	public String skipQuestString()
+	public String skipQuestion()
 	{
 		return "Question skipped:\n" + activeQuestion.provideResolution() + "\n" + sendQuestion();
 	}
@@ -133,6 +149,5 @@ public class QuizBot
 		points = null;
 		return result;
 	}
-	
 	
 }
