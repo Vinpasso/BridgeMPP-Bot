@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import bridgempp.bot.database.PersistenceManager;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.network.CommandTransceiver;
 import bridgempp.bot.wrapper.network.ProtoBuf;
@@ -64,6 +65,7 @@ public class BotWrapper {
 					"No external build version supplied to BridgeMPP-Bot-Wrapper");
 		}
 		bots = new ArrayList<>();
+		PersistenceManager.loadFactory();
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);

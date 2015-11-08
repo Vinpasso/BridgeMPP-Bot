@@ -116,4 +116,9 @@ public class PersistenceManager
 			throw new InvalidParameterException("Attempted to access Persistence Manager from another Thread");
 		}
 	}
+
+	public static void loadFactory()
+	{
+		entityManagerFactory = Persistence.createEntityManagerFactory("bridgempp-bots");		
+	}
 }
