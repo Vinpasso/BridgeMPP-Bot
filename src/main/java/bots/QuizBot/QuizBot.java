@@ -115,7 +115,7 @@ public class QuizBot
 	private String sendQuestion()
 	{
 		questionNumber++;
-		if(questionNumber >= maxQuestionNumber)
+		if(questionNumber > maxQuestionNumber)
 		{
 			return sendQuizCompleted();
 		}
