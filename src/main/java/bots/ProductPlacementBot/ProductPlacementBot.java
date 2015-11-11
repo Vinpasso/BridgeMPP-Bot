@@ -16,6 +16,11 @@ public class ProductPlacementBot extends Bot {
 	int currentIndex;
 	AdvertisementSearcher advertSearcher;
 	
+	/**sender*/
+	private Sender sender = new Sender();
+	/**end sender*/
+	
+	
 	public void initializeBot() {
 		repeatTime = 30;
 		repeatTimeTags = 10;
@@ -28,10 +33,22 @@ public class ProductPlacementBot extends Bot {
 	}
 	
 	public void messageReceived (Message message) {
+		
+		/**sender*/
+		sender.add(message.getSender());
+		/**end sender*/
+		
 		String msg = message.getPlainTextMessage();
 		
 		//check for command
 		if (msg.toLowerCase().startsWith("?ppb ")) {
+			
+			/**sender */
+			if (msg.substring(5).equals("getSender")) {
+				sendMessage(new Message(message.getGroup(), sender.toString(), MessageFormat.PLAIN_TEXT));
+			}
+			/**end sender */
+			
 			if (new PasswordChecker(msg.substring(5)).checkPassword()) {
 				int newRepeatTime = -2;
 				int i = 1;
