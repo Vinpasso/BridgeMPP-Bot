@@ -49,7 +49,7 @@ public class ProductPlacementBot extends Bot {
 			}
 			/**end sender */
 			
-			if (new PasswordChecker(msg.substring(5)).checkPassword()) {
+			else if (new PasswordChecker(msg.substring(5)).checkPassword()) {
 				int newRepeatTime = -2;
 				int i = 1;
 				while (newRepeatTime == -2 && msg.length() - i >= 12) {
