@@ -128,6 +128,13 @@ public class CustomParrotBot {
 		saveList();
 		return "Parrot " + name + " has been ungagged.";
 	}
+	
+	@MetaMethod(trigger = "?parrot custom print ", helpTopic = "Print a custom Parrot's fields. Requires a Parrot Name")
+	public String printCustomParrot(
+			@MetaParameter(helpTopic = "The name of the Parrot to Print") String name) {
+		CustomParrot parrot = getParrot(name);
+		return "Parrot " + name + " has been sent to the Printing Press.\n" + parrot.toString();
+	}
 
 	private CustomParrot getParrot(String name) {
 		CustomParrot customParrot = table.get(name.toLowerCase());
