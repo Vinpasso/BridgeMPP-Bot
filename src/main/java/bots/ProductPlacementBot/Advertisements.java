@@ -108,14 +108,14 @@ public class Advertisements {
 						"christian",
 						"terminieren"
 			}),
-			new Advertisement(null, "Wissen sie es gute Dinge zu schätzen? Bewerben sie sich jetzt als Immobilienhändler!"),
+			new Advertisement(null, "Wissen sie es gute Dinge zu schätzen? Bewerben sie sich jetzt als Immobilienhändler!",
 				new String[]{
 						"haus",
 						"schätzen",
 						"bewerben",
 						"immobilie",
 						"wert"
-				}
+				}),
 	};
 
 	public Advertisement[] getAdvertisements() {
