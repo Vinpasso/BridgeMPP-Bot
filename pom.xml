@@ -138,5 +138,12 @@
 			<artifactId>derby</artifactId>
 			<version>10.11.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>ocaml-scripting</groupId>
+			<artifactId>org.ocamlscripting</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/liblocal/ocamlrun-scripting.jar</systemPath>
+		</dependency>
 	</dependencies>
 </project>

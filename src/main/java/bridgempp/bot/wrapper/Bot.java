@@ -94,4 +94,13 @@ public abstract class Bot {
 	public void sendMessage(Message message) {
 		BotWrapper.printMessage(message, this);
 	}
+	
+	/**
+	 * Receive Messages in a synchronized Manner
+	 * @param message
+	 */
+	public synchronized void synchronizedMessageReceived(Message message)
+	{
+		messageReceived(message);
+	}
 }

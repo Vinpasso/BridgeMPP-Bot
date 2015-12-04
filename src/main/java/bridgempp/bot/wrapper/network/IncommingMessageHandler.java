@@ -45,21 +45,28 @@ public class IncommingMessageHandler extends
 					+ bot.name + " running on BridgeMPP-Bot-Wrapper Build: #"
 					+ BotWrapper.build, MessageFormat.PLAIN_TEXT));
 		}
-		if(message.getMessage().startsWith("?botwrapper status"))
-		{
-			bot.sendMessage(new Message(message.getGroup(), "This is Status Check triggered by "
-					+ bot.name + "\nResult:\n"
-					+ BotWrapper.statusCheck(), MessageFormat.PLAIN_TEXT));
+		if (message.getMessage().startsWith("?botwrapper status")) {
+			bot.sendMessage(new Message(message.getGroup(),
+					"This is Status Check triggered by " + bot.name
+							+ "\nResult:\n" + BotWrapper.statusCheck(),
+					MessageFormat.PLAIN_TEXT));
 		}
-		try {
-			bot.messageReceived(message);
-		} catch (Exception e) {
-			BotWrapper.printMessage(
-					new Message(message.getGroup(), "A Bot has crashed!\n"
-							+ e.toString() + "\n"
-							+ e.getStackTrace()[0].toString(),
-							MessageFormat.PLAIN_TEXT), bot);
-		}
+		Thread botThread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					bot.synchronizedMessageReceived(message);
+				} catch (Exception e) {
+					BotWrapper.printMessage(
+							new Message(message.getGroup(),
+									"A Bot has crashed!\n" + e.toString()
+											+ "\n"
+											+ e.getStackTrace()[0].toString(),
+									MessageFormat.PLAIN_TEXT), bot);
+				}
+			}
+		});
+		botThread.setName("Processor: " + bot.name);
+		botThread.start();
 	}
 
 	@Override
