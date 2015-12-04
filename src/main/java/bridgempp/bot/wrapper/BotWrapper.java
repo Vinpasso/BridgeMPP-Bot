@@ -41,14 +41,15 @@ import bridgempp.util.Log;
 /**
  *
  */
-public class BotWrapper {
+public class BotWrapper
+{
 
 	private static Bootstrap bootstrap;
 
 	public static String build;
 
 	private static Injector injector;
-	
+
 	private static volatile boolean isShuttingDown = false;
 	private static ArrayList<Bot> bots;
 	private static File botsDir;
@@ -57,14 +58,17 @@ public class BotWrapper {
 	 * @param args
 	 *            the command line arguments
 	 */
-	public static void main(String[] args) {
-		if (args.length > 0) {
+	public static void main(String[] args)
+	{
+		if (args.length > 0)
+		{
 			build = args[0];
-		} else {
-			Log.log(Level.WARNING,
-					"No external build version supplied to BridgeMPP-Bot-Wrapper");
+		} else
+		{
+			Log.log(Level.WARNING, "No external build version supplied to BridgeMPP-Bot-Wrapper");
 		}
 		bots = new ArrayList<>();
+		Schedule.startExecutorService();
 		PersistenceManager.loadFactory();
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
@@ -73,7 +77,8 @@ public class BotWrapper {
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 
 			@Override
-			protected void initChannel(Channel channel) throws Exception {
+			protected void initChannel(Channel channel) throws Exception
+			{
 
 			}
 		});
@@ -81,56 +86,72 @@ public class BotWrapper {
 		initGuice();
 
 		botsDir = new File("bots/");
-		if (!botsDir.exists()) {
+		if (!botsDir.exists())
+		{
 			botsDir.mkdir();
 			Properties exampleBotProperties = new Properties();
-			try {
+			try
+			{
 				writeDefaultConfig(exampleBotProperties);
-				exampleBotProperties.store(new FileOutputStream(
-						"bots/exampleBot.config"), "Bot Wrapper Configuration");
-			} catch (IOException e) {
+				exampleBotProperties.store(new FileOutputStream("bots/exampleBot.config"), "Bot Wrapper Configuration");
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 			System.out.println("Created Example Config. Please Edit");
 			return;
 		}
-		for (File botConfig : botsDir.listFiles()) {
-			try {
+		for (File botConfig : botsDir.listFiles())
+		{
+			try
+			{
 				botInitialize(botConfig);
-			} catch (Exception e) {
-				Log.log(Level.SEVERE, "Bot Initialize failed in Config: "
-						+ botConfig.toString(), e);
+			} catch (Exception e)
+			{
+				Log.log(Level.SEVERE, "Bot Initialize failed in Config: " + botConfig.toString(), e);
 			}
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
 			@Override
-			public void run() {
-				loopGroup.shutdownGracefully();
-				Iterator<Bot> botIterator = bots.iterator();
-				while (botIterator.hasNext())
+			public void run()
+			{
+				try
 				{
-					Bot bot = botIterator.next();
-					Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
-					isShuttingDown = true;
-					try
+					Log.log(Level.INFO, "Received Shutdown Signal");
+					Schedule.stopExecutorService();
+					Log.log(Level.INFO, "Shutting down Network");
+					loopGroup.shutdownGracefully();
+					Log.log(Level.INFO, "Shutting down Bots");
+					Iterator<Bot> botIterator = bots.iterator();
+					while (botIterator.hasNext())
 					{
-						bot.deinitializeBot();
-						Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
+						Bot bot = botIterator.next();
+						Log.log(Level.INFO, "Deinitializing Bot: " + bot.name);
+						isShuttingDown = true;
+						try
+						{
+							bot.deinitializeBot();
+							Log.log(Level.INFO, "Deinitialized Bot: " + bot.name);
 
-					} catch (Exception e)
-					{
-						Log.log(Level.SEVERE, "Failed to deinitialize Bot! Data Loss possible");
+						} catch (Exception e)
+						{
+							Log.log(Level.SEVERE, "Failed to deinitialize Bot! Data Loss possible");
+						}
+						Log.log(Level.INFO, "Saving Bot: " + bot.name);
+						bot.saveProperties();
+						bot.channel.close();
+						Log.log(Level.INFO, "Saved Bot: " + bot.name);
 					}
-					Log.log(Level.INFO, "Saving Bot: " + bot.name);
-					bot.saveProperties();
-					bot.channel.close();
-					Log.log(Level.INFO, "Saved Bot: " + bot.name);
+				} catch (Exception e)
+				{
+					Log.log(Level.SEVERE, "Exception during Shutdown Routine: ", e);
 				}
+				Log.log(Level.INFO, "Shutdown successful. Exiting...");
 			}
 
 		}));
-		
+
 		Log.log(Level.INFO, "Waiting 60 seconds for Authentication to complete");
 		try
 		{
@@ -141,126 +162,132 @@ public class BotWrapper {
 		}
 		Log.log(Level.INFO, "Checking for Status of Bot authentications");
 		Iterator<Bot> iterator = bots.iterator();
-		while(iterator.hasNext())
+		while (iterator.hasNext())
 		{
 			Bot bot = iterator.next();
-			if(bot.channel.pipeline().last() instanceof CommandTransceiver)
+			if (bot.channel.pipeline().last() instanceof CommandTransceiver)
 			{
 				Log.log(Level.SEVERE, "Bot: " + bot.name + " did not autheticate within the specified Timeout, exiting");
 				shutdown();
-			}
-			else
+			} else
 			{
 				Log.log(Level.INFO, "Bot: " + bot.name + " appears to be authenticated");
 			}
 		}
 	}
 
-	private static void initGuice() {
+	private static void initGuice()
+	{
 		injector = Guice.createInjector(new MainModule());
 	}
 
-	public static ChannelFuture printMessage(Message message, Bot bot) {
-		if (bot.channel == null) {
-			if (message.message.length() == 0) {
+	public static ChannelFuture printMessage(Message message, Bot bot)
+	{
+		if (bot.channel == null)
+		{
+			if (message.message.length() == 0)
+			{
 				System.out.println("CONSOLE BOT: Empty Message");
 			}
 			System.out.println("CONSOLE BOT: " + message.toComplexString());
 			return null;
 		}
-		if (message.message.length() == 0) {
+		if (message.message.length() == 0)
+		{
 			return null;
 		}
-		try {
+		try
+		{
 			message.validate();
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			throw new InvalidMessageFormatException(e);
 		}
 
-		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder()
-				.setMessageFormat(message.getMessageFormat().getName())
-				.setMessage(message.getMessage())
-				.setSender(message.getSender()).setTarget(message.getTarget())
-				.setGroup(message.group).build();
+		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat().getName()).setMessage(message.getMessage()).setSender(message.getSender())
+				.setTarget(message.getTarget()).setGroup(message.group).build();
 		ChannelFuture future = bot.channel.writeAndFlush(protoMessage);
 		Log.log(Level.INFO, "Outbound: " + message.toComplexString());
 		return future;
 	}
 
-	public static ChannelFuture printCommand(String command, Bot bot) {
+	public static ChannelFuture printCommand(String command, Bot bot)
+	{
 		return printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
 	}
 
-	private static void botInitialize(File botConfig)
-			throws UnsupportedOperationException {
-		try {
+	private static void botInitialize(File botConfig) throws UnsupportedOperationException
+	{
+		try
+		{
 			Properties botProperties = new Properties();
-			if (!botConfig.exists()) {
+			if (!botConfig.exists())
+			{
 				botConfig.createNewFile();
 			}
 			botProperties.load(new FileInputStream(botConfig));
 			String botClass = botProperties.getProperty("botClass");
-			if (botClass == null) {
+			if (botClass == null)
+			{
 				writeDefaultConfig(botProperties);
 				Log.log(Level.SEVERE, "Bot Class is null, cannot execute BridgeMPP server commands in file: " + botConfig.getName());
 				fail();
 			}
 			Class<?> clazz = Class.forName(botClass);
-            if (!Bot.class.isAssignableFrom(clazz)) {
-                Log.log(Level.SEVERE, "Bot class " + clazz.toString() + " not instance of Bot");
-                fail();
-            }
-            @SuppressWarnings("unchecked")
-            Bot bot = injector.getInstance((Class<Bot>)clazz);
+			if (!Bot.class.isAssignableFrom(clazz))
+			{
+				Log.log(Level.SEVERE, "Bot class " + clazz.toString() + " not instance of Bot");
+				fail();
+			}
+			@SuppressWarnings("unchecked")
+			Bot bot = injector.getInstance((Class<Bot>) clazz);
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
 			bot.initializeBot();
 
 			String serverAddress = botProperties.getProperty("serverAddress");
-			int portNumber = Integer.parseInt(botProperties
-					.getProperty("serverPort"));
-			if (serverAddress == null) {
+			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
+			if (serverAddress == null)
+			{
 				writeDefaultConfig(botProperties);
-						Log.log(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
-						fail();
+				Log.log(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
+				fail();
 			}
 			String serverKey = botProperties.getProperty("serverKey");
-			if (serverKey == null) {
+			if (serverKey == null)
+			{
 				writeDefaultConfig(botProperties);
-				throw new UnsupportedOperationException(
-						"Server Key is null, cannot execute BridgeMPP server commands");
+				throw new UnsupportedOperationException("Server Key is null, cannot execute BridgeMPP server commands");
 			}
 			String botAlias = botProperties.getProperty("botname");
-			if (botAlias != null) {
+			if (botAlias != null)
+			{
 				printCommand("!botcreatealias \"" + botAlias + "\"", bot);
 			}
 			bot.name = botAlias;
 			String[] groups = botProperties.getProperty("groups").split("; ");
-			if(groups.length == 0)
+			if (groups.length == 0)
 			{
 				throw new UnsupportedOperationException("No Groups declared. Please specify at least one Group to join");
 			}
-			
-			
-			ChannelFuture channelFuture = bootstrap
-					.connect(new InetSocketAddress(serverAddress, portNumber));
-//			byte[] protocol = new byte[1];
-//			protocol[0] = 0x32;
-//			channelFuture.await();
-//			channelFuture.channel().writeAndFlush(
-//					Unpooled.wrappedBuffer(protocol));
-			
+
+			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
+			// byte[] protocol = new byte[1];
+			// protocol[0] = 0x32;
+			// channelFuture.await();
+			// channelFuture.channel().writeAndFlush(
+			// Unpooled.wrappedBuffer(protocol));
+
 			channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
 
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception
 				{
-					if(!future.isSuccess())
+					if (!future.isSuccess())
 					{
 						Log.log(Level.WARNING, "Connection could not be Established");
 						BotWrapper.shutdown();
-					}
-					else
+					} else
 					{
 						bot.channel = channelFuture.channel();
 						new CommandTransceiver(bot.channel, bot.name, serverKey, groups, bot).initializeCommands();
@@ -269,32 +296,34 @@ public class BotWrapper {
 			});
 
 			bots.add(bot);
-		} catch (Exception ex) {
+		} catch (Exception ex)
+		{
 			Log.log(Level.SEVERE, null, ex);
 		}
 	}
 
-
-
 	private static void systemExit(int status)
 	{
-		if(isShuttingDown)
+		if (isShuttingDown)
 		{
 			return;
 		}
 		isShuttingDown = true;
 		System.exit(status);
 	}
-	
-	public static void shutdown() {
+
+	public static void shutdown()
+	{
 		systemExit(0);
 	}
-	private static void fail() {
+
+	private static void fail()
+	{
 		systemExit(1);
 	}
 
-	private static void writeDefaultConfig(Properties botProperties)
-			throws IOException {
+	private static void writeDefaultConfig(Properties botProperties) throws IOException
+	{
 		botProperties.put("serverKey", "<insertserveraccesskey>");
 		botProperties.put("serverAddress", "<insertserveraddress>");
 		botProperties.put("serverPort", "<insertserverport>");
@@ -306,10 +335,8 @@ public class BotWrapper {
 
 	public static String statusCheck()
 	{
-		return "There are " + bots.size() + " Bots loaded in Memory\n" + 
-				"There are " + botsDir.listFiles().length + " config files present\n" +
-				"The current Memory usage is " + (Runtime.getRuntime().totalMemory() / 1000000L) + "/" + (Runtime.getRuntime().maxMemory() / 1000000L) + "MB\n"+
-				"There are " + (Runtime.getRuntime().freeMemory() / 1000000L) + " MB of free Memory\n" + 
-				"There are " + Thread.activeCount() + " threads running in the BotWrapper";
+		return "There are " + bots.size() + " Bots loaded in Memory\n" + "There are " + botsDir.listFiles().length + " config files present\n" + "The current Memory usage is "
+				+ (Runtime.getRuntime().totalMemory() / 1000000L) + "/" + (Runtime.getRuntime().maxMemory() / 1000000L) + "MB\n" + "There are " + (Runtime.getRuntime().freeMemory() / 1000000L)
+				+ " MB of free Memory\n" + "There are " + Thread.activeCount() + " threads running in the BotWrapper";
 	}
 }
