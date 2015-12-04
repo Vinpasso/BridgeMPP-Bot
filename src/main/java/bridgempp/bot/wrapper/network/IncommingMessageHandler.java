@@ -66,6 +66,7 @@ public class IncommingMessageHandler extends
 			}
 		});
 		botThread.setName("Processor: " + bot.name);
+		botThread.setPriority(Thread.MIN_PRIORITY);
 		botThread.start();
 	}
 
