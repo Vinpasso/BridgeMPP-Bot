@@ -51,7 +51,7 @@ public class CalendarBot extends Bot {
 		
 		runCmd = new RunCommand(calendars, firstYear, filepath);
 		reminder = new Reminder(calendars.toArray(new Calendar[calendars.size()]), firstYear, alertson);
-		reminder.start();
+		reminder.scheduleNextReminder();
 	}
 	
 	@Override
@@ -138,7 +138,7 @@ public class CalendarBot extends Bot {
 				printMessage("Error: Could not save calendars! Changes may be gone");
 			}
 		}
-		reminder.interrupt();
+//		reminder.interrupt();
 		initializeBot();
 	}
 	

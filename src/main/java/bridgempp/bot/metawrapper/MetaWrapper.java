@@ -47,6 +47,7 @@ public class MetaWrapper extends Bot
 			classAnnotation = metaClass.getAnnotation(MetaClass.class);
 			metaMethods = metaClass.getDeclaredMethods();
 			methods = new Hashtable<>();
+			methods.put(getManTrigger(), getClass().getMethod("getHelpTopicForClass"));
 			for (Method method : metaMethods)
 			{
 				if (classAnnotation == null)
@@ -74,6 +75,8 @@ public class MetaWrapper extends Bot
 			e.printStackTrace();
 		}
 	}
+
+
 
 	private String getTrigger(MetaMethod methodAnnotation, Method method)
 	{
@@ -112,7 +115,7 @@ public class MetaWrapper extends Bot
 		Object[] arguments = parseParametersCommandLineStyle(parameters, parameterString, message);
 		if (arguments == null)
 		{
-			sendMessage(new Message(message.getGroup(), getHelpTopic(), MessageFormat.PLAIN_TEXT));
+			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + "to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
 			return;
 		}
 		try
@@ -122,18 +125,26 @@ public class MetaWrapper extends Bot
 			{
 				sendMessage(new Message(message.getGroup(), returnObject.toString(), MessageFormat.PLAIN_TEXT));
 			}
-		} catch (MetaNotifyException e)
-		{
-			sendMessage(new Message(message.getGroup(), e.getMessage(), MessageFormat.PLAIN_TEXT));
 		} catch (Exception e)
 		{
-			sendMessage(new Message(message.getGroup(), "A Meta Error has ocurred: " + e.toString(),
-					MessageFormat.PLAIN_TEXT));
-			e.printStackTrace();
+			if(e.getCause() != null && e.getCause() instanceof MetaNotifyException)
+			{
+				sendMessage(new Message(message.getGroup(), e.getCause().getMessage(), MessageFormat.PLAIN_TEXT));
+			}
+			else
+			{
+				sendMessage(new Message(message.getGroup(), "A Meta Error has ocurred: " + e.toString(), MessageFormat.PLAIN_TEXT));
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private String getHelpTopic()
+	private String getManTrigger()
+	{
+		return "?man " + metaClass.getSimpleName();
+	}
+	
+	public String getHelpTopicForClass()
 	{
 		String helpTopic = "Man Page for " + metaClass.getSimpleName() + " at " + metaClass.getName() + "\n";
 		if (metaClass.getAnnotation(MetaClass.class) != null)
@@ -145,24 +156,30 @@ public class MetaWrapper extends Bot
 		{
 			Method method = elements.nextElement();
 
-			helpTopic += "Method: " + method.getName() + " Usage: "
-					+ getTrigger(method.getAnnotation(MetaMethod.class), method);
-			for (Parameter parameter : method.getParameters())
+			helpTopic += getHelpTopicForMethod(method);
+		}
+		return helpTopic;
+	}
+
+	protected String getHelpTopicForMethod(Method method)
+	{
+		String helpTopic = "Method: " + method.getName() + " Usage: "
+				+ getTrigger(method.getAnnotation(MetaMethod.class), method);
+		for (Parameter parameter : method.getParameters())
+		{
+			helpTopic += "<" + parameter.getType() + " " + parameter.getName() + "> ";
+		}
+		helpTopic += "\n";
+		if (method.getAnnotation(MetaMethod.class) != null && !method.getAnnotation(MetaMethod.class).equals(""))
+		{
+			helpTopic += method.getAnnotation(MetaMethod.class).helpTopic() + "\n";
+		}
+		for (Parameter parameter : method.getParameters())
+		{
+			if (parameter.getAnnotation(MetaParameter.class) != null)
 			{
-				helpTopic += "<" + parameter.getType() + " " + parameter.getName() + "> ";
-			}
-			helpTopic += "\n";
-			if (method.getAnnotation(MetaMethod.class) != null && !method.getAnnotation(MetaMethod.class).equals(""))
-			{
-				helpTopic += method.getAnnotation(MetaMethod.class).helpTopic() + "\n";
-			}
-			for (Parameter parameter : method.getParameters())
-			{
-				if (parameter.getAnnotation(MetaParameter.class) != null)
-				{
-					helpTopic += "<" + parameter.getType() + " " + parameter.getName() + ">: "
-							+ parameter.getAnnotation(MetaParameter.class).helpTopic() + "\n";
-				}
+				helpTopic += "<" + parameter.getType() + " " + parameter.getName() + ">: "
+						+ parameter.getAnnotation(MetaParameter.class).helpTopic() + "\n";
 			}
 		}
 		return helpTopic;
@@ -180,33 +197,44 @@ public class MetaWrapper extends Bot
 		}
 		String[] splittedString = splitCommandLine(message);
 		Object[] parameterObjects = new Object[parameters.length];
-		if (splittedString.length != parameters.length)
+		int splittedProgress = 0;
+		for (int i = 0; i < parameterObjects.length; i++)
 		{
-			return null;
-		}
-		for (int i = 0; i < splittedString.length; i++)
-		{
+			if(parameters[i].getType().equals(Message.class))
+			{
+				parameterObjects[i] = bridgemppMessage;
+				continue;
+			}
+			if(splittedProgress >= splittedString.length)
+			{
+				return null;
+			}
 			switch (parameters[i].getType().getName())
 			{
 				case "java.lang.String":
-					parameterObjects[i] = splittedString[i];
+					parameterObjects[i] = splittedString[splittedProgress];
 					break;
 				case "boolean":
-					parameterObjects[i] = Boolean.parseBoolean(splittedString[i]);
+					parameterObjects[i] = Boolean.parseBoolean(splittedString[splittedProgress]);
 					break;
 				case "int":
-					parameterObjects[i] = Integer.parseInt(splittedString[i]);
+					parameterObjects[i] = Integer.parseInt(splittedString[splittedProgress]);
 					break;
 				case "double":
-					parameterObjects[i] = Double.parseDouble(splittedString[i]);
+					parameterObjects[i] = Double.parseDouble(splittedString[splittedProgress]);
 					break;
 				case "float":
-					parameterObjects[i] = Float.parseFloat(splittedString[i]);
+					parameterObjects[i] = Float.parseFloat(splittedString[splittedProgress]);
 					break;
 				default:
-					parameterObjects[i] = splittedString[i];
+					parameterObjects[i] = splittedString[splittedProgress];
 					break;
 			}
+			splittedProgress++;
+		}
+		if(splittedProgress != splittedString.length)
+		{
+			return null;
 		}
 		return parameterObjects;
 	}

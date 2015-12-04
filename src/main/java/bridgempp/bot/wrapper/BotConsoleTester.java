@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Scanner;
 
+import bridgempp.bot.database.PersistenceManager;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.metawrapper.MetaWrapper;
 
@@ -13,6 +14,7 @@ public class BotConsoleTester
 	public static void main(String[] args) throws IOException
 	{
 		Scanner scanner = new Scanner(System.in);
+		PersistenceManager.loadFactory();
 		System.out.println("Please enter Bot FQCN:");
 		try
 		{

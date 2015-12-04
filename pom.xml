@@ -145,5 +145,11 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/resources/liblocal/ocamlrun-scripting.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.8</version>
+		</dependency>
+
 	</dependencies>
 </project>

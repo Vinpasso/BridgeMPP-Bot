@@ -1,13 +1,16 @@
 package bots.CalendarBot;
 
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+
+import bridgempp.bot.wrapper.Schedule;
 
 /**
  * 
  * @author Bernie
  *
  */
-public class Reminder extends Thread {
+public class Reminder implements Runnable {
 	private LinkedList<Event> nextReminds;
 	private Calendar[] calendar;
 	private int firstYear;
@@ -117,17 +120,17 @@ public class Reminder extends Thread {
 	 */
 	@Override
 	public void run() {
-		while (true) {
-			setNextReminds();
-			try {
-				if (minToRemind() < 0) {
-					break;
-				} else {
-					Thread.sleep((long) (minToRemind()) * 60000);
-				}
-			} catch (InterruptedException e) {
-				break;
-			}		
+//		while (true) {
+//			setNextReminds();
+//			try {
+//				if (minToRemind() < 0) {
+//					break;
+//				} else {
+//					Thread.sleep((long) (minToRemind()) * 60000);
+//				}
+//			} catch (InterruptedException e) {
+//				break;
+//			}		
 		
 			try {
 				for (int i = 0; i < nextReminds.size(); i++) {
@@ -141,9 +144,19 @@ public class Reminder extends Thread {
 			} catch (Exception e) {
 				
 			}
-		}
+			scheduleNextReminder();
+		//}
 	}
 	
+	/**
+	 * Schedules the Notification of the next Event to the BotWrapper Schedule
+	 */
+	public void scheduleNextReminder()
+	{
+		setNextReminds();
+		Schedule.scheduleOnce(this, minToRemind(), TimeUnit.MINUTES);
+	}
+
 	/**
 	 * 
 	 * @param event
