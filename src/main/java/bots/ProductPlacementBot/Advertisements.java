@@ -25,7 +25,7 @@ public class Advertisements {
 			//witze
 			new Advertisement(null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWolltest du schon immer Leute nerven? Dann schalte jetzt Werbung ueber Product Placement Bot mit vielen Leerzeilen davor!\nProduct Placement Bot: Wenig Publikum aber viel Werbung.",
 					new String[] {
-					"alex",
+					"bernie",
 					"werbung"
 			}),
 			
@@ -108,6 +108,14 @@ public class Advertisements {
 						"christian",
 						"terminieren"
 			}),
+			new Advertisement(null, "Wissen sie es gute Dinge zu schätzen? Bewerben sie sich jetzt als Immobilienhändler!"),
+				new String[]{
+						"haus",
+						"schätzen",
+						"bewerben",
+						"immobilie",
+						"wert"
+				}
 	};
 
 	public Advertisement[] getAdvertisements() {
