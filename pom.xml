@@ -143,7 +143,7 @@
 			<artifactId>org.ocamlscripting</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/liblocal/ocamlrun-scripting.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/liblocal/ocamlrun-scripting-standalone.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>

@@ -1,6 +1,9 @@
 package bots.ParrsonRuntimeEnvironment;
 
+import java.util.List;
+
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 import bridgempp.bot.metawrapper.MetaNotifyException;
@@ -27,6 +30,10 @@ public class ParrsonRuntimeManager
 	public static void initializeManager()
 	{
 		manager = new ScriptEngineManager();
-	}
+	}	
 
+	public static List<ScriptEngineFactory> listEngineFactories()
+	{
+		return manager.getEngineFactories();
+	}
 }

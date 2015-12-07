@@ -1,5 +1,11 @@
 package bots.ParrsonRuntimeEnvironment;
 
+import java.util.Iterator;
+import java.util.List;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+
 import bridgempp.bot.database.PersistenceManager;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.metawrapper.MetaClass;
@@ -40,7 +46,12 @@ public class ParrsonRuntimeEnvironmentBot
 		{
 			environment = new ScriptEngineEnvironment(language);
 		}
-		Runtime runtime = new Runtime(name, environment, context);
+		Runtime runtime = PersistenceManager.getForCurrentThread().getFromPrimaryKey(Runtime.class, name);
+		if(runtime != null)
+		{
+			return "Create Failure: Runtime already exists";
+		}
+		runtime = new Runtime(name, environment, context);
 		PersistenceManager.getForCurrentThread().updateState(runtime);
 		return "Created a new Runtime with name: " + name + " and language " + language;
 	}
@@ -78,6 +89,21 @@ public class ParrsonRuntimeEnvironmentBot
 			return "Interactive Failure: Sender is not in interactive Mode";
 		}
 		return "Thank you for using " + runtime.toString() + ". Hope to serve you soon.";
+	}
+	
+	@MetaMethod(trigger ="?pre list languages", helpTopic = "Disables interactivity for the Message Author")
+	public String cmdListLanguages(Message message)
+	{
+		String result = "Parrson Runtime Environment serves in the following languages:\n";
+		List<ScriptEngineFactory> factories = ParrsonRuntimeManager.listEngineFactories();
+		Iterator<ScriptEngineFactory> iterator = factories.iterator();
+		while(iterator.hasNext())
+		{
+			ScriptEngineFactory engineFactory = iterator.next();
+			result += engineFactory.getLanguageName() + " (" + engineFactory.getLanguageVersion() + "): " + engineFactory.getEngineName() + " (" + engineFactory.getEngineVersion() + ")\n";
+		}
+		result += "Additional languages may be added by placing the Scripting Jar on the Classpath";
+		return result;
 	}
 
 	public void replyMessage(String sendMessage, Message message)
