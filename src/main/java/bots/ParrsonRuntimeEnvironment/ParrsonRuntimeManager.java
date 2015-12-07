@@ -12,6 +12,10 @@ public class ParrsonRuntimeManager
 {
 	private static ScriptEngineManager manager;
 	
+	static
+	{
+		initializeManager();
+	}
 	
 	public static ScriptEngine getScriptEngine(String scriptLanguage)
 	{
