@@ -42,12 +42,14 @@ public class HashBot {
 			if(splitmessage.length <= 1){
 				return null;
 			}
-			for (int i = 1; i < splitmessage.length;i++) {
+			int hashtagCount = 0;
+			for (int i = 1; i < splitmessage.length && hashtagCount < 42;i++) {
 				String s = splitmessage[i];
 				if (r.nextInt(100) < 89 && s.length() > 3 && isCapitalWord.matcher(s).matches()) {
 					try {
 						//hashtags.append(getPopularTweet(s));
 						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(URLEncoder.encode(s, "UTF-8")).append("?src=hash\"").append(">");
+						hashtagCount++;
 					} catch (Exception e) {
 						hashtags.append("<a href=\"http://twitter.com/hashtag/").append(s).append("?src=hash\"").append(">");
 					}
