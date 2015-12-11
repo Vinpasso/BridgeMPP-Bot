@@ -6,6 +6,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
+import fr.x9c.cadmium.support.scripting.OCamlScriptEngineFactory;
 import bridgempp.bot.metawrapper.MetaNotifyException;
 
 public class ParrsonRuntimeManager
@@ -39,5 +40,13 @@ public class ParrsonRuntimeManager
 	public static List<ScriptEngineFactory> listEngineFactories()
 	{
 		return manager.getEngineFactories();
+	}
+	
+	/**
+	 * Retained to ensure compiler References
+	 */
+	public static void registerDependencies()
+	{
+		manager.registerEngineName("OCaml", new OCamlScriptEngineFactory());
 	}
 }

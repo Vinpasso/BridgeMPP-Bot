@@ -69,7 +69,7 @@ public class BotWrapper
 		}
 		bots = new ArrayList<>();
 		Schedule.startExecutorService();
-		PersistenceManager.loadFactory();
+		Schedule.execute(() -> { Log.log(Level.INFO, "Loading Database..."); PersistenceManager.loadFactory(); Log.log(Level.INFO, "Loaded Database");});
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);

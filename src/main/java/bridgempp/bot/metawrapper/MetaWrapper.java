@@ -47,6 +47,7 @@ public class MetaWrapper extends Bot
 			classAnnotation = metaClass.getAnnotation(MetaClass.class);
 			metaMethods = metaClass.getDeclaredMethods();
 			methods = new Hashtable<>();
+			methods.put("?man list", getClass().getMethod("getHelpIndex"));
 			methods.put(getManTrigger(), getClass().getMethod("getHelpTopicForClass"));
 			for (Method method : metaMethods)
 			{
@@ -118,9 +119,10 @@ public class MetaWrapper extends Bot
 			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + "to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
 			return;
 		}
+		Object instanceObject = method.getDeclaringClass().equals(getClass())?this:metaInstance;
 		try
 		{
-			Object returnObject = method.invoke(metaInstance, arguments);
+			Object returnObject = method.invoke(instanceObject, arguments);
 			if (returnObject != null)
 			{
 				sendMessage(new Message(message.getGroup(), returnObject.toString(), MessageFormat.PLAIN_TEXT));
@@ -134,6 +136,12 @@ public class MetaWrapper extends Bot
 			else
 			{
 				sendMessage(new Message(message.getGroup(), "A Meta Error has ocurred: " + e.toString(), MessageFormat.PLAIN_TEXT));
+				Throwable cause = e.getCause();
+				while(cause != null)
+				{
+					sendMessage(new Message(message.getGroup(), "The previous Error was caused by: " + cause.toString(), MessageFormat.PLAIN_TEXT));
+					cause = cause.getCause();
+				}
 				e.printStackTrace();
 			}
 		}
@@ -159,6 +167,11 @@ public class MetaWrapper extends Bot
 			helpTopic += getHelpTopicForMethod(method);
 		}
 		return helpTopic;
+	}
+	
+	public String getHelpIndex()
+	{
+		return "Man Page: " + metaClass.getSimpleName() + ": " + getManTrigger();
 	}
 
 	protected String getHelpTopicForMethod(Method method)
