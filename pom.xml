@@ -627,15 +627,15 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>installjawk.</id>
+						<id>installjawk</id>
 						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
 							<file>lib/jawk.0_14.jar</file>
-							<groupId>scriptengine-jawk.</groupId>
-							<artifactId>scriptengine-jawk.</artifactId>
+							<groupId>scriptengine-jawk</groupId>
+							<artifactId>scriptengine-jawk</artifactId>
 							<version>0_14</version>
 							<packaging>jar</packaging>
 							<localRepositoryPath>libmvn/</localRepositoryPath>
@@ -643,15 +643,15 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>installjawk_ex.</id>
+						<id>installjawk_ex</id>
 						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
 							<file>lib/jawk_ex.0_14.jar</file>
-							<groupId>scriptengine-jawk_ex.</groupId>
-							<artifactId>scriptengine-jawk_ex.</artifactId>
+							<groupId>scriptengine-jawk_ex</groupId>
+							<artifactId>scriptengine-jawk_ex</artifactId>
 							<version>0_14</version>
 							<packaging>jar</packaging>
 							<localRepositoryPath>libmvn/</localRepositoryPath>
@@ -1532,13 +1532,13 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>scriptengine-jawk.</groupId>
-			<artifactId>scriptengine-jawk.</artifactId>
+			<groupId>scriptengine-jawk</groupId>
+			<artifactId>scriptengine-jawk</artifactId>
 			<version>0_14</version>
 		</dependency>
 		<dependency>
-			<groupId>scriptengine-jawk_ex.</groupId>
-			<artifactId>scriptengine-jawk_ex.</artifactId>
+			<groupId>scriptengine-jawk_ex</groupId>
+			<artifactId>scriptengine-jawk_ex</artifactId>
 			<version>0_14</version>
 		</dependency>
 		<dependency>
