@@ -5,6 +5,12 @@
 	<artifactId>BridgeMPP-Bot</artifactId>
 	<version>1.0.0</version>
 	<name>BridgeMPP-Bot</name>
+	<repositories>
+		<repository>
+			<id>Local Git Maven Repository</id>
+			<url>file://libmvn</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -14,7 +20,7 @@
 				<executions>
 					<execution>
 						<id>installOCamlScripting</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -24,11 +30,13 @@
 							<artifactId>org.ocamlscripting</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installJama-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -38,11 +46,13 @@
 							<artifactId>scriptengine-Jama-</artifactId>
 							<version>1.0.2</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installasm-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -52,11 +62,13 @@
 							<artifactId>scriptengine-asm-</artifactId>
 							<version>2.2.3</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installbackport-util-concurrent</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -66,11 +78,13 @@
 							<artifactId>scriptengine-backport-util-concurrent</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installbnd-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -80,11 +94,13 @@
 							<artifactId>scriptengine-bnd-</artifactId>
 							<version>0.0.249</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installbsh-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -94,11 +110,13 @@
 							<artifactId>scriptengine-bsh-</artifactId>
 							<version>2.0b5</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installbsh-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -108,11 +126,13 @@
 							<artifactId>scriptengine-bsh-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-beanutils-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -122,11 +142,13 @@
 							<artifactId>scriptengine-commons-beanutils-</artifactId>
 							<version>1.6</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-cli-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -136,11 +158,13 @@
 							<artifactId>scriptengine-commons-cli-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-collections-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -150,11 +174,13 @@
 							<artifactId>scriptengine-commons-collections-</artifactId>
 							<version>2.1</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-discovery-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -164,11 +190,13 @@
 							<artifactId>scriptengine-commons-discovery-</artifactId>
 							<version>20030211.213356</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -178,11 +206,13 @@
 							<artifactId>scriptengine-commons-jelly-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-bean-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -192,11 +222,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-bean-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-define-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -206,11 +238,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-define-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-dynabean-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -220,11 +254,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-dynabean-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-fmt-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -234,11 +270,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-fmt-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-interaction-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -248,11 +286,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-interaction-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-junit-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -262,11 +302,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-junit-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-log-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -276,11 +318,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-log-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-swing-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -290,11 +334,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-swing-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-util-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -304,11 +350,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-util-</artifactId>
 							<version>1.1.1</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jelly-tags-xml-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -318,11 +366,13 @@
 							<artifactId>scriptengine-commons-jelly-tags-xml-</artifactId>
 							<version>1.1</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-jexl-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -332,11 +382,13 @@
 							<artifactId>scriptengine-commons-jexl-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-lang-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -346,11 +398,13 @@
 							<artifactId>scriptengine-commons-lang-</artifactId>
 							<version>2.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installcommons-logging-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -360,11 +414,13 @@
 							<artifactId>scriptengine-commons-logging-</artifactId>
 							<version>1.0.3</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installdom</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -374,11 +430,13 @@
 							<artifactId>scriptengine-dom</artifactId>
 							<version>4j-1.5.2</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installext-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -388,11 +446,13 @@
 							<artifactId>scriptengine-ext-</artifactId>
 							<version>1.1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installforehead-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -402,11 +462,13 @@
 							<artifactId>scriptengine-forehead-</artifactId>
 							<version>1.0-beta-5</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installfreemarker-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -416,11 +478,13 @@
 							<artifactId>scriptengine-freemarker-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installfreemarker</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -430,11 +494,13 @@
 							<artifactId>scriptengine-freemarker</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installgroovy-all-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -444,11 +510,13 @@
 							<artifactId>scriptengine-groovy-all-</artifactId>
 							<version>1.5.6</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installgroovy-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -458,11 +526,13 @@
 							<artifactId>scriptengine-groovy-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjacl-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -472,11 +542,13 @@
 							<artifactId>scriptengine-jacl-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjacl</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -486,11 +558,13 @@
 							<artifactId>scriptengine-jacl</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjaskell-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -500,11 +574,13 @@
 							<artifactId>scriptengine-jaskell-</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjaskell-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -514,11 +590,13 @@
 							<artifactId>scriptengine-jaskell-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjava-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -528,11 +606,13 @@
 							<artifactId>scriptengine-java-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjawk-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -542,11 +622,13 @@
 							<artifactId>scriptengine-jawk-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjawk.</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -556,11 +638,13 @@
 							<artifactId>scriptengine-jawk.</artifactId>
 							<version>0_14</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjawk_ex.</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -570,11 +654,13 @@
 							<artifactId>scriptengine-jawk_ex.</artifactId>
 							<version>0_14</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjaxen-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -584,11 +670,13 @@
 							<artifactId>scriptengine-jaxen-</artifactId>
 							<version>1.1-beta-4</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjelly-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -598,11 +686,13 @@
 							<artifactId>scriptengine-jelly-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjep-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -612,11 +702,13 @@
 							<artifactId>scriptengine-jep-</artifactId>
 							<version>2.4.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjep-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -626,11 +718,13 @@
 							<artifactId>scriptengine-jep-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjexl-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -640,11 +734,13 @@
 							<artifactId>scriptengine-jexl-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjfunutil</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -654,11 +750,13 @@
 							<artifactId>scriptengine-jfunutil</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjparsec</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -668,11 +766,13 @@
 							<artifactId>scriptengine-jparsec</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjruby-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -682,11 +782,13 @@
 							<artifactId>scriptengine-jruby-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjruby</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -696,11 +798,13 @@
 							<artifactId>scriptengine-jruby</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjstl-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -710,11 +814,13 @@
 							<artifactId>scriptengine-jstl-</artifactId>
 							<version>1.0.6</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjudo-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -724,11 +830,13 @@
 							<artifactId>scriptengine-judo-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjudo</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -738,11 +846,13 @@
 							<artifactId>scriptengine-judo</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjuel-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -752,11 +862,13 @@
 							<artifactId>scriptengine-juel-</artifactId>
 							<version>2.1.0-rc2</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjuel-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -766,11 +878,13 @@
 							<artifactId>scriptengine-juel-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjunit-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -780,11 +894,13 @@
 							<artifactId>scriptengine-junit-</artifactId>
 							<version>3.8.1</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjython-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -794,11 +910,13 @@
 							<artifactId>scriptengine-jython-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installjython</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -808,11 +926,13 @@
 							<artifactId>scriptengine-jython</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installognl-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -822,11 +942,13 @@
 							<artifactId>scriptengine-ognl-</artifactId>
 							<version>2.6.9</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installognl-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -836,11 +958,13 @@
 							<artifactId>scriptengine-ognl-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installpnuts-jsr</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -850,11 +974,13 @@
 							<artifactId>scriptengine-pnuts-jsr</artifactId>
 							<version>223</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installpnuts-modules</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -864,11 +990,13 @@
 							<artifactId>scriptengine-pnuts-modules</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installpnuts</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -878,11 +1006,13 @@
 							<artifactId>scriptengine-pnuts</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installscheme-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -892,11 +1022,13 @@
 							<artifactId>scriptengine-scheme-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installservletapi-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -906,11 +1038,13 @@
 							<artifactId>scriptengine-servletapi-</artifactId>
 							<version>2.3</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installsisc-lib</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -920,11 +1054,13 @@
 							<artifactId>scriptengine-sisc-lib</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installsisc-opt</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -934,11 +1070,13 @@
 							<artifactId>scriptengine-sisc-opt</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installsisc</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -948,11 +1086,13 @@
 							<artifactId>scriptengine-sisc</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installtcljava</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -962,11 +1102,13 @@
 							<artifactId>scriptengine-tcljava</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installvelocity-dep-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -976,11 +1118,13 @@
 							<artifactId>scriptengine-velocity-dep-</artifactId>
 							<version>1.5</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installvelocity-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -990,11 +1134,13 @@
 							<artifactId>scriptengine-velocity-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installxerces-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -1004,11 +1150,13 @@
 							<artifactId>scriptengine-xerces-</artifactId>
 							<version>2.2.1</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installxml-apis-</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -1018,11 +1166,13 @@
 							<artifactId>scriptengine-xml-apis-</artifactId>
 							<version>1.0.b2</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installxpath-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -1032,11 +1182,13 @@
 							<artifactId>scriptengine-xpath-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 					<execution>
 						<id>installxslt-engine</id>
-						<phase>validate</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -1046,6 +1198,8 @@
 							<artifactId>scriptengine-xslt-engine</artifactId>
 							<version>1.0</version>
 							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
 
