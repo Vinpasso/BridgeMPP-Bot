@@ -17,6 +17,7 @@ public class Schedule
 	
 	public static void startExecutorService()
 	{
+		Log.log(Level.INFO, "Starting Bot Scheduler");
 		threadFactory = new ThreadFactory() {
 			private int threadNumber = 0;
 			@Override
@@ -30,6 +31,7 @@ public class Schedule
 			}
 		};
 		executorService = Executors.newScheduledThreadPool(5, threadFactory);
+		Log.log(Level.INFO, "Started Bot Scheduler");
 	}
 	
 	public static void stopExecutorService()

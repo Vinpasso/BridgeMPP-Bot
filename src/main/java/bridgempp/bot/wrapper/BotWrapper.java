@@ -69,7 +69,7 @@ public class BotWrapper
 		}
 		bots = new ArrayList<>();
 		Schedule.startExecutorService();
-		Schedule.execute(() -> { Log.log(Level.INFO, "Loading Database..."); PersistenceManager.loadFactory(); Log.log(Level.INFO, "Loaded Database");});
+		Log.log(Level.INFO, "Initializing Bootstrap");
 		EventLoopGroup loopGroup = new NioEventLoopGroup(2);
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);
@@ -82,12 +82,15 @@ public class BotWrapper
 
 			}
 		});
+		Log.log(Level.INFO, "Initializing Guice");
 		// init Guice Injector
 		initGuice();
 
+		Log.log(Level.INFO, "Accessing bot configurations");
 		botsDir = new File("bots/");
 		if (!botsDir.exists())
 		{
+			Log.log(Level.INFO, "Creating bot configuration directory");
 			botsDir.mkdir();
 			Properties exampleBotProperties = new Properties();
 			try
@@ -98,7 +101,7 @@ public class BotWrapper
 			{
 				e.printStackTrace();
 			}
-			System.out.println("Created Example Config. Please Edit");
+			System.out.println("Created example config. Please edit");
 			return;
 		}
 		for (File botConfig : botsDir.listFiles())
@@ -152,7 +155,7 @@ public class BotWrapper
 
 		}));
 
-		Log.log(Level.INFO, "Waiting 60 seconds for Authentication to complete");
+		/*Log.log(Level.INFO, "Waiting 60 seconds for Authentication to complete");
 		try
 		{
 			Thread.sleep(60000);
@@ -173,7 +176,8 @@ public class BotWrapper
 			{
 				Log.log(Level.INFO, "Bot: " + bot.name + " appears to be authenticated");
 			}
-		}
+		}*/
+		Schedule.execute(() -> { Log.log(Level.INFO, "Loading Database..."); PersistenceManager.loadFactory(); Log.log(Level.INFO, "Loaded Database");});
 	}
 
 	private static void initGuice()
@@ -220,11 +224,13 @@ public class BotWrapper
 	{
 		try
 		{
+			Log.log(Level.INFO, "Loading bot: " + botConfig.getPath());
 			Properties botProperties = new Properties();
 			if (!botConfig.exists())
 			{
 				botConfig.createNewFile();
 			}
+			Log.log(Level.INFO, "Loading bot properties: " + botConfig.getPath());
 			botProperties.load(new FileInputStream(botConfig));
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null)
@@ -233,6 +239,7 @@ public class BotWrapper
 				Log.log(Level.SEVERE, "Bot Class is null, cannot execute BridgeMPP server commands in file: " + botConfig.getName());
 				fail();
 			}
+			Log.log(Level.INFO, "Loading bot class: " + botConfig.getPath());
 			Class<?> clazz = Class.forName(botClass);
 			if (!Bot.class.isAssignableFrom(clazz))
 			{
@@ -243,8 +250,11 @@ public class BotWrapper
 			Bot bot = injector.getInstance((Class<Bot>) clazz);
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
+			Log.log(Level.INFO, "Initializing bot: " + botConfig.getPath());
 			bot.initializeBot();
+			Log.log(Level.INFO, "Initialized bot: " + botConfig.getPath());
 
+			Log.log(Level.INFO, "Creating bot network interface: " + botConfig.getPath());
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null)
@@ -271,6 +281,8 @@ public class BotWrapper
 				throw new UnsupportedOperationException("No Groups declared. Please specify at least one Group to join");
 			}
 
+			Log.log(Level.INFO, "Connecting bot to server: " + botAlias);
+
 			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
 			// byte[] protocol = new byte[1];
 			// protocol[0] = 0x32;
@@ -285,10 +297,11 @@ public class BotWrapper
 				{
 					if (!future.isSuccess())
 					{
-						Log.log(Level.WARNING, "Connection could not be Established");
+						Log.log(Level.WARNING, "Connection could not be Established: " + botAlias);
 						BotWrapper.shutdown();
 					} else
 					{
+						Log.log(Level.INFO, "Connection established: " + botAlias);
 						bot.channel = channelFuture.channel();
 						new CommandTransceiver(bot.channel, bot.name, serverKey, groups, bot).initializeCommands();
 					}

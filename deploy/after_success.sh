@@ -22,7 +22,9 @@ New Version: $TRAVIS_BUILD_NUMBER
 sftp $SSH_USER@$SSH_HOST <<EOF
 put message.txt /bots-upload/message.txt
 EOF
-sleep 300
+echo "Waiting 120 Seconds for restart"
+sleep 120
+echo "Wait complete"
 echo "0
 !botusekey $BRIDGEMPP_KEY
 !botcreatealias Build Bot
