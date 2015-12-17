@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>ocaml-scripting</groupId>
-  <artifactId>org.ocamlscripting</artifactId>
+  <groupId>python-scripting</groupId>
+  <artifactId>python-scripting</artifactId>
   <versioning>
     <release>1.0</release>
     <versions>
