@@ -14,31 +14,35 @@ public class RegExBot extends Bot {
 
 	@Override
 	public void initializeBot() {
-		pattern = Pattern.compile("(\\?regex)\\s+?(.+?)\\s+?(.+)");
+		pattern = Pattern.compile("\\s*(.+?)\\s+(.+)");
 	}
 
 	@Override
 	public void messageReceived(Message message) {
 		if (message.getMessage().toLowerCase().indexOf("?regex") > -1) {
-			try {
-				Matcher matcher = pattern.matcher(message.getMessage());
-				matcher.find();
-				if (matcher.groupCount() < 3) {
-					sendMessage(new Message(
-							message.getGroup(),
-							"Not enough Arguments: Usage ?regex <regex> <matchstring>",
-							MessageFormat.PLAIN_TEXT));
-					return;
-				}
-				Pattern thisPattern = Pattern.compile(matcher.group(2));
-				Matcher thisMatcher = thisPattern.matcher(matcher.group(3));
-				while (thisMatcher.find()) {
+			String[] regexTriggers = message.getMessage().split("\\?regex");
+			for (int i = 1; i < regexTriggers.length; i++) {
+				String triggerMessage = regexTriggers[i];
+				try {
+					Matcher matcher = pattern.matcher(triggerMessage);
+					if (!matcher.find()) {
+						sendMessage(new Message(
+								message.getGroup(),
+								"Not enough Arguments: Usage ?regex <regex> <matchstring>. The Regex can not contain Whitespaces",
+								MessageFormat.PLAIN_TEXT));
+						continue;
+					}
+					Pattern thisPattern = Pattern.compile(matcher.group(1));
+					Matcher thisMatcher = thisPattern.matcher(matcher.group(2));
+					while (thisMatcher.find()) {
+						sendMessage(new Message(message.getGroup(),
+								thisMatcher.group(), MessageFormat.PLAIN_TEXT));
+					}
+				} catch (PatternSyntaxException e) {
 					sendMessage(new Message(message.getGroup(),
-							thisMatcher.group(), MessageFormat.PLAIN_TEXT));
+							"Invalid Regex Syntax:\n" + e.getMessage(),
+							MessageFormat.PLAIN_TEXT));
 				}
-			} catch (PatternSyntaxException e) {
-				sendMessage(new Message(message.getGroup(),
-						"Invalid Regex Syntax:\n" + e.getMessage(), MessageFormat.PLAIN_TEXT));
 			}
 		}
 	}
