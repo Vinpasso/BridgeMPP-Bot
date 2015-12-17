@@ -10,8 +10,6 @@ import bots.config.MainModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.sun.media.jfxmedia.logging.Logger;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -307,6 +305,8 @@ public class BotWrapper
 					}
 				}
 			});
+			
+			channelFuture.await();
 
 			bots.add(bot);
 		} catch (Exception ex)
