@@ -1,12 +1,18 @@
 package bridgempp.bot.wrapper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 import bridgempp.bot.database.PersistenceManager;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.metawrapper.MetaWrapper;
+import bridgempp.util.Log;
 
 public class BotConsoleTester
 {
@@ -15,18 +21,26 @@ public class BotConsoleTester
 	{
 		Scanner scanner = new Scanner(System.in);
 		PersistenceManager.loadFactory();
-		System.out.println("Please enter Bot FQCN:");
+		Properties lastUsed = getLastUsed();
+		String botclass = lastUsed.getProperty("BotFQCN");
+		System.out.println("Please enter Bot FQCN (Default: " + botclass + "):");
 		try
 		{
-			Bot bot = (Bot) Class.forName(scanner.nextLine()).newInstance();
+			String input = scanner.nextLine();
+			Bot bot = (Bot) Class.forName((input.length()==0)?botclass:input).newInstance();
+			lastUsed.put("BotFQCN", (input.length()==0)?botclass:input);
 			bot.properties = new Properties();
 			bot.name = "Test Bot";
 			bot.configFile = "config.txt";
 			if (bot instanceof MetaWrapper)
 			{
-				System.out.println("Please enter the Meta Class FQCN:");
-				bot.properties.put("metaclass", scanner.nextLine());
+				String metaClass = lastUsed.getProperty("MetaFQCN");
+				System.out.println("Please enter the Meta Class FQCN (Default: " + metaClass + "):");
+				String metaInput = scanner.nextLine();
+				bot.properties.put("metaclass", (metaInput.length()==0)?metaClass:metaInput);
+				lastUsed.put("MetaFQCN", (metaInput.length()==0)?metaClass:metaInput);
 			}
+			saveLastUsed(lastUsed);
 			bot.initializeBot();
 			System.out.println("Bot loaded");
 			while (true)
@@ -39,6 +53,26 @@ public class BotConsoleTester
 			e.printStackTrace();
 		}
 		scanner.close();
+	}
+
+	private static Properties getLastUsed() {
+		File memoryFile = new File("lastrun.txt");
+		Properties properties = new Properties();
+		try {
+			properties.load(new FileInputStream(memoryFile));
+		} catch (Exception e) {
+		}
+		return properties;
+	}
+	
+	private static void saveLastUsed(Properties properties)
+	{
+		File memoryFile = new File("lastrun.txt");
+		try {
+			properties.store(new FileOutputStream(memoryFile), "Last Used Bot");
+		} catch (Exception e) {
+			Log.log(Level.WARNING, "Could not save Last Used Properties");
+		}
 	}
 
 }
