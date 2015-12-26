@@ -1,7 +1,6 @@
 package bots.CalendarBot;
 
 import java.io.FileInputStream;
-import java.util.LinkedList;
 import java.util.Properties;
 
 /**
@@ -9,8 +8,7 @@ import java.util.Properties;
  * @author Bernie
  *
  */
-public class CalendarBirthday extends Calendar{
-
+public class CalendarBirthday extends Calendar {
 	public CalendarBirthday(int firstYear, String filepath) {
 		super("birthday", firstYear, filepath, 360, 10080);
 	}
@@ -22,7 +20,7 @@ public class CalendarBirthday extends Calendar{
 	@Override
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
-		EventBirthday event = new EventBirthday(wat, date + 720, DefaultRepeat, DefaultRemind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
+		EventBirthday event = new EventBirthday(wat, date + 600, DefaultRepeat, DefaultRemind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
 		if (!existsEvent(event)) {
 			insert(event);
 			added = save();
@@ -31,23 +29,6 @@ public class CalendarBirthday extends Calendar{
 		return added;
 	}
 	
-	@Override
-	public boolean add (String wat, String date, String time, int repeat, int remind) {
-		boolean added = false;
-		try {
-			added = add(wat, CalDateFormat.dateToMin(date + " 12:00", firstYear), DefaultRepeat, DefaultRemind);
-		} 
-		catch (Exception e) {
-			return false;
-		}
-		
-		return added;
-	}
-	
-	@Override
-	public boolean add (String wat, String date, String time) {
-		return add(wat, date, time, DefaultRepeat, DefaultRemind);
-	}
 	
 	@Override
 	public boolean add (String name, int date) {
@@ -57,7 +38,6 @@ public class CalendarBirthday extends Calendar{
 	@Override
 	protected void load() {
 		try {
-			events = new LinkedList<Event>();
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + name + ".properties");
 			prop.load(fis);

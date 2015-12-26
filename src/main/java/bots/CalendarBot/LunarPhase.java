@@ -48,30 +48,9 @@ public class LunarPhase {
 	
 	/**
 	 * 
-	 * @param date
-	 */
-	public void setDate (int date) {
-		this.date = date / 1440;
-	}
-	
-	/**
-	 * 
-	 * @param date - format: dd.mm.yyyy hh:mm || dd.mm.yyyy
 	 * @return
 	 */
-	public void setDate (String date) {
-		this.date = (CalDateFormat.dateToMin(date + " 12:00", firstYear)) / 1440;
-	}
-	
-	public void setLang(int lang) {
-		this.lang = lang;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public  double getDayOfLunarPhase () {
+	private  double getDayOfLunarPhase () {
 		return (date - firstNewMoon) % daysLunarPhase;
 	}
 	

@@ -2,7 +2,7 @@ package bots.CalendarBot;
 
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -11,141 +11,122 @@ import java.util.Arrays;
  *
  */
 public class RunCommand {
-	private String[] command;
-	private LinkedList<Calendar> calendars;
-	private int firstYear;
-	private String filepath;
-	static boolean isCmdDeleteAll = false;
+	private Commands commands = Commands.getInstance();
+	private ArrayList<Calendar> calendars;
+	private final int firstYear;
+	private final String filepath;
+	private boolean isCmdDeleteAll = false;
 	
-	public RunCommand (LinkedList<Calendar> calendars, int firstYear, String filepath) {
+	public RunCommand (ArrayList<Calendar> calendars, int firstYear, String filepath) {
 		this.calendars = calendars;
 		this.firstYear = firstYear;
 		this.filepath = filepath;
 	}
 	
-	public void runNewCommand (String cmd) {
-		this.command = cmd.split(" ");
-		if (command.length > 0) {
-			command[0] = command[0].toLowerCase();
-		}
+	public void runNewCommand (String command) {
+		String[] cmd = command.split(" ");
+		if (cmd.length > 0) {
+			cmd[0] = cmd[0].toLowerCase();
+		}		
+		int indexCommand = commands.getIndexForCommand(cmd[0]);
 		
-		//help
-		if (CommandSyntax.equalsHelp(command[0])) {
-			if (!isParamHelp(0)) {
-				printMessage(CommandSyntax.commandsWithParamToString());
+		// test if not "yes"
+		if (indexCommand != 102) {
+			isCmdDeleteAll = false;
+		}
+		// tests if parameter is help
+		if (cmd.length > 0 && commands.getCommand(0).isCommand(cmd[1].toLowerCase())) {
+			if (indexCommand >= 0) {
+				printMessage(commands.commandToString(indexCommand));
 			}
 		}
-		//printDate
-		else if (command[0].equals(CommandSyntax.getCommands()[1])) {
-			if (!isParamHelp(1)) {
+		else {
+			switch (indexCommand) {
+			case 0:
+				// help
+				printMessage(commands.commandsToString());
+				break;
+			case 1:
+				//printDate
 				printMessage(CurrentDate.getDateWTime());
-			}
-		}
-		//printTime
-		else if (command[0].equals(CommandSyntax.getCommands()[2])) {
-			if (!isParamHelp(2)) {
+				break;
+			case 2:
+				//printTime
 				printMessage(CurrentDate.getTime());
-			}
-		}
-		//alertson
-		else if (command[0].equals(CommandSyntax.getCommands()[3])) {
-			if (!isParamHelp(3)) {
+				break;
+			case 3:
+				//alertson
 				CalendarBot.alertson();
-			}
-		}
-		//alertsoff
-		else if (command[0].equals(CommandSyntax.getCommands()[4])) {
-			if (!isParamHelp(4)) {
+				break;
+			case 4:
+				//alertsoff
 				CalendarBot.alertsoff();
-			}
-		}
-		//createCal
-		else if (command[0].equals(CommandSyntax.getCommands()[5])) {
-			if (!isParamHelp(5)) {
-				cmdCalcr();
-			}
-		}
-		//ListCal
-		else if (command[0].equals(CommandSyntax.getCommands()[6])) {
-			if (!isParamHelp(6)) {
+				break;
+			case 5:
+				//createCal
+				cmdCalcr(cmd);
+				break;
+			case 6:
+				//listCal
 				cmdCalls();
-			}
-		}
-		//delCal
-		else if (command[0].equals(CommandSyntax.getCommands()[7])) {			
-			if (!isParamHelp(7)) {
-				cmdCaldel();
-			}
-		}
-		//createEvent
-		else if (command[0].equals(CommandSyntax.getCommands()[8])) {			
-			if (!isParamHelp(8)) {
-				cmdEventcr();			
-			}
-		}
-		//listEvents
-		else if (command[0].equals(CommandSyntax.getCommands()[9])) {
-			if (!isParamHelp(9)) {
-				cmdEventls();
-			}
-		}
-		//delEvent
-		else if (command[0].equals(CommandSyntax.getCommands()[10])) {
-			if (!isParamHelp(10)) {
-				cmdEventdel();
-			}
-		}
-		//autoDel
-		else if (command[0].equals(CommandSyntax.getCommands()[11])) {
-			if (!isParamHelp(11)) {
+				break;
+			case 7:
+				//delCal
+				cmdCaldel(cmd);
+				break;
+			case 8:
+				//createEvent
+				cmdEventcr(cmd);
+				break;
+			case 9:
+				//listEvents
+				cmdEventls(cmd);
+				break;
+			case 10:
+				//delEvent
+				cmdEventdel(cmd);
+				break;
+			case 11:
+				//autodel
 				cmdAutoDel();
-			}
-		}
-		//autoDelOn
-		else if (command[0].equals(CommandSyntax.getCommands()[12])) {
-			if (!isParamHelp(12)) {
+				break;
+			case 12:
+				//autoDelOn
 				CalendarBot.eventsPastAutoDelOn = true;
-			}
-		}
-		//autoDelOff
-		else if (command[0].equals(CommandSyntax.getCommands()[13])) {
-			if (!isParamHelp(13)) {
+				break;
+			case 13:
+				//autoDelOff
 				CalendarBot.eventsPastAutoDelOn = false;
-			}
-		}
-		//lunarPhase
-		else if (command[0].equals(CommandSyntax.getCommands()[14])) {
-			if (!isParamHelp(14)) {
-				cmdLunar();
-			}
-		}
-		//deleteAllCal
-		else if (command[0].equals(CommandSyntax.getCommands()[15])) {
-			if (!isParamHelp(15)) {
+				break;
+			case 14:
+				//lunar
+				cmdLunar(cmd);
+				break;
+			case 15:
+				//deleteAllCalendars (-param = no)
 				isCmdDeleteAll = true;
 				printMessage("Are you sure to delete all calenders and events?");
-			}
-		}
-		//deleteAllYes
-		else if (command[0].equals("yes") && isCmdDeleteAll) {
-			cmdDeleteAllYes();
-		}
-		//version
-		else if (command[0].equals("version")) {
-			printMessage(CalendarBot.version);
-		}
-		//reset
-		else if (command[0].equals("reset")) {
-					
-		}
-		//no
-		else if (command[0].equals("no")) {
+				break;
+			case 16:
+				//version
+				printMessage(CalendarBot.VERSION);
+				break;
+			case 100:
+				//reset
+			case 101:
+				//no
+				break;
+			case 102:
+				//yes
+				if (isCmdDeleteAll) cmdDeleteAllYes();
+				break;
+				default:
+					//unknown command
+					printMessage("Unknown Command " + cmd[0] + "\nType \"" + commands.getPrefix() + commands.getCommand(0).getCommand() + "\" for more information");
+					break;
 			
-		}
-		//unknown command
-		else {
-			printMessage("Unknown Command " + command[0] + "\nType " + CommandSyntax.getCommands()[0] + " for more information");
-		}
+			}
+		}		
 	}
 	
 
@@ -153,14 +134,13 @@ public class RunCommand {
 	/**
 	 * 
 	 */
-	private void cmdCalcr () {
-		int remind;
-		int repeat;
+	private void cmdCalcr (String[] command) {
 		try {
-			repeat = convertRepeat(command[2]);
-			remind = convertRemind(command[3]);
-			if (!existsCalendar(new Calendar(command[1], firstYear, filepath, repeat, remind))) {
-				calendars.add(new Calendar(command[1], firstYear, filepath, repeat, remind));
+			int repeat = convertRepeat(command[2]);
+			int remind = convertRemind(command[3]);
+			Calendar newCalendar = new Calendar(command[1], firstYear, filepath, repeat, remind);
+			if (!existsCalendar(newCalendar)) {
+				calendars.add(newCalendar);
 				printMessage("Created Calendar " + command[1]);
 			} 
 			else {
@@ -185,21 +165,19 @@ public class RunCommand {
 	/**
 	 * 
 	 */
-	private void cmdCaldel () {
-		boolean deleted = false;
+	private void cmdCaldel (String[] command) {
 		try {
 			for (int i = 0; i < calendars.size(); i++) {
-				if (calendars.get(i).equals(new Calendar(command[1], 0, ""))) {
-					String name = calendars.get(i).getName();
-					if(!calendars.get(i).removeAll()) throw new IOException();
-					if(!calendars.get(i).delete()) throw new IOException();
+				if (calendars.get(i).getName().toLowerCase().equals(command[1].toLowerCase())) {
+					command[1] = calendars.get(i).getName();
+					if(!calendars.get(i).removeAllEvents()) throw new IOException();
+					if(!calendars.get(i).deleteCalendar()) throw new IOException();
 					calendars.remove(i);
-					deleted = true;
-					printMessage("Deleted Calendar " + name);
-					break;
+					printMessage("Deleted Calendar " + command[1]);
+					return;
 				}
 			}
-			if (!deleted) errorCalNotFound();
+			errorCalNotFound();
 		} catch (IOException ie) {
 			errorFailed();
 		}
@@ -211,39 +189,43 @@ public class RunCommand {
 	/**
 	 * 
 	 */
-	private void cmdEventcr () {
-		boolean create = true;
+	private void cmdEventcr (String[] command) {
 		boolean created = false;
 		try {
 			//check if calendar exists
 			Calendar cal = getCalendarByName(command[1]);
 			if (cal == null) {
 				errorCalNotFound();
-				create = false;
+				return;
 			}					
 			//check if date is correct
 			int date;
 			try {
+				//date in min since firstYear
 				date = Integer.parseInt(command[3]);
 			} 
 			catch (NumberFormatException e) {
-				if (command[3].length() >= 12) {
-					command[3] = command[3].substring(0, 10) + " " + command[3].substring(11, 16);
-				}
-				else {
+				//dateFormat: dd.mm.yyyy
+				if (command[3].length() == 10) {
 					command[3] = command[3].substring(0, 10) + " 00:00";
 				}
+				//dateFormat: dd.mm.yyyy-hh:mm
+				else {
+					command[3] = command[3].substring(0, 10) + " " + command[3].substring(11, 16);
+				}
+				//throws IllegalArgumentException for wrong dateFormat/not existing date
 				date = CalDateFormat.dateToMin(command[3], firstYear);
 			}
 			//check for repeat remind
-			if (command.length >= 5 && create) {
+			if (command.length >= 5) {
 				int repeat = convertRepeat(command[4]);
+				//throws IndexOutOfBoundsException if command.length = 5 < 6
 				int remind = convertRemind(command[5]);
 				if (repeat == -1 || remind == -1) 
 					throw new IllegalArgumentException();
-				created = cal.add(command[2], date, repeat, remind);				
+				created = cal.add(command[2], date, repeat, remind);			
 			}
-			else if (create) {
+			else {
 				created = cal.add(command[2], date);
 			}
 			//print status message
@@ -262,14 +244,14 @@ public class RunCommand {
 	/**
 	 * 
 	 */
-	private void cmdEventls () {
-		boolean existsCal = true;
+	private void cmdEventls (String[] command) {
 		try {			
 			Calendar cal = getCalendarByName(command[1]);
 			if (command.length >= 3) {
 				//check if calendar exists				
 				if (cal == null) {
-					existsCal = false;				
+					errorCalNotFound();
+					return;				
 				}
 			}
 			else {
@@ -282,25 +264,25 @@ public class RunCommand {
 				for (int i = 0; i < calendars.size(); i++) {
 					msg = msg + "Calendar \"" + calendars.get(i).getName() + "\":\n";
 					for (int j = 0; j < calendars.get(i).getEvents().length; j++) {
-						msg = msg + j + ": " + calendars.get(i).getEvents()[j].toStringList(firstYear) + "\n";
+						msg = msg + j + ": " + calendars.get(i).getEvents()[j].toStringList(false) + "\n";
 					}
 				}
 			}
 			//cal + all
 			else if (cal != null && command[2].equals("all")) {
-				msg = msg + "Calendar \"" + cal.getName() + "\":\n";
+				msg = "Calendar \"" + cal.getName() + "\":\n";
 				for (int j = 0; j < cal.getEvents().length; j++) {
-					msg = msg + j + ": " + cal.getEvents()[j].toStringList(firstYear) + "\n";
+					msg = msg + j + ": " + cal.getEvents()[j].toStringList(false) + "\n";
 				}
 			}
 			
 			//no cal + next
 			else if (cal == null && command[1].equals("next")) {
-				int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
+				int dateNow = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
 				Event[] events = null;
 				for (int i = 0; i < calendars.size(); i++) {
-					if (calendars.get(i).getNext(date) != null && calendars.get(i).getNext(date).length > 0) {
-						Event[] tmpEvents = calendars.get(i).getNext(date);
+					Event[] tmpEvents = calendars.get(i).getNext(dateNow);
+					if (tmpEvents.length > 0) {						
 						if (events == null) {
 							events = tmpEvents;
 						}					
@@ -315,21 +297,22 @@ public class RunCommand {
 					}
 				}
 				for (int i = 0; i < events.length; i++) {
-					msg = msg + events[i].toStringList(firstYear) + "\n";					
+					msg = msg + events[i].toStringList(true) + "\n";					
 				}
 			}
 			
 			//cal + next
 			else if (cal != null && command[2].equals("next")) {
-				int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
-				Event[] events = cal.getNext(date);
+				int dateNow = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
+				Event[] events = cal.getNext(dateNow);
 				for (int i = 0; i < events.length; i++) {
-					msg = msg + events[i].toStringList(firstYear) + "\n";					
+					msg = msg + events[i].toStringList(true) + "\n";					
 				}
 			}
 			
 			//date
 			else {
+				//dateFormat: dd.mm.yyyy
 				int indexDate = cal == null ? 1 : 2;
 				int start, end;
 				if (command[indexDate].length() == 10) {
@@ -337,6 +320,7 @@ public class RunCommand {
 					start = CalDateFormat.dateToMin(command[indexDate], firstYear);
 					end = start + 1440;
 				}
+				//dateFormat: mm.yyyy
 				else if (command[indexDate].length() == 7) {
 					int tmpYear = Integer.parseInt(command[indexDate].substring(3, 7));
 					int tmpMonth = Integer.parseInt(command[indexDate].substring(0, 2));
@@ -348,6 +332,7 @@ public class RunCommand {
 					}
 					end = CalDateFormat.dateToMin("01." + tmpMonth + "." + tmpYear + " 00:00", firstYear);
 				}
+				//dateFormat yyyy
 				else if (command[indexDate].length() == 4) {
 					int tmpYear = Integer.parseInt(command[indexDate]);
 					start = CalDateFormat.dateToMin("01.01." + (tmpYear) + " 00:00", firstYear);
@@ -362,7 +347,7 @@ public class RunCommand {
 					for (int i = 0; i < calendars.size(); i++) {
 						for (int j = 0; j < calendars.get(i).getEvents().length; j++) {
 							if (calendars.get(i).getEvents()[j].getDate() >= start && calendars.get(i).getEvents()[j].getDate() < end) {
-								msg = msg + calendars.get(i).getEvents()[j].toStringList(firstYear) + "\n";
+								msg = msg + calendars.get(i).getEvents()[j].toStringList(true) + "\n";
 							}
 						}
 					}
@@ -372,25 +357,19 @@ public class RunCommand {
 				else {
 					for (int j = 0; j < cal.getEvents().length; j++) {
 						if (cal.getEvents()[j].getDate() >= start && cal.getEvents()[j].getDate() < end) {
-							msg = msg + cal.getEvents()[j].toStringList(firstYear) + "\n";
+							msg = msg + cal.getEvents()[j].toStringList(true) + "\n";
 						}
 					}
 				}
 			}
 			printMessage(msg);
 		} 
-		//no event found || calendar not found
-		catch (NullPointerException ne) {			
-			if (!existsCal) errorCalNotFound();
+		//no event found 
+		catch (NullPointerException ne) {
 		} 
-		//to less parameters given
-		catch (ArrayIndexOutOfBoundsException ae) {
+		//to less parameters given | wrong parameters given
+		catch (ArrayIndexOutOfBoundsException | IllegalArgumentException aie) {
 			errorSyntax(9);
-		}
-		//wrong parameters given 
-		catch (IllegalArgumentException ie) {
-			if (!existsCal) errorCalNotFound();
-			else errorSyntax(9);
 		}
 		//else
 		catch (Exception e) {
@@ -401,7 +380,7 @@ public class RunCommand {
 	/**
 	 * 
 	 */
-	private void cmdEventdel() {
+	private void cmdEventdel(String[] command) {
 		try {
 			Calendar cal = getCalendarByName(command[1]);
 			boolean deleted = false;
@@ -409,15 +388,17 @@ public class RunCommand {
 			
 			try {
 				number = Integer.parseInt(command[2]);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				number = -1;
 			}
 			
+			//delete by number
 			if (number >= 0) {
-				deleted = cal.remove(number);
+				deleted = cal.removeEvent(number);
 			}
+			//delete by name
 			else {
-				deleted = cal.remove(command[2]);
+				deleted = cal.removeEvent(command[2]);
 			}
 			//print status msg
 			if (deleted) {
@@ -443,7 +424,7 @@ public class RunCommand {
 		}
 	}
 	
-	private void cmdLunar() {
+	private void cmdLunar(String[] command) {
 		int lang = 0;
 		try {
 			if (command[1].toLowerCase().equals("ger")) {
@@ -462,8 +443,8 @@ public class RunCommand {
 	private void cmdDeleteAllYes() {
 		boolean removed = true;
 		for (int i = 0; i < calendars.size(); i++) {
-			removed = calendars.get(i).removeAll() && removed;
-			removed = calendars.get(i).delete() && removed;
+			removed = removed && calendars.get(i).removeAllEvents();
+			removed = removed && calendars.get(i).deleteCalendar();
 		}
 		
 		while (calendars.size() > 0) {
@@ -479,33 +460,16 @@ public class RunCommand {
 	}
 	
 	/**
-	 * 
-	 * @param index
-	 * @return
-	 */
-	private boolean isParamHelp (int index) {
-		try {
-			if (CommandSyntax.equalsHelp(command[1])) {
-				printMessage(CommandSyntax.commandWithParamHelpToString(index));
-				return true;
-			}
-		} catch (Exception e) {
-			
-		}
-		return false;
-	}
-	
-	/**
 	 * prints SyntaxError
 	 * @param indexCmd
 	 */
 	private void errorSyntax (int indexCmd) {
-		String msg = "Syntax Error!\nType \"" + CommandSyntax.getCommands()[indexCmd] + " " + CommandSyntax.getCommands()[0] + "\" for more information";
+		String msg = "Syntax Error!\nType \"" + commands.getPrefix() + commands.getCommand(indexCmd).getCommand() + " " + commands.getCommand(0).getCommand() + "\" for more information";
 		printMessage(msg);
 	}
 	
 	private void errorCalNotFound () {
-		printMessage("Calendar not found!");
+		printMessage("Error: Calendar not found!");
 	}
 	
 	private void errorUnkown () {
@@ -525,7 +489,7 @@ public class RunCommand {
 	 * @param msg
 	 */
 	private void printMessage (String msg) {
-		CalendarBot.printMessage(msg);
+		CalendarBot.printMessageTumSpam(msg);
 	}
 	
 	/**
@@ -536,7 +500,7 @@ public class RunCommand {
 	private boolean existsCalendar (Calendar calendar) {
 		boolean equals = false;
 		for (int i = 0; i < calendars.size(); i++) {
-			equals = calendars.get(i).equals(calendar) || equals;			
+			equals = equals || calendars.get(i).equals(calendar);			
 		}
 		return equals;
 	}
@@ -544,7 +508,7 @@ public class RunCommand {
 	/**
 	 * 
 	 * @param name
-	 * @return
+	 * @return calendar with name {@code name} or null if calendar not exists
 	 */
 	private Calendar getCalendarByName (String name) {
 		for (int i = 0; i < calendars.size(); i++) {
@@ -604,7 +568,7 @@ public class RunCommand {
 			case 'm':
 				return number * 43200;
 			case 'y':
-				return number * 525600;
+				return number * 518400;
 			default:
 				return -1;
 			}

@@ -3,7 +3,7 @@ package bots.CalendarBot;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import bridgempp.bot.messageformat.MessageFormat;
@@ -16,35 +16,29 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	static String version = "1.0.8";
-	LinkedList<Calendar> calendars;
-	RunCommand runCmd;
-	Reminder reminder;
-	int firstYear;
-	String filepath;
-	static boolean eventsPastAutoDelOn;
+	public final static String VERSION = "1.1.0";
+	private static CalendarBot INSTANCE;
+	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson;
-	private static String messageGroup;
-	String command;
-	
-	private static CalendarBot instance;
+	private final int firstYear = 1970;
+	private final String filepath = "calendarbot/";
+	private final Commands commands = Commands.getInstance();
+	private RunCommand runCmd;
+	private Reminder reminder;
+	private ArrayList<Calendar> calendars;
 	
 	@Override
 	public void initializeBot () {
-		instance = this;
-		command = null;
-		filepath = "../calendarbot/";
+		INSTANCE = this;
 		if (!new File(filepath).exists()) {
 			new File(filepath).mkdir();
 		}
-		eventsPastAutoDelOn = false;
-		firstYear = 1970;
 		
-		calendars = new LinkedList<Calendar>();
+		calendars = new ArrayList<Calendar>();
 		File file = new File(filepath + "calendarbot" + ".properties");
 		if (file.exists()) {
 			if (!loadCalendars()) {
-				printMessage("Error: Could not load Calendars\nType \"reset\" to try again");
+				printMessageTumSpam("Error: Could not load Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again");
 			}
 		}
 		calendars.add(new CalendarBirthday(firstYear, filepath));
@@ -57,18 +51,10 @@ public class CalendarBot extends Bot {
 	@Override
 	public void messageReceived(Message message) {
 		//set command
-		command = message.getPlainTextMessage();
+		String command = message.getPlainTextMessage();
 		
-		if (command.toLowerCase().startsWith(CommandSyntax.getPrefix())) {			
-			command = command.substring(CommandSyntax.getPrefix().length());
-			
-			//set messageGroup
-			messageGroup = message.getGroup();
-					
-			//set isCmdDeleteAll
-			if (!command.toLowerCase().split(" ")[0].equals("yes")) {
-				RunCommand.isCmdDeleteAll = false;
-			}
+		if (command.toLowerCase().startsWith(commands.getPrefix())) {			
+			command = command.substring(commands.getPrefix().length());
 			
 			//send message
 			runCmd.runNewCommand(command);
@@ -77,13 +63,13 @@ public class CalendarBot extends Bot {
 			if (eventsPastAutoDelOn) {
 				runCmd.cmdAutoDel();
 			}
-			//
+			//save and load changes
 			reset();
 		}
 	}
 	
-	public static void printMessage (String msg) {
-		instance.sendMessage(new Message(messageGroup, msg, MessageFormat.PLAIN_TEXT));
+	public static void printMessageTumSpam (String msg) {
+		INSTANCE.sendMessage(new Message("tumspam", msg, MessageFormat.PLAIN_TEXT));
 	}
 	
 	/**
@@ -94,9 +80,9 @@ public class CalendarBot extends Bot {
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + "calendarbot" + ".properties");
 			prop.load(fis);
+			fis.close();
 			eventsPastAutoDelOn = Boolean.parseBoolean(prop.getProperty("eventsPastAutoDelOn"));
 			alertson = Boolean.parseBoolean(prop.getProperty("alertson"));
-			messageGroup = prop.getProperty("messageGroup");
 			int size = Integer.parseInt(prop.getProperty("size"));
 			for (int i = 0; i < size; i++) {
 				String[] value = prop.getProperty("" + i).split(" ");
@@ -120,22 +106,21 @@ public class CalendarBot extends Bot {
 			for (int i = 0; i < calendars.size(); i++) {
 				properties.setProperty("" + i, calendars.get(i).toString());
 			}
-			properties.setProperty("messageGroup", "" + messageGroup);
 			properties.setProperty("eventsPastAutoDelOn", "" + eventsPastAutoDelOn);
 			properties.setProperty("alertson", "" + alertson);
 			properties.setProperty("size", "" + calendars.size());
 			properties.store(fos, "");
 			fos.close();
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 	
 	private void reset () {
 		if (!saveCalendars()) {
 			if (!saveCalendars()) {
-				printMessage("Error: Could not save calendars! Changes may be gone");
+				printMessageTumSpam("Error: Could not save calendars! Changes may be gone");
 			}
 		}
 //		reminder.interrupt();

@@ -1,6 +1,6 @@
 package bots.CalendarBot;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +15,7 @@ public class Calendar {
 	protected String name;
 	protected int firstYear;
 	protected String filepath;
-	protected LinkedList<Event> events;
+	protected ArrayList<Event> events;
 	protected int DefaultRepeat, DefaultRemind;
 	
 	/**
@@ -42,7 +42,7 @@ public class Calendar {
 		this.filepath = filepath;
 		this.DefaultRemind = DefaultRemind;
 		this.DefaultRepeat = DefaultRepeat;
-		events = new LinkedList<Event>();
+		events = new ArrayList<>();
 		File file = new File(filepath + name + ".properties");
 		if (file.exists()) {
 			load();
@@ -54,7 +54,6 @@ public class Calendar {
 	 */
 	protected void load() {
 		try {
-			events = new LinkedList<Event>();
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + name + ".properties");
 			prop.load(fis);
@@ -93,13 +92,13 @@ public class Calendar {
 	 * deletes properties file
 	 * @return
 	 */
-	public boolean delete() {
+	public boolean deleteCalendar() {
 		try {
 			return new File(filepath + name + ".properties").delete();
 		}
-			catch (Exception e) {
-				return false;
-			}
+		catch (Exception e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -118,37 +117,6 @@ public class Calendar {
 		}
 		load();
 		return added;
-	}
-	
-	/**
-	 * 
-	 * @param wat
-	 * @param date - format dd.mm.yyyy
-	 * @param time - format hh:mm
-	 * @param repeat
-	 * @param remind
-	 * @return
-	 */
-	public boolean add (String wat, String date, String time, int repeat, int remind) {
-		try {
-			return add(wat, CalDateFormat.dateToMin(date + " " + time, firstYear), repeat, remind);
-		} 
-		catch (Exception e) {
-			return false;
-		}
-		
-		
-	}
-	
-	/**
-	 * 
-	 * @param wat
-	 * @param date - format: ddmmyyyy
-	 * @param time - format: hhmm
-	 * @return
-	 */
-	public boolean add (String wat, String date, String time) {
-		return add(wat, date, time, DefaultRepeat, DefaultRemind);
 	}
 	
 	/**
@@ -179,7 +147,7 @@ public class Calendar {
 	 * @param index
 	 * @return
 	 */
-	public boolean remove (int index) {
+	public boolean removeEvent (int index) {
 		boolean removed = false;
 		if (events.size() > index) {
 			events.remove(index);
@@ -189,7 +157,7 @@ public class Calendar {
 		return removed;
 	}
 	
-	public boolean remove (String name) {
+	public boolean removeEvent (String name) {
 		boolean removed = false;
 		for (int i = 0; i < events.size(); i++) {
 			if (events.get(i).getWat().equals(name)) {
@@ -201,9 +169,9 @@ public class Calendar {
 		return removed;
 	}
 	
-	public boolean removeAll () {
+	public boolean removeAllEvents () {
 		boolean removed = false;
-		events = new LinkedList<Event>();
+		events = new ArrayList<>();
 		removed = save();
 		load();
 		return removed;
@@ -235,10 +203,10 @@ public class Calendar {
 	/**
 	 * 
 	 * @param currentDate
-	 * @return next event after {@code currentDate} or null if there is no next date
+	 * @return next event after {@code currentDate} or empty array if there is no next date
 	 */
 	public Event[] getNext (int currentDate) {
-		LinkedList<Event> nextEvents = new LinkedList<>();
+		ArrayList<Event> nextEvents = new ArrayList<>();
 		for (int i = 0; i < events.size(); i++) {
 			if (events.get(i).getNextRepeat() > currentDate) {
 				if (nextEvents.size() > 0) {
@@ -246,7 +214,7 @@ public class Calendar {
 						nextEvents.add(events.get(i));
 					}
 					else if (nextEvents.get(0).getNextRepeat() > events.get(i).getNextRepeat()) {
-						nextEvents = new LinkedList<>();
+						nextEvents = new ArrayList<>();
 						nextEvents.add(events.get(i));
 					}
 				}
@@ -258,7 +226,7 @@ public class Calendar {
 		try {
 			return nextEvents.toArray(new Event[nextEvents.size()]);		
 		} catch (Exception e) {
-			return null;
+			return new Event[] {};
 		}
 	}
 	

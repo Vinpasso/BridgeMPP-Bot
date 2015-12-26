@@ -1,8 +1,7 @@
 package bots.CalendarBot;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 import bridgempp.bot.wrapper.Schedule;
 
 /**
@@ -11,7 +10,7 @@ import bridgempp.bot.wrapper.Schedule;
  *
  */
 public class Reminder implements Runnable {
-	private LinkedList<Event> nextReminds;
+	private ArrayList<Event> nextReminds;
 	private Calendar[] calendar;
 	private int firstYear;
 	public boolean alertson;
@@ -27,14 +26,14 @@ public class Reminder implements Runnable {
 	 * add next Event(s) and/ or Reminder(s) to {@code nextReminds}
 	 */
 	public void setNextReminds() {
-		LinkedList<Event> nextRepeats = new LinkedList<Event>();
-		nextReminds = new LinkedList<Event>();
-		int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
+		ArrayList<Event> nextRepeats = new ArrayList<>();
+		nextReminds = new ArrayList<>();
+		int dateNow = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
 		for (int i = 0; i < calendar.length; i++) {
 			for (int j = 0; j < calendar[i].getEvents().length; j++) {
 				
 				//set nextEvents
-				if(calendar[i].getEvents()[j].getNextRepeat() > date) {					
+				if(calendar[i].getEvents()[j].getNextRepeat() > dateNow) {					
 					if (nextRepeats.size() == 0 ) {
 						nextRepeats.add(calendar[i].getEvents()[j]);
 					}
@@ -42,13 +41,13 @@ public class Reminder implements Runnable {
 						nextRepeats.add(calendar[i].getEvents()[j]);
 					}
 					else if (calendar[i].getEvents()[j].getNextRepeat() < nextRepeats.get(0).getNextRepeat()) {
-						nextRepeats = new LinkedList<Event>();
+						nextRepeats = new ArrayList<Event>();
 						nextRepeats.add(calendar[i].getEvents()[j]);
 					}
 				}				
 				
 				//set nextReminds
-				if(calendar[i].getEvents()[j].getRemind() > 0 && calendar[i].getEvents()[j].getNextRemind() > date) {
+				if(calendar[i].getEvents()[j].getRemind() > 0 && calendar[i].getEvents()[j].getNextRemind() > dateNow) {
 					if (nextReminds.size() == 0 ) {
 						nextReminds.add(calendar[i].getEvents()[j]);
 					}
@@ -56,7 +55,7 @@ public class Reminder implements Runnable {
 						nextReminds.add(calendar[i].getEvents()[j]);
 					}
 					else if (calendar[i].getEvents()[j].getNextRemind() < nextReminds.get(0).getNextRemind()) {
-						nextReminds = new LinkedList<Event>();
+						nextReminds = new ArrayList<Event>();
 						nextReminds.add(calendar[i].getEvents()[j]);
 					}
 				}
@@ -78,35 +77,18 @@ public class Reminder implements Runnable {
 	
 	/**
 	 * 
-	 * @return the events to remind
-	 */
-	public Event[] getNextRemind () {
-		try {
-			int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
-			if (date < nextReminds.get(0).getNextRemind() || date < nextReminds.get(0).getNextRepeat()) {
-				return (nextReminds.toArray(new Event[nextReminds.size()]));
-			}
-			return null;
-		} 
-		catch (Exception e) {
-			return null;
-		}
-	}
-	
-	/**
-	 * 
 	 * @return minutes until next Reminder/ Event 
 	 *  or -1 if there is no upcoming event 
 	 *  or -2 if there is no event
 	 */
 	public int minToRemind () {
-		int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
+		int dateNow = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);
 		try {			
-			if (nextReminds.get(0).getNextRemind() > date) {
-				return nextReminds.get(0).getNextRemind() - date;
+			if (nextReminds.get(0).getNextRemind() > dateNow) {
+				return nextReminds.get(0).getNextRemind() - dateNow;
 			} 
-			else if (nextReminds.get(0).getNextRepeat() > date) {
-				return nextReminds.get(0).getNextRepeat() - date;
+			else if (nextReminds.get(0).getNextRepeat() > dateNow) {
+				return nextReminds.get(0).getNextRepeat() - dateNow;
 			}
 			else return -1;
 		} 
@@ -135,10 +117,10 @@ public class Reminder implements Runnable {
 			try {
 				for (int i = 0; i < nextReminds.size(); i++) {
 					if (isRemindRepeat(nextReminds.get(i)) == 2 && alertson) {
-						CalendarBot.printMessage(nextReminds.get(i).toStringRemind(firstYear));
+						CalendarBot.printMessageTumSpam(nextReminds.get(i).toStringRemind());
 					}
-					else if ((isRemindRepeat(nextReminds.get(i)) == 1 || isRemindRepeat(nextReminds.get(i)) == 3) && alertson) {
-						CalendarBot.printMessage(nextReminds.get(i).toStringRepeat(firstYear));
+					else if (isRemindRepeat(nextReminds.get(i)) == 1 && alertson) {
+						CalendarBot.printMessageTumSpam(nextReminds.get(i).toStringRepeat());
 					}
 				}
 			} catch (Exception e) {
@@ -160,35 +142,18 @@ public class Reminder implements Runnable {
 	/**
 	 * 
 	 * @param event
-	 * @return 0: else, 1: if event is now, 2: if event should be remind now, 3: if both
+	 * @return 0: else, 1: if event is now, 2: if event should be remind now
 	 */
 	public int isRemindRepeat (Event event) {
-		int date = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);			
-		if (event.getNextRemind() == event.getNextRepeat() && event.getNextRemind() <= date) {
-			return 3;
-		} 
-		else if (event.getNextRepeat() <= date) {
+		int dateNow = CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear);			
+		if (event.getNextRepeat() <= dateNow) {
 				return 1;
 		}
-		else if (event.getNextRemind() <= date) {
+		else if (event.getNextRemind() <= dateNow) {
 			return 2;
 		}
 		
 		return 0;	
-	}
-	
-	/**
-	 * 
-	 */
-	public void alertson () {
-		alertson = true;
-	}
-	
-	/**
-	 * 
-	 */
-	public void alertsoff () {
-		alertson = false;
 	}
 	
 }

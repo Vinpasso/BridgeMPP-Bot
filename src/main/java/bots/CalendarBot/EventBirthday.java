@@ -7,32 +7,30 @@ public class EventBirthday extends Event {
 	}
 	
 	@Override
-	public String toStringList (int firstYear) {
-		return CalDateFormat.minToDate(date, firstYear) + ": " + watWithS() + " Geburtstag, repeat: " + repeatToString() + ", remind: " + remindToString();
+	public String toStringList (boolean next) {
+		return CalDateFormat.minToDate((next ? nextRepeat : date), firstYear) + ": " + watWithS() + " Geburtstag, repeat: " + repeatToString() + ", remind: " + remindToString();
 	}
 	
 	@Override
-	public String toStringRepeat (int firstYear) {
-		return new WishChooser().toString() + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday(firstYear) + "\nshow me birthday cake" + wat;
+	public String toStringRepeat () {
+		return new BirthdayWishes().getWish(age()) + "\nCalendarBot wuenscht " + wat + " alles Gute zum Geburtstag!\n" + toStringBirthday() + "\nshow me birthday cake" + wat;
 	}
 	
 	@Override
-	public String toStringRemind (int firstYear) {
-		return (remind == 1440 ? "Morgen: " : CalDateFormat.minToDate(date, firstYear) + ": ") + toStringBirthday(firstYear);
+	public String toStringRemind () {
+		return (remind == 1440 ? "Morgen: " : CalDateFormat.minToDate(date, firstYear) + ": ") + toStringBirthday();
 	}
 	
-	private String toStringBirthday(int firstYear) {
-		int currentYear = CurrentDate.getYear();
+	private String toStringBirthday() {
 		return watWithS()
-		+ (currentYear - CalDateFormat.minToDateSplitted(date, firstYear)[2]) + ". Geburtstag";
+		+ age() + ". Geburtstag";
 	}
 	private String watWithS () {
 		return wat + ((wat.charAt(wat.length() - 1) != 's' && wat.charAt(wat.length() - 1) != 'x') ? "s " : "\' ");
 	}
 	
-	
-	private String toStringShowMe (int firstYear) {
-		int currentYear = CurrentDate.getYear();
-		return "show me " + (currentYear - CalDateFormat.minToDateSplitted(date, firstYear)[2]) + " birthday";
+	private int age () {
+		
+		return (CurrentDate.getYear() - CalDateFormat.minToDateSplitted(date, firstYear)[2]);
 	}
 }
