@@ -269,7 +269,7 @@ public class Calendar {
 	}
 	
 	public String toStringList () {
-		return name + ": repeat: " + Event.repeatToString(defaultRepeat) + ", remind: " + Event.remindToString(defaultRemind) + ", tumtum-Chat: " + (defaultTumtum ? "on" : "off"); 
+		return name + ":\t repeat: " + Event.repeatToString(defaultRepeat) + ", remind: " + Event.remindToString(defaultRemind) + ", tumtum-Chat: " + (defaultTumtum ? "on" : "off"); 
 	}
 	
 	@Override

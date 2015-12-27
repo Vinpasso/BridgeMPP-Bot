@@ -67,3 +67,9 @@ v. 2.0.0:
 	- RR Bug: if remind/ repeat is 0 command eventls shows repeat/ remind wrongly
 	- Alex Cal Bug: command calls shows "repeat" and "remind" wrongly
 	- BMPP Schedule Bug: events are reminded several times at the same time
+	
+v. 2.0.1:
+--------
+Bugfixes:
+	- status message of command caledit is shown wrongly
+	

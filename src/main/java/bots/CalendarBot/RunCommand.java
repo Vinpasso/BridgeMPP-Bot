@@ -232,7 +232,7 @@ public class RunCommand {
 			cal.setDefaultRemind(remind);
 		}
 		//print status
-		printMessage("Changed Calendar \"" + cal + "\" into: \n" + cal.toStringList());
+		printMessage("Changed Calendar \"" + cal.toStringList() + "\" into: \n" + cal.toStringList());
 	}
 	
 	/**
@@ -306,7 +306,7 @@ public class RunCommand {
 			else {
 				cal = null;
 			}			
-			String msg = "";
+			String msg = "\n";
 			
 			// no cal + all
 			if (cal == null && command[1].equals("all")) {				
