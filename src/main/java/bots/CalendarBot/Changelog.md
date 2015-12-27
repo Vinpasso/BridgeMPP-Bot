@@ -32,8 +32,18 @@ v. 1.1.0:
 
 Bugs:
 	- command "eventls [calendar] next" shows wrong date
-	- Error "unknown command" shows wrong wrong command
+	- Error "unknown command" shows wrong command
 
+v. 1.1.1:
+--------
+- Changes:
+	- Command help: added new help message: "Type "?cal %command% help" for more information"
 
+- Multiple Bugfixes
+
+Bugs:
+	- Crashes at initializing
+	- Crashes at command without parameters
+	- Crashes if command is help command or contains help
 
 

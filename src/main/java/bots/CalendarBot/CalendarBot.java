@@ -16,10 +16,10 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "1.1.0";
+	public final static String VERSION = "1.1.1";
 	private static CalendarBot INSTANCE;
 	public static boolean eventsPastAutoDelOn = false;
-	private static boolean alertson;
+	private static boolean alertson = true;
 	private final int firstYear = 1970;
 	private final String filepath = "calendarbot/";
 	private final Commands commands = Commands.getInstance();

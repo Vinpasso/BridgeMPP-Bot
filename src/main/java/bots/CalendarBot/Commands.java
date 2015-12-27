@@ -38,7 +38,7 @@ public class Commands {
 		return new Command (
 				new String[] {"help", "?", "hilfe", "aiuto", "ayuda", "ivastehnix", "auxilium"},
 				"",
-				"Shows all available commands. Type \"" + prefix + "%command% " + commands[0].getCommand() + "\" for more information"
+				"Shows all available commands. Type \"" + prefix + "%command% help \" for more information"
 			);
 	}
 	
@@ -104,7 +104,7 @@ public class Commands {
 	private Command setCreateEvent () {
 		return new Command (
 				new String[] {"eventcr"},
-				"{calendar} {description} {dateInMin | dd.mm.yyyy | dd.mm.yyyy-hh:mm} [repeat remind]",
+				"{calendar} {description} {dd.mm.yyyy | dd.mm.yyyy-hh:mm | dateInMin} [repeat remind]",
 				"Creates new event\n"
 				+ "calendar:\tName of calendar in which the event should be created\n"
 				+ "description:\tDescription of event\n"
@@ -298,12 +298,12 @@ public class Commands {
 		 * @return ONLY first element
 		 */
 		public String getCommand () {
-			return command[1];
+			return command[0];
 		}
 		
 		@Override
 		public String toString() {
-			return command[1] + " " + parameter + "\n" + description;
+			return command[0] + " " + parameter + "\n" + description;
 		}
 		
 		/**
@@ -311,7 +311,7 @@ public class Commands {
 		 * @return command as String with parameters
 		 */
 		public String commandToString () {
-			return command[1] + " " + parameter + "\n";
+			return command[0] + " " + parameter + "\n";
 		}
 		
 		public boolean isCommand (String cmd) {

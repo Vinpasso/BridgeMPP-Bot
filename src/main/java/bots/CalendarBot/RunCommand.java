@@ -35,7 +35,7 @@ public class RunCommand {
 			isCmdDeleteAll = false;
 		}
 		// tests if parameter is help
-		if (cmd.length > 0 && commands.getCommand(0).isCommand(cmd[1].toLowerCase())) {
+		if (cmd.length > 1 && commands.getCommand(0).isCommand(cmd[1].toLowerCase())) {
 			if (indexCommand >= 0) {
 				printMessage(commands.commandToString(indexCommand));
 			}
@@ -44,7 +44,8 @@ public class RunCommand {
 			switch (indexCommand) {
 			case 0:
 				// help
-				printMessage(commands.commandsToString());
+				printMessage(commands.commandsToString()
+				+ "Type \"" + commands.getPrefix() + "%command% " + commands.getCommand(0).getCommand() + "\" for more information");
 				break;
 			case 1:
 				//printDate
