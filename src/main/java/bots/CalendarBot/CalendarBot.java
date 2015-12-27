@@ -16,7 +16,7 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "1.1.1";
+	public final static String VERSION = "1.1.2";
 	private static CalendarBot INSTANCE;
 	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson = true;

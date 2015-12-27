@@ -56,7 +56,7 @@ public class CalDateFormat {
             //Date to minutes
             int min = 0;
             min += (intDate[2] - firstYear)*365;             //add (years to days)
-            if (isLapYear(firstYear)) {                      //add one day per labyear in this period
+            if (isLeapYear(firstYear)) {                      //add one day per labyear in this period
                 min += numLabYears(firstYear, intDate[2]);   
             }            
             else {
@@ -284,7 +284,7 @@ public class CalDateFormat {
     private static int daysOfMonth (int month, int year) {
         //February
         if (month == 2) {
-            if (isLapYear(year)) {
+            if (isLeapYear(year)) {
                 return 29;
             }
             else {
@@ -314,7 +314,7 @@ public class CalDateFormat {
      * @param year
      * @return true if {@code year} is a lap year
      */
-    private static boolean isLapYear (int year) {
+    private static boolean isLeapYear (int year) {
         return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
     }
 }

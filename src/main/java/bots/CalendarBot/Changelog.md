@@ -6,7 +6,6 @@ v. 1.0.6:
 
 Alex Bug: command eventls shows "repeat" and "remind" of events as number of days/ minutes
 
-
 v. 1.0.7:
 ---------
 - Bugfixes: Next Bug
@@ -46,4 +45,7 @@ Bugs:
 	- Crashes at command without parameters
 	- Crashes if command is help command or contains help
 
-
+v. 1.1.2:
+--------
+Bugfixes: 
+	- Udo's Travel Catastrophe (UTC) Bug: wrong time unit (UTC+0)

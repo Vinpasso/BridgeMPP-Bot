@@ -2,6 +2,8 @@ package bots.CalendarBot;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * 
@@ -9,44 +11,36 @@ import java.util.GregorianCalendar;
  *
  */
 public class CurrentDate {
-	private static GregorianCalendar date;
-	public CurrentDate () {
-		
-	}	
+	private static GregorianCalendar newCal () {
+		return new GregorianCalendar(TimeZone.getTimeZone("CET"),Locale.GERMAN);
+	}
 	
 	public static int getYear () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.YEAR);
+		return newCal().get(Calendar.YEAR);
 	}
 	
 	public static int getMonth () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.MONTH) + 1;
+		return newCal().get(Calendar.MONTH) + 1;
 	}
 	
-	public static int getDay () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.DAY_OF_MONTH);
+	public static int getDay () {		
+		return newCal().get(Calendar.DAY_OF_MONTH);
 	}
 	
-	public static int getWeekday () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.DAY_OF_WEEK);
+	public static int getWeekday () {		
+		return newCal().get(Calendar.DAY_OF_WEEK);
 	}
 	
-	public static int getHour () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.HOUR_OF_DAY);
+	public static int getHour () {		
+		return newCal().get(Calendar.HOUR_OF_DAY);
 	}
 	
-	public static int getMinute () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.MINUTE);
+	public static int getMinute () {		
+		return newCal().get(Calendar.MINUTE);
 	}
 	
-	public static int getSecond () {
-		date = new GregorianCalendar();
-		return date.get(Calendar.SECOND);
+	public static int getSecond () {		
+		return newCal().get(Calendar.SECOND);
 	}
 	
 	public static String getTime () {
