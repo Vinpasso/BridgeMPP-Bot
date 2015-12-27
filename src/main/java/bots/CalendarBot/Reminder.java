@@ -13,7 +13,7 @@ public class Reminder implements Runnable {
 	private ArrayList<Event> nextReminds;
 	private Calendar[] calendar;
 	private int firstYear;
-	public boolean alertson;
+	private boolean alertson;
 	
 	public Reminder (Calendar[] calendar, int firstYear, boolean alertson) {
 		this.calendar = calendar;
@@ -115,12 +115,27 @@ public class Reminder implements Runnable {
 //			}		
 		
 			try {
+				//check whether this is the last instance of reminder
+				if (this != CalendarBot.reminder) {
+					return;
+				}
+				
 				for (int i = 0; i < nextReminds.size(); i++) {
-					if (isRemindRepeat(nextReminds.get(i)) == 2 && alertson) {
-						CalendarBot.printMessageTumSpam(nextReminds.get(i).toStringRemind());
+					if (isRemindRepeat(nextReminds.get(i)) == 2) {
+						//print in tumspam
+						CalendarBot.printMessage(nextReminds.get(i).toStringRemind(), false);
+						if (nextReminds.get(i).isTumtum() && alertson) {
+							//print in tumtum
+							CalendarBot.printMessage(nextReminds.get(i).toStringRemind(), true);
+						}
 					}
 					else if (isRemindRepeat(nextReminds.get(i)) == 1 && alertson) {
-						CalendarBot.printMessageTumSpam(nextReminds.get(i).toStringRepeat());
+						//print in tumspam
+						CalendarBot.printMessage(nextReminds.get(i).toStringRepeat(), false);
+						if (nextReminds.get(i).isTumtum() && alertson) {
+							//print in tumtum
+							CalendarBot.printMessage(nextReminds.get(i).toStringRepeat(), true);
+						}
 					}
 				}
 			} catch (Exception e) {

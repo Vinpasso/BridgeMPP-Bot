@@ -110,7 +110,15 @@ public class RunCommand {
 				break;
 			case 16:
 				//version
-				printMessage(CalendarBot.VERSION);
+				printMessage("CalendarBot Version " + CalendarBot.VERSION);
+				break;
+			case 17:
+				//caledit
+				cmdCalEdit(cmd);
+				break;
+			case 18:
+				//alerts
+				printMessage("Alerts are " + (CalendarBot.getAlertson() ? "on" : "off"));
 				break;
 			case 100:
 				//reset
@@ -139,7 +147,8 @@ public class RunCommand {
 		try {
 			int repeat = convertRepeat(command[2]);
 			int remind = convertRemind(command[3]);
-			Calendar newCalendar = new Calendar(command[1], firstYear, filepath, repeat, remind);
+			boolean tumtum = (command[4].charAt(0) == 49) ? true : false; 
+			Calendar newCalendar = new Calendar(command[1], firstYear, filepath, repeat, remind, tumtum);
 			if (!existsCalendar(newCalendar)) {
 				calendars.add(newCalendar);
 				printMessage("Created Calendar " + command[1]);
@@ -158,7 +167,7 @@ public class RunCommand {
 	private void cmdCalls () {
 		String calall = "";
 		for (int i = 0; i < calendars.size(); i++) {
-			calall = calall + "\n" + calendars.get(i).toString();
+			calall = calall + "\n" + calendars.get(i).toStringList();
 		}
 		printMessage(calall);
 	}
@@ -185,6 +194,45 @@ public class RunCommand {
 		catch (Exception e) {
 			errorSyntax(7);
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void cmdCalEdit (String[] command) {
+		//check for parameters
+		if (command.length < 3) {
+			errorSyntax(17);
+			return;
+		}		
+		//check whether the calendar exists
+		Calendar cal = getCalendarByName(command[1]);
+		if (cal == null) {
+			errorCalNotFound();
+			return;
+		}		
+		//set TumTum
+		cal.setDefaultTumtum((command[2].charAt(0) == 49) ? true : false);		
+		//set repeat
+		if (command.length >= 4) {
+			int repeat = convertRepeat(command[3]);
+			if (repeat == -1) {
+				errorSyntax(17);
+				return;
+			}
+			cal.setDefaultRepeat(repeat);
+		}
+		//set remind
+		if (command.length >= 5) {
+			int remind = convertRemind(command[4]);
+			if (remind == -1) {
+				errorSyntax(17);
+				return;
+			}
+			cal.setDefaultRemind(remind);
+		}
+		//print status
+		printMessage("Changed Calendar \"" + cal + "\" into: \n" + cal.toStringList());
 	}
 	
 	/**
@@ -490,7 +538,7 @@ public class RunCommand {
 	 * @param msg
 	 */
 	private void printMessage (String msg) {
-		CalendarBot.printMessageTumSpam(msg);
+		CalendarBot.printMessage(msg, false);
 	}
 	
 	/**

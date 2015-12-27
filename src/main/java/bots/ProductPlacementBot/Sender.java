@@ -24,4 +24,8 @@ public class Sender {
 		}
 		return all;
 	}
+	
+	public String getRandomSender () {
+		return sender.size() > 0 ? sender.get((int) (Math.random() * sender.size())) : "no existing senders";
+	}
 }

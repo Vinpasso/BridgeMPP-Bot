@@ -8,6 +8,7 @@ package bots.CalendarBot;
 public class Event {
 	protected String wat;
 	protected int date, repeat, remind, nextRepeat, nextRemind, firstYear;
+	protected boolean tumtum;
 	
 	/**
 	 * 
@@ -18,13 +19,14 @@ public class Event {
 	 * @param currentDate current date as past minutes since 01.01.{@code firstYear} 
 	 * @param firstYear 
 	 */
-	public Event (String wat, int date, int repeat, int remind, int currentDate, int firstYear) {
+	public Event (String wat, int date, int repeat, int remind, int firstYear, boolean tumtum) {
 		this.wat = wat;
 		this.date = date;
 		this.repeat = repeat;
 		this.remind = remind;
 		this.firstYear = firstYear;
-		setNextRepeat(currentDate);
+		this.tumtum = tumtum;
+		setNextRepeat(CurrentDate.getDateInMin(firstYear));
 		setNextRemind();
 	}
 	
@@ -115,13 +117,17 @@ public class Event {
 		return event.wat == this.wat && event.date == this.date && event.repeat == this.repeat && event.remind == this.remind;
 	}
 	
+	public boolean isTumtum() {
+		return tumtum;
+	}
+	
 	@Override
 	public String toString() {
 		return date + " " + wat + " " + repeat + " " + remind;
 	}
 	
 	public String toStringList (boolean next) {
-		return CalDateFormat.minToDate((next ? nextRepeat : date), firstYear) + ": " + wat + ", repeat: " + repeatToString() + ", remind: " + remindToString();
+		return CalDateFormat.minToDate((next ? nextRepeat : date), firstYear) + ": " + wat + ", repeat: " + repeatToString(repeat) + ", remind: " + remindToString(remind);
 	}
 	
 	/**
@@ -130,7 +136,7 @@ public class Event {
 	 * @return reminiscence of event
 	 */
 	public String toStringRemind () {
-		return CalDateFormat.minToWeekday(nextRepeat, firstYear) + " " + CalDateFormat.minToDate(nextRepeat, firstYear) + ": " + wat;
+		return "Reminder: " + CalDateFormat.minToWeekday(nextRepeat, firstYear) + " " + CalDateFormat.minToDate(nextRepeat, firstYear) + ": " + wat;
 	}
 	
 	/**
@@ -142,7 +148,10 @@ public class Event {
 		return "Today " + CalDateFormat.minToDate(nextRepeat, firstYear).substring(11, 16) + ": " + wat;
 	}
 	
-	protected String repeatToString () {
+	public static String repeatToString (int repeat) {
+		if (repeat == 0) {
+			return "off";
+		}
 		if (repeat % 360 == 0) {
 			return "" + (repeat / 360) + (repeat == 360 ? " year" : " years");
 		}
@@ -155,7 +164,10 @@ public class Event {
 		return repeat + " days";		
 	}
 	
-	protected String remindToString () {
+	public static String remindToString (int remind) {
+		if (remind == 0) {
+			return "off";
+		}
 		if (remind % 518400 == 0) {
 			return "" + (remind / 518400) + (remind == 518400 ? " year" : " years");
 		}

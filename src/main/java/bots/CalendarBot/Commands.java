@@ -20,7 +20,9 @@ public class Commands {
 		setDelPastOff(),
 		setLunarPhase(),
 		setDelAllCal(),
-		setVersion()
+		setVersion(),
+		setEditCal(),
+		setAlerts ()
 	};
 	private final Command[] hiddenCommands = {
 		setReset(),
@@ -62,7 +64,7 @@ public class Commands {
 		return new Command (
 				new String[] {"alertson"},
 				"",
-				"Sets the alerts on"
+				"Activates the alerts for the TumTum-Chat"
 			);
 	}
 	
@@ -70,17 +72,19 @@ public class Commands {
 		return new Command (
 				new String[] {"alertsoff"},
 				"",
-				"Sets the alerts off"
+				"Deactivates the alerts for the TumTum-Chat"
 			);
 	}
 	
 	private Command setCreateCal () {
 		return new Command (
 				new String[] {"calcr"},
-				"{name} {repeat} {remind}",
-				"Creates new Calendar\nname:\tName of Calendar\n"
-				 + setRepeat() + "\n" 
-				 + setRemind()
+				"{name} {repeat} {remind} {tumtum}",
+				"Creates new Calendar\n"
+				+ "name:\tName of Calendar\n"
+				+ setRepeat() + "\n" 
+				+ setRemind() + "\n"
+				+ setTumTum()
 			);
 	}
 	
@@ -182,6 +186,26 @@ public class Commands {
 		);
 	}
 	
+	private Command setEditCal () {
+		return new Command (
+				new String[] {"caledit"},
+				"{name} {tumtum} [repeat remind]",
+				"Edits the named calendar"
+				+ "name:\tName of Calendar"
+				+ setTumTum() + "\n"
+				+ setRepeat() + "\n"
+				+ setRemind()
+		);
+	}
+	
+	private Command setAlerts () {
+		return new Command (
+				new String[] {"alerts"},
+				"",
+				"Shows whether the alerts are activated for the TumTum-Chat"
+		);
+	}
+	
 	private String setRepeat () {
 		return "repeat:\tNumber of days the event will repeat\n"
 				+ "Available parameters:\n"
@@ -202,6 +226,13 @@ public class Commands {
 				+ "%number%w = number of weeks\n"
 				+ "%number%m = number of months \n"
 				+ "&number%y = number of years";
+	}
+	
+	private String setTumTum () {
+		return "tumtum: if on events will also be remind in TumTum-Chat\n"
+				 + "Available parameters:\n"
+				 + "0: off\n"
+				 + "1: on";
 	}
 	
 	//hidden commands

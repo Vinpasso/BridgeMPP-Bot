@@ -15,10 +15,7 @@ public class ProductPlacementBot extends Bot {
 	private Advertisement[] playList;
 	int currentIndex;
 	AdvertisementSearcher advertSearcher;
-	
-	/**sender*/
-	private Sender sender = new Sender();
-	/**end sender*/
+	public static Sender sender = new Sender();
 	
 	
 	public void initializeBot() {
@@ -43,11 +40,10 @@ public class ProductPlacementBot extends Bot {
 		//check for command
 		if (msg.toLowerCase().startsWith("?ppb ")) {
 			
-			/**sender */
+			//command: getSender
 			if (msg.substring(5).equals("getSender")) {
 				sendMessage(new Message(message.getGroup(), sender.toString(), MessageFormat.PLAIN_TEXT));
 			}
-			/**end sender */
 			
 			else if (new PasswordChecker(msg.substring(5)).checkPassword()) {
 				int newRepeatTime = -2;
@@ -95,9 +91,6 @@ public class ProductPlacementBot extends Bot {
 		if (advertisement != null && ((advertisement.getLastPlayed() + repeatTimeTags) <= currentTime())) {			
 			lastPlayed = currentTime();
 			advertisement.setLastPlayed(currentTime());
-			if (advertisement.numberOfTags() == 2) {
-				advertisement.setLastPlayed(currentTime() - repeatTimeTags + 1);
-			}
 			sendMessage(advertisement, message);
 		}
 		

@@ -10,17 +10,17 @@ import java.util.Properties;
  */
 public class CalendarBirthday extends Calendar {
 	public CalendarBirthday(int firstYear, String filepath) {
-		super("birthday", firstYear, filepath, 360, 10080);
+		super("birthday", firstYear, filepath, 360, 10080, true);
 	}
 	
 	public CalendarBirthday () {
-		super("birthday", 0, null, 0, 0);
+		super("birthday", 0, null, 0, 0, false);
 	}
 	
 	@Override
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
-		EventBirthday event = new EventBirthday(wat, date + 600, DefaultRepeat, DefaultRemind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
+		EventBirthday event = new EventBirthday(wat, date + 480, defaultRepeat, defaultRemind, firstYear, defaultTumtum);
 		if (!existsEvent(event)) {
 			insert(event);
 			added = save();
@@ -32,7 +32,7 @@ public class CalendarBirthday extends Calendar {
 	
 	@Override
 	public boolean add (String name, int date) {
-		return add(name, date, DefaultRepeat, DefaultRemind);
+		return add(name, date, defaultRepeat, defaultRemind);
 	}
 	
 	@Override
@@ -45,7 +45,7 @@ public class CalendarBirthday extends Calendar {
 			int size = Integer.parseInt(prop.getProperty("size"));
 			for (int i = 0; i < size; i++) {
 				String[] value = prop.getProperty("" + i).split(" ");
-				insert(new EventBirthday(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear));
+				insert(new EventBirthday(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
 			}
 		} catch (Exception e) {
 			

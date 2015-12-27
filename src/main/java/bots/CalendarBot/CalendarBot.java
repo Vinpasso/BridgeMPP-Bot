@@ -16,29 +16,29 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "1.1.2";
-	private static CalendarBot INSTANCE;
+	public final static String VERSION = "2.0.0";
+	private static CalendarBot instance;
 	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson = true;
 	private final int firstYear = 1970;
 	private final String filepath = "calendarbot/";
 	private final Commands commands = Commands.getInstance();
 	private RunCommand runCmd;
-	private Reminder reminder;
+	public static Reminder reminder;
 	private ArrayList<Calendar> calendars;
 	
 	@Override
 	public void initializeBot () {
-		INSTANCE = this;
+		instance = this;
 		if (!new File(filepath).exists()) {
 			new File(filepath).mkdir();
 		}
 		
-		calendars = new ArrayList<Calendar>();
+		calendars = new ArrayList<>();
 		File file = new File(filepath + "calendarbot" + ".properties");
 		if (file.exists()) {
 			if (!loadCalendars()) {
-				printMessageTumSpam("Error: Could not load Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again");
+				printMessage("Error: Could not load Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again", false);
 			}
 		}
 		calendars.add(new CalendarBirthday(firstYear, filepath));
@@ -68,8 +68,13 @@ public class CalendarBot extends Bot {
 		}
 	}
 	
-	public static void printMessageTumSpam (String msg) {
-		INSTANCE.sendMessage(new Message("tumspam", msg, MessageFormat.PLAIN_TEXT));
+	/**
+	 * 
+	 * @param msg
+	 * @param tumtum -true: Message.group = tumtum, -false: Message.group = tumspam
+	 */
+	public static void printMessage (String msg, boolean tumtum) {
+		instance.sendMessage(new Message(tumtum ? "tumtum" : "tumspam", msg, MessageFormat.PLAIN_TEXT));
 	}
 	
 	/**
@@ -85,9 +90,10 @@ public class CalendarBot extends Bot {
 			alertson = Boolean.parseBoolean(prop.getProperty("alertson"));
 			int size = Integer.parseInt(prop.getProperty("size"));
 			for (int i = 0; i < size; i++) {
-				String[] value = prop.getProperty("" + i).split(" ");
+				//downward compatible (adds false to String)
+				String[] value = (prop.getProperty("" + i) + " false").split(" ");
 				if (value[0].equals("birthday")) continue;
-				calendars.add(new Calendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2])));
+				calendars.add(new Calendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
 			}
 			return true;
 		} catch (Exception e) {
@@ -120,7 +126,7 @@ public class CalendarBot extends Bot {
 	private void reset () {
 		if (!saveCalendars()) {
 			if (!saveCalendars()) {
-				printMessageTumSpam("Error: Could not save calendars! Changes may be gone");
+				printMessage("Error: Could not save calendars! Changes may be gone", false);
 			}
 		}
 //		reminder.interrupt();
@@ -133,6 +139,10 @@ public class CalendarBot extends Bot {
 	
 	public static void alertsoff() {
 		alertson = false;
+	}
+	
+	public static boolean getAlertson () {
+		return alertson;
 	}
 
 	

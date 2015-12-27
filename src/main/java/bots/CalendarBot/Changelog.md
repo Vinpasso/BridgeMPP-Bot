@@ -20,7 +20,7 @@ S-Bug: names of person in Birthday calendar which end with s or x are listed wro
 
 v. 1.1.0:
 --------
-- new:
+- New:
 	- command "version" (now visible)
 	- age-related birthday wishes (ages 18, 20, others)
 	- new birthday wishes for ages 18 and 20
@@ -49,3 +49,21 @@ v. 1.1.2:
 --------
 Bugfixes: 
 	- Udo's Travel Catastrophe (UTC) Bug: wrong time unit (UTC+0)
+	
+v. 2.0.0:
+--------
+(downward compatible to version 1.0.0 and later)
+- New:
+	- TumTum integration
+	- command caledit: Edits the settings of an existing calendar
+	- command alert: Shows whether the alerts are on
+	
+- Changes:
+	- Birthday cakes have been removed
+	- Command calcr: new parameter tumtum
+	- Setting Alerts: now only for TumTum-Chat
+	
+- Bugfixes:
+	- RR Bug: if remind/ repeat is 0 command eventls shows repeat/ remind wrongly
+	- Alex Cal Bug: command calls shows "repeat" and "remind" wrongly
+	- BMPP Schedule Bug: events are reminded several times at the same time

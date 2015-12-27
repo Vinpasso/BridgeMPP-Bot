@@ -16,7 +16,8 @@ public class Calendar {
 	protected int firstYear;
 	protected String filepath;
 	protected ArrayList<Event> events;
-	protected int DefaultRepeat, DefaultRemind;
+	protected int defaultRepeat, defaultRemind;
+	protected boolean defaultTumtum;
 	
 	/**
 	 * 
@@ -25,7 +26,7 @@ public class Calendar {
 	 * @param filepath
 	 */
 	public Calendar(String name, int firstYear, String filepath) {
-		this(name, firstYear, filepath, -1, -1);
+		this(name, firstYear, filepath, -1, -1, false);
 	}
 	
 	/**
@@ -33,15 +34,16 @@ public class Calendar {
 	 * @param name
 	 * @param firstYear
 	 * @param filepath
-	 * @param DefaultRepeat
-	 * @param DefaultRemind
+	 * @param defaultRepeat
+	 * @param defaultRemind
 	 */
-	public Calendar(String name, int firstYear, String filepath, int DefaultRepeat, int DefaultRemind) {
+	public Calendar(String name, int firstYear, String filepath, int defaultRepeat, int defaultRemind, boolean defaultTumtum) {
 		this.name = name;
 		this.firstYear = firstYear;
 		this.filepath = filepath;
-		this.DefaultRemind = DefaultRemind;
-		this.DefaultRepeat = DefaultRepeat;
+		this.defaultRemind = defaultRemind;
+		this.defaultRepeat = defaultRepeat;
+		this.defaultTumtum = defaultTumtum;
 		events = new ArrayList<>();
 		File file = new File(filepath + name + ".properties");
 		if (file.exists()) {
@@ -61,7 +63,7 @@ public class Calendar {
 			int size = Integer.parseInt(prop.getProperty("size"));
 			for (int i = 0; i < size; i++) {
 				String[] value = prop.getProperty("" + i).split(" ");
-				insert(new Event(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear));
+				insert(new Event(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
 			}
 		} catch (Exception e) {
 			
@@ -110,7 +112,7 @@ public class Calendar {
 	 */
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
-		Event event = new Event(wat, date, repeat, remind, CalDateFormat.dateToMin(CurrentDate.getDateWTime(), firstYear) , firstYear);
+		Event event = new Event(wat, date, repeat, remind, firstYear, defaultTumtum);
 		if (!existsEvent(event)) {
 			insert(event);
 			added = save();
@@ -126,7 +128,7 @@ public class Calendar {
 	 * @return
 	 */
 	public boolean add (String wat, int date) {
-		return add(wat, date, DefaultRepeat, DefaultRemind);
+		return add(wat, date, defaultRepeat, defaultRemind);
 	}
 	
 	/**
@@ -249,9 +251,25 @@ public class Calendar {
 		return name;
 	}
 	
+	public void setDefaultTumtum(boolean defaultTumtum) {
+		this.defaultTumtum = defaultTumtum;
+	}
+	
+	public void setDefaultRepeat(int defaultRepeat) {
+		this.defaultRepeat = defaultRepeat;
+	}
+	
+	public void setDefaultRemind(int defaultRemind) {
+		this.defaultRemind = defaultRemind;
+	}
+	
 	@Override
 	public String toString() {
-		return name + " " + DefaultRepeat + " " + DefaultRemind;
+		return name + " " + defaultRepeat + " " + defaultRemind + " " + defaultTumtum;
+	}
+	
+	public String toStringList () {
+		return name + ": repeat: " + Event.repeatToString(defaultRepeat) + ", remind: " + Event.remindToString(defaultRemind) + ", tumtum-Chat: " + (defaultTumtum ? "on" : "off"); 
 	}
 	
 	@Override

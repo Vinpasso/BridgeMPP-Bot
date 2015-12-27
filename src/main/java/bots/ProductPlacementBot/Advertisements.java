@@ -23,9 +23,10 @@ public class Advertisements {
 			}),
 			
 			//witze
-			new Advertisement(null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWolltest du schon immer Leute nerven? Dann schalte jetzt Werbung ueber Product Placement Bot mit vielen Leerzeilen davor!\nProduct Placement Bot: Wenig Publikum aber viel Werbung.",
+			new Advertisement(null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+					+ "Wolltest du schon immer Leute nerven? Dann schalte jetzt Werbung ueber Product Placement Bot mit vielen Leerzeilen davor!\nProduct Placement Bot: Wenig Publikum aber viel Werbung.",
 					new String[] {
-					"bernie",
+					ProductPlacementBot.sender.getRandomSender(),		
 					"werbung"
 			}),
 			

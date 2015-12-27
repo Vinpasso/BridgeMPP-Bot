@@ -60,4 +60,8 @@ public class CurrentDate {
 	public static String getDateWTime () {
 		return getDate() + " " + getTime();
 	}
+	
+	public static int getDateInMin (int firstYear) {
+		return CalDateFormat.dateToMin(getDateWTime(), firstYear);
+	}
 }
