@@ -41,13 +41,13 @@ public class InternetCalendar extends Calendar
 	{
 		try
 		{
-			String internetcalendar = IOUtils.toString(new URL(name).openConnection().getInputStream());
+			String internetcalendar = IOUtils.toString(new URL(name).openConnection().getInputStream(), "UTF-8");
 			//Nobody likes Windows Newlines anyway
 			internetcalendar = internetcalendar.replaceAll("\\r\\n", "\n");
-			Matcher eventregex = Pattern.compile("BEGIN:VEVENT.*?SUMMARY:([^\\n]+).*?DTSTART;[^\\n].*?(\\d\\d\\d\\d)(\\d\\d)(\\d\\d)T{0,1}(\\d{0,2})(\\d{0,2}).*?END:VEVENT", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(internetcalendar);
+			Matcher eventregex = Pattern.compile("BEGIN:VEVENT.*?SUMMARY:(.+?)(?=\\n\\S).*?DTSTART;[^\\n].*?(\\d\\d\\d\\d)(\\d\\d)(\\d\\d)T{0,1}(\\d{0,2})(\\d{0,2}).*?END:VEVENT", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(internetcalendar);
 			while (eventregex.find())
 			{
-				insert(new Event(eventregex.group(1), CalDateFormat.dateToMin(eventregex.group(4)+"."+eventregex.group(3)+"."+eventregex.group(2) + " " + ((eventregex.group(5).length() > 0)?eventregex.group(5):"00") + ":" + ((eventregex.group(6).length() > 0)?eventregex.group(6):"00"), firstYear), defaultRepeat, defaultRemind, firstYear, defaultTumtum));
+				insert(new Event(eventregex.group(1).replaceAll("\\n\\s", ""), CalDateFormat.dateToMin(eventregex.group(4)+"."+eventregex.group(3)+"."+eventregex.group(2) + " " + ((eventregex.group(5).length() > 0)?eventregex.group(5):"00") + ":" + ((eventregex.group(6).length() > 0)?eventregex.group(6):"00"), firstYear), defaultRepeat, defaultRemind, firstYear, defaultTumtum));
 			}
 		} catch (Exception e)
 		{
