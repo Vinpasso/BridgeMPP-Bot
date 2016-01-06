@@ -26,7 +26,16 @@ public class EventBirthday extends Event {
 	}
 	
 	private String watWithS () {
-		return wat + ((wat.charAt(wat.length() - 1) != 's' && wat.charAt(wat.length() - 1) != 'x') ? "s " : "\' ");
+		switch (wat.charAt(wat.length() - 1)) {
+		case 'e':
+			if (wat.charAt(wat.length() - 2) != 'c') break;
+		case 's':
+		case 'ß':
+		case 'z':
+		case 'x':
+			return wat + "\' ";
+		}
+		return wat + "s ";
 	}
 	
 	private int age () {		

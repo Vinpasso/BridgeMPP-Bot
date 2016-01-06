@@ -232,7 +232,7 @@ public class RunCommand {
 			cal.setDefaultRemind(remind);
 		}
 		//print status
-		printMessage("Changed Calendar \"" + cal.toStringList() + "\" into: \n" + cal.toStringList());
+		printMessage("Changed Calendar \"" + cal.getName() + "\" into: \n" + cal.toStringList());
 	}
 	
 	/**
