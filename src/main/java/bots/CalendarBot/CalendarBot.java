@@ -93,6 +93,11 @@ public class CalendarBot extends Bot {
 				//downward compatible (adds false to String)
 				String[] value = (prop.getProperty("" + i) + " false").split(" ");
 				if (value[0].equals("birthday")) continue;
+				if (value[0].startsWith("http://"))
+				{
+					calendars.add(new InternetCalendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
+					continue;
+				}
 				calendars.add(new Calendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
 			}
 			return true;

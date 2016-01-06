@@ -21,6 +21,7 @@ public class BotConsoleTester
 	{
 		Scanner scanner = new Scanner(System.in);
 		PersistenceManager.loadFactory();
+		Schedule.startExecutorService();
 		Properties lastUsed = getLastUsed();
 		String botclass = lastUsed.getProperty("BotFQCN");
 		System.out.println("Please enter Bot FQCN (Default: " + botclass + "):");

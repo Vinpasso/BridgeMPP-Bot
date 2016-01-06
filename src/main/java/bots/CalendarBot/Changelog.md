@@ -73,3 +73,11 @@ v. 2.0.1:
 Bugfixes:
 	- status message of command caledit is shown wrongly
 	
+v. 2.1.0
+--------
+- New:
+	- CalendarBot can now subscribe to Internet Calendars. The primitive implementation supports the following features:
+		- Importing an Internet Calendar by specifying the ICS URL as the Calendar Name
+		- Can read VEVENT DTSTART Tags (Sets to Event's Date and Time)
+		- Can read VEVENT SUMMARY Tags (Sets to Event's Name)
+		- Uses the Calendar's default Repeat and Remind for all Events
