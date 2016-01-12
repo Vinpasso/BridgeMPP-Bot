@@ -37,23 +37,23 @@ public class RunCommand {
 		// tests if parameter is help
 		if (cmd.length > 1 && commands.getCommand(0).isCommand(cmd[1].toLowerCase())) {
 			if (indexCommand >= 0) {
-				printMessage(commands.commandToString(indexCommand));
+				CalendarBot.printMessage(commands.commandToString(indexCommand),false);
 			}
 		}
 		else {
 			switch (indexCommand) {
 			case 0:
 				// help
-				printMessage(commands.commandsToString()
-				+ "Type \"" + commands.getPrefix() + "%command% " + commands.getCommand(0).getCommand() + "\" for more information");
+				CalendarBot.printMessage(commands.commandsToString()
+				+ "Type \"" + commands.getPrefix() + "%command% " + commands.getCommand(0).getCommand() + "\" for more information", false);
 				break;
 			case 1:
 				//printDate
-				printMessage(CurrentDate.getDateWTime());
+				CalendarBot.printMessage(CurrentDate.getDateWTime(), false);
 				break;
 			case 2:
 				//printTime
-				printMessage(CurrentDate.getTime());
+				CalendarBot.printMessage(CurrentDate.getTime(), false);
 				break;
 			case 3:
 				//alertson
@@ -106,11 +106,11 @@ public class RunCommand {
 			case 15:
 				//deleteAllCalendars (-param = no)
 				isCmdDeleteAll = true;
-				printMessage("Are you sure to delete all calenders and events?");
+				CalendarBot.printMessage("Are you sure to delete all calenders and events?", false);
 				break;
 			case 16:
 				//version
-				printMessage("CalendarBot Version " + CalendarBot.VERSION);
+				CalendarBot.printMessage("CalendarBot Version " + CalendarBot.VERSION, false);
 				break;
 			case 17:
 				//caledit
@@ -118,7 +118,7 @@ public class RunCommand {
 				break;
 			case 18:
 				//alerts
-				printMessage("Alerts are " + (CalendarBot.getAlertson() ? "on" : "off"));
+				CalendarBot.printMessage("Alerts are " + (CalendarBot.getAlertson() ? "on" : "off"), false);
 				break;
 			case 100:
 				//reset
@@ -131,7 +131,7 @@ public class RunCommand {
 				break;
 				default:
 					//unknown command
-					printMessage("Unknown Command " + cmd[0] + "\nType \"" + commands.getPrefix() + commands.getCommand(0).getCommand() + "\" for more information");
+					CalendarBot.printMessage(ErrorMessages.unknownCommand(cmd[0]), false);
 					break;
 			
 			}
@@ -151,13 +151,13 @@ public class RunCommand {
 			Calendar newCalendar = new Calendar(command[1], firstYear, filepath, repeat, remind, tumtum);
 			if (!existsCalendar(newCalendar)) {
 				calendars.add(newCalendar);
-				printMessage("Created Calendar " + command[1]);
+				CalendarBot.printMessage("Created Calendar " + command[1], false);
 			} 
 			else {
-				printMessage("This calendar exists already");
+				CalendarBot.printMessage("This calendar exists already", false);
 			}
 		} catch (Exception e) {
-			errorSyntax(5);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(5), false);
 		}
 	}
 	
@@ -169,7 +169,7 @@ public class RunCommand {
 		for (int i = 0; i < calendars.size(); i++) {
 			calall = calall + "\n" + calendars.get(i).toStringList();
 		}
-		printMessage(calall);
+		CalendarBot.printMessage(calall, false);
 	}
 	
 	/**
@@ -183,16 +183,16 @@ public class RunCommand {
 					if(!calendars.get(i).removeAllEvents()) throw new IOException();
 					if(!calendars.get(i).deleteCalendar()) throw new IOException();
 					calendars.remove(i);
-					printMessage("Deleted Calendar " + command[1]);
+					CalendarBot.printMessage("Deleted Calendar " + command[1], false);
 					return;
 				}
 			}
-			errorCalNotFound();
+			CalendarBot.printMessage(ErrorMessages.CalNotFoundError(), false);
 		} catch (IOException ie) {
-			errorFailed();
+			CalendarBot.printMessage(ErrorMessages.operationFailedError(""), false);
 		}
 		catch (Exception e) {
-			errorSyntax(7);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(7), false);
 		}
 	}
 	
@@ -202,13 +202,13 @@ public class RunCommand {
 	private void cmdCalEdit (String[] command) {
 		//check for parameters
 		if (command.length < 3) {
-			errorSyntax(17);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(17), false);
 			return;
 		}		
 		//check whether the calendar exists
 		Calendar cal = getCalendarByName(command[1]);
 		if (cal == null) {
-			errorCalNotFound();
+			CalendarBot.printMessage(ErrorMessages.CalNotFoundError(), false);
 			return;
 		}		
 		//set TumTum
@@ -217,7 +217,7 @@ public class RunCommand {
 		if (command.length >= 4) {
 			int repeat = convertRepeat(command[3]);
 			if (repeat == -1) {
-				errorSyntax(17);
+				CalendarBot.printMessage(ErrorMessages.syntaxError(17), false);
 				return;
 			}
 			cal.setDefaultRepeat(repeat);
@@ -226,13 +226,13 @@ public class RunCommand {
 		if (command.length >= 5) {
 			int remind = convertRemind(command[4]);
 			if (remind == -1) {
-				errorSyntax(17);
+				CalendarBot.printMessage(ErrorMessages.syntaxError(17), false);
 				return;
 			}
 			cal.setDefaultRemind(remind);
 		}
 		//print status
-		printMessage("Changed Calendar \"" + cal.getName() + "\" into: \n" + cal.toStringList());
+		CalendarBot.printMessage("Changed Calendar \"" + cal.getName() + "\" into: \n" + cal.toStringList(), false);
 	}
 	
 	/**
@@ -244,7 +244,7 @@ public class RunCommand {
 			//check if calendar exists
 			Calendar cal = getCalendarByName(command[1]);
 			if (cal == null) {
-				errorCalNotFound();
+				CalendarBot.printMessage(ErrorMessages.CalNotFoundError(), false);
 				return;
 			}					
 			//check if date is correct
@@ -279,14 +279,14 @@ public class RunCommand {
 			}
 			//print status message
 			if (created) {
-				printMessage("Created Event " + command[2]);
+				CalendarBot.printMessage("Created Event " + command[2], false);
 			}
 			else { 
-				errorFailed("Possibly the event exists already");
+				CalendarBot.printMessage(ErrorMessages.operationFailedError("Possibly the event exists already"), false);
 			}
 		} 
 		catch (Exception e) {
-			errorSyntax(8);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(8), false);
 		}
 	}
 	
@@ -299,7 +299,7 @@ public class RunCommand {
 			if (command.length >= 3) {
 				//check if calendar exists				
 				if (cal == null) {
-					errorCalNotFound();
+					CalendarBot.printMessage(ErrorMessages.CalNotFoundError(), false);
 					return;				
 				}
 			}
@@ -411,18 +411,18 @@ public class RunCommand {
 					}
 				}
 			}
-			printMessage(msg);
+			CalendarBot.printMessage(msg, false);
 		} 
 		//no event found 
 		catch (NullPointerException ne) {
 		} 
 		//to less parameters given | wrong parameters given
 		catch (ArrayIndexOutOfBoundsException | IllegalArgumentException aie) {
-			errorSyntax(9);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(9), false);
 		}
 		//else
 		catch (Exception e) {
-			errorUnkown();
+			CalendarBot.printMessage(ErrorMessages.unknownError(), false);
 		}
 	}
 	
@@ -451,19 +451,19 @@ public class RunCommand {
 			}
 			//print status msg
 			if (deleted) {
-				printMessage("Deleted Event successfully");
+				CalendarBot.printMessage("Deleted Event successfully", false);
 			}
 			else {
-				errorFailed();
+				CalendarBot.printMessage(ErrorMessages.operationFailedError(""), false);
 			}
 				
 		}
 		// calendar not found
 		catch (NullPointerException ne) {
-			errorCalNotFound();
+			CalendarBot.printMessage(ErrorMessages.CalNotFoundError(), false);
 		}
 		catch (Exception e) {
-			errorSyntax(10);
+			CalendarBot.printMessage(ErrorMessages.syntaxError(10), false);
 		}		
 	}
 	
@@ -482,8 +482,8 @@ public class RunCommand {
 		} catch (Exception e) {
 			
 		}
-		printMessage(new LunarPhase(firstYear, lang).toString());
-		printMessage("show me " + (new LunarPhase(firstYear).getLunarPhase()));
+		CalendarBot.printMessage(new LunarPhase(firstYear, lang).toString(), false);
+		CalendarBot.printMessage("show me " + (new LunarPhase(firstYear).getLunarPhase()), false);
 	}
 	
 	/**
@@ -501,44 +501,11 @@ public class RunCommand {
 		}
 		
 		if (removed) {
-			printMessage("Deleted all calendars");
+			CalendarBot.printMessage("Deleted all calendars", false);
 		}
 		else {
-			errorFailed();
+			CalendarBot.printMessage(ErrorMessages.operationFailedError(""), false);
 		}
-	}
-	
-	/**
-	 * prints SyntaxError
-	 * @param indexCmd
-	 */
-	private void errorSyntax (int indexCmd) {
-		String msg = "Syntax Error!\nType \"" + commands.getPrefix() + commands.getCommand(indexCmd).getCommand() + " " + commands.getCommand(0).getCommand() + "\" for more information";
-		printMessage(msg);
-	}
-	
-	private void errorCalNotFound () {
-		printMessage("Error: Calendar not found!");
-	}
-	
-	private void errorUnkown () {
-		printMessage("Unknown Error!");
-	}
-	
-	private void errorFailed (String msg) {
-		printMessage("Error: Operation failed!\n" + msg);
-	}
-	
-	private void errorFailed () {
-		printMessage("Error: Operation failed!");
-	}
-	
-	/**
-	 * 
-	 * @param msg
-	 */
-	private void printMessage (String msg) {
-		CalendarBot.printMessage(msg, false);
 	}
 	
 	/**

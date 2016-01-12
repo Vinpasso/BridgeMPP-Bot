@@ -66,7 +66,7 @@ public class Calendar {
 				insert(new Event(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
 			}
 		} catch (Exception e) {
-			
+			CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
 		}		
 	}
 	

@@ -16,7 +16,7 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "2.1.1";
+	public final static String VERSION = "2.1.2";
 	private static CalendarBot instance;
 	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson = true;
@@ -38,7 +38,7 @@ public class CalendarBot extends Bot {
 		File file = new File(filepath + "calendarbot" + ".properties");
 		if (file.exists()) {
 			if (!loadCalendars()) {
-				printMessage("Error: Could not load Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again", false);
+				printMessage(ErrorMessages.calNotLoadError(), false);
 			}
 		}
 		calendars.add(new CalendarBirthday(firstYear, filepath));
@@ -131,7 +131,7 @@ public class CalendarBot extends Bot {
 	private void reset () {
 		if (!saveCalendars()) {
 			if (!saveCalendars()) {
-				printMessage("Error: Could not save calendars! Changes may be gone", false);
+				printMessage(ErrorMessages.calNotLoadError(), false);
 			}
 		}
 //		reminder.interrupt();

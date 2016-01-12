@@ -1,15 +1,30 @@
 #CHANGELOG
 
+
+unreleased:
+--------
+##### ADDED:
+- Calendar Official Holiday
+
+
+v. 2.1.2 - 2016-01-12:
+--------
+##### ADDED:
+- ErrorMessage: "Error: Could not load events of calendar ..."
+
+##### FIXED:
+- Internet calendars could not be removed
+
+
 v. 2.1.1 - 2016-01-06:
 --------
 ##### CHANGED:
 - new style for changelog.md 
 
 ##### FIXED:
-- version number of command version is shown wrongly
-- status message of command caledit is shown wrongly
-- names of person in Birthday calendar which end with ß, z or ce were listed wrongly
-
+- version number of command version was shown wrongly
+- status message of command caledit was shown wrongly
+- names of person in Birthday calendar which end with "ß", "z" or "ce" were listed wrongly
 
 
 v. 2.1.0 - 2016-01-06:

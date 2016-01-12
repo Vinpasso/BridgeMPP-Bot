@@ -1,7 +1,6 @@
 package bots.CalendarBot;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +36,7 @@ public class InternetCalendar extends Calendar
 	/**
 	 * loads saved events from an internet calendar
 	 */
+	@Override
 	protected void load()
 	{
 		try
@@ -51,7 +51,7 @@ public class InternetCalendar extends Calendar
 			}
 		} catch (Exception e)
 		{
-
+			CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
 		}
 	}
 
@@ -60,6 +60,7 @@ public class InternetCalendar extends Calendar
 	 * Pretend that it gets saved anyway
 	 * @return
 	 */
+	@Override
 	protected boolean save()
 	{
 		return true;
@@ -70,6 +71,7 @@ public class InternetCalendar extends Calendar
 	 * Pretend that it gets deleted anyway
 	 * @return
 	 */
+	@Override
 	public boolean deleteCalendar()
 	{
 		return true;
@@ -83,6 +85,7 @@ public class InternetCalendar extends Calendar
 	 * @param repeat
 	 * @param remind
 	 */
+	@Override
 	public boolean add(String wat, int date, int repeat, int remind)
 	{
 		return false;
@@ -101,143 +104,37 @@ public class InternetCalendar extends Calendar
 
 	/**
 	 * 
-	 * @param event
-	 * @return
-	 */
-	protected boolean existsEvent(Event event)
-	{
-		boolean gibtsscho = false;
-		for (int i = 0; i < events.size(); i++)
-		{
-			gibtsscho = gibtsscho || events.get(i).getWat().equals(event.getWat());
-		}
-		return gibtsscho;
-	}
-
-	/**
-	 * 
 	 * @param index
 	 * @return
 	 */
+	@Override
 	public boolean removeEvent(int index)
 	{
 		return false;
 	}
 
+	@Override
 	public boolean removeEvent(String name)
 	{
 		return false;
 	}
 
+	/**
+	 * Can't possibly remove Events from an Internet calendar
+	 * However method has to return true otherwise calendar cannot be removed
+	 */
 	public boolean removeAllEvents()
 	{
-		return false;
+		return true;
 	}
 
+	@Override
+	/**
+	 * Can't possibly remove Events from an Internet calendar
+	 * 
+	 */
 	public boolean removePastEvents()
 	{
-		return false;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Event[] getEvents()
-	{
-		return events.toArray(new Event[events.size()]);
-	}
-
-	/**
-	 * 
-	 * @param currentDate
-	 * @return next event after {@code currentDate} or empty array if there is
-	 *         no next date
-	 */
-	public Event[] getNext(int currentDate)
-	{
-		ArrayList<Event> nextEvents = new ArrayList<>();
-		for (int i = 0; i < events.size(); i++)
-		{
-			if (events.get(i).getNextRepeat() > currentDate)
-			{
-				if (nextEvents.size() > 0)
-				{
-					if (nextEvents.get(0).getNextRepeat() == events.get(i).getNextRepeat())
-					{
-						nextEvents.add(events.get(i));
-					} else if (nextEvents.get(0).getNextRepeat() > events.get(i).getNextRepeat())
-					{
-						nextEvents = new ArrayList<>();
-						nextEvents.add(events.get(i));
-					}
-				} else
-				{
-					nextEvents.add(events.get(i));
-				}
-			}
-		}
-		try
-		{
-			return nextEvents.toArray(new Event[nextEvents.size()]);
-		} catch (Exception e)
-		{
-			return new Event[] {};
-		}
-	}
-
-	/**
-	 * 
-	 * @param event
-	 */
-	protected void insert(Event event)
-	{
-		for (int i = 0; i < events.size(); i++)
-		{
-			if (event.getDate() < events.get(i).getDate())
-			{
-				events.add(i, event);
-				return;
-			}
-		}
-		events.add(event);
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setDefaultTumtum(boolean defaultTumtum)
-	{
-		this.defaultTumtum = defaultTumtum;
-	}
-
-	public void setDefaultRepeat(int defaultRepeat)
-	{
-		this.defaultRepeat = defaultRepeat;
-	}
-
-	public void setDefaultRemind(int defaultRemind)
-	{
-		this.defaultRemind = defaultRemind;
-	}
-
-	@Override
-	public String toString()
-	{
-		return name + " " + defaultRepeat + " " + defaultRemind + " " + defaultTumtum;
-	}
-
-	public String toStringList()
-	{
-		return name + ":\t repeat: " + Event.repeatToString(defaultRepeat) + ", remind: " + Event.remindToString(defaultRemind) + ", tumtum-Chat: " + (defaultTumtum ? "on" : "off");
-	}
-
-	@Override
-	public boolean equals(Object object)
-	{
-		Calendar calendar = (Calendar) (object);
-		return (calendar.getName().toLowerCase().equals(this.name.toLowerCase()));
+		return true;
 	}
 }
