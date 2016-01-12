@@ -7,6 +7,10 @@ public class ErrorMessages {
 		return "Error: Could not load Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again";
 	}
 	
+	public static String calNotSaveError () {
+		return "Error: Could not save Calendars\nType \"" + commands.getPrefix() + commands.getCommand(100) + "\" to try again";
+	}
+	
 	public static String syntaxError (int indexCmd) {
 		return "Syntax Error!\nType \"" + commands.getPrefix() + commands.getCommand(indexCmd).getCommand() + " " + commands.getCommand(0).getCommand() + "\" for more information";
 	}
@@ -29,5 +33,11 @@ public class ErrorMessages {
 	
 	public static String eventsNotLoadError (Calendar calendar) {
 		return "Error: Could not load Events of Calendar \"" + calendar.getName() + "\""; 
-	}	
+	}
+	
+	public static String errorNoPermissions () {
+		return "Error: No commands allowed! Because of the failure of loading calendars,"
+				+ " you are not allowed to run any commands. Type: \"" + commands.getPrefix()
+				+ commands.getCommand(100) + "\" to try again";
+	}
 }

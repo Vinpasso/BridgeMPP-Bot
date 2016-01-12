@@ -47,7 +47,9 @@ public class CalendarBirthday extends Calendar {
 				String[] value = prop.getProperty("" + i).split(" ");
 				insert(new EventBirthday(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
 			}
+			loaded = true;
 		} catch (Exception e) {
+			loaded = false;
 			CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
 		}		
 	}

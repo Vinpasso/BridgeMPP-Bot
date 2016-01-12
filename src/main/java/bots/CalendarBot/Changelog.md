@@ -7,6 +7,22 @@ unreleased:
 - Calendar Official Holiday
 
 
+v. 2.1.3 - 2016-01-12:
+--------
+##### ADDED:
+- ErrorMessages:
+	<br> - "Error: Could not save Calendars ..."
+	<br> - "Error: No commands allowed! Because of the failure of loading calendars, you are not allowed to run any commands..."
+- StatusMessages for commands "alertson" and "alertsoff": "Alerts: on/off"
+
+##### FIXED:
+- duplicate events (in properties file) were loaded twice
+
+##### SECURITY:
+- Events of a calendar which could not been loaded, were possibly deleted while saving current events of that calendar
+- Calendars which could not been loaded, were possibly removed while saving all calendars
+
+
 v. 2.1.2 - 2016-01-12:
 --------
 ##### ADDED:

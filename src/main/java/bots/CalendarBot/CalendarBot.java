@@ -16,7 +16,7 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "2.1.2";
+	public final static String VERSION = "2.1.3";
 	private static CalendarBot instance;
 	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson = true;
@@ -26,6 +26,10 @@ public class CalendarBot extends Bot {
 	private RunCommand runCmd;
 	public static Reminder reminder;
 	private ArrayList<Calendar> calendars;
+	/**
+	 * false if calendars were not loaded otherwise true
+	 */
+	private boolean loaded = false;
 	
 	@Override
 	public void initializeBot () {
@@ -37,11 +41,8 @@ public class CalendarBot extends Bot {
 		calendars = new ArrayList<>();
 		File file = new File(filepath + "calendarbot" + ".properties");
 		if (file.exists()) {
-			if (!loadCalendars()) {
-				printMessage(ErrorMessages.calNotLoadError(), false);
-			}
+			loadCalendars();
 		}
-		calendars.add(new CalendarBirthday(firstYear, filepath));
 		
 		runCmd = new RunCommand(calendars, firstYear, filepath);
 		reminder = new Reminder(calendars.toArray(new Calendar[calendars.size()]), firstYear, alertson);
@@ -56,6 +57,15 @@ public class CalendarBot extends Bot {
 		if (command.toLowerCase().startsWith(commands.getPrefix())) {			
 			command = command.substring(commands.getPrefix().length());
 			
+			if (!loaded) {
+				if (command.toLowerCase().startsWith("admin ")) {
+					command = command.substring(6);
+				} 
+				else {
+					printMessage(ErrorMessages.errorNoPermissions(), false);
+					return;
+				}
+			}
 			//send message
 			runCmd.runNewCommand(command);
 			
@@ -80,7 +90,7 @@ public class CalendarBot extends Bot {
 	/**
 	 * loads saved calendars from property file
 	 */
-	private boolean loadCalendars() {
+	private void loadCalendars() {
 		try {			
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + "calendarbot" + ".properties");
@@ -93,16 +103,21 @@ public class CalendarBot extends Bot {
 				//downward compatible (adds false to String)
 				String[] value = (prop.getProperty("" + i) + " false").split(" ");
 				if (value[0].equals("birthday")) continue;
+				//internet calendar
 				if (value[0].startsWith("http://"))
 				{
 					calendars.add(new InternetCalendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
 					continue;
 				}
+				//normal calendar
 				calendars.add(new Calendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
 			}
-			return true;
+			//birthday calendar
+			calendars.add(new CalendarBirthday(firstYear, filepath));
+			loaded = true;
 		} catch (Exception e) {
-			return false;
+			loaded = false;
+			printMessage(ErrorMessages.calNotLoadError(), false);
 		}		
 	}
 	
@@ -112,6 +127,7 @@ public class CalendarBot extends Bot {
 	 */
 	private boolean saveCalendars() {
 		try {
+			if (!loaded) return false;
 			Properties properties = new Properties();
 			FileOutputStream fos = new FileOutputStream(new File(filepath + "calendarbot" + ".properties"));
 			for (int i = 0; i < calendars.size(); i++) {
@@ -131,7 +147,7 @@ public class CalendarBot extends Bot {
 	private void reset () {
 		if (!saveCalendars()) {
 			if (!saveCalendars()) {
-				printMessage(ErrorMessages.calNotLoadError(), false);
+				printMessage(ErrorMessages.calNotSaveError(), false);
 			}
 		}
 //		reminder.interrupt();

@@ -58,10 +58,12 @@ public class RunCommand {
 			case 3:
 				//alertson
 				CalendarBot.alertson();
+				CalendarBot.printMessage("Alerts: " + (CalendarBot.getAlertson() ? "on" : "off"), false);
 				break;
 			case 4:
 				//alertsoff
 				CalendarBot.alertsoff();
+				CalendarBot.printMessage("Alerts: " + (CalendarBot.getAlertson() ? "on" : "off"), false);
 				break;
 			case 5:
 				//createCal
@@ -118,7 +120,7 @@ public class RunCommand {
 				break;
 			case 18:
 				//alerts
-				CalendarBot.printMessage("Alerts are " + (CalendarBot.getAlertson() ? "on" : "off"), false);
+				CalendarBot.printMessage("Alerts: " + (CalendarBot.getAlertson() ? "on" : "off"), false);
 				break;
 			case 100:
 				//reset

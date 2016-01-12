@@ -12,6 +12,10 @@ import java.io.FileOutputStream;
  *
  */
 public class Calendar {
+	/**
+	 * false if events were not loaded otherwise true
+	 */
+	protected boolean loaded = false;
 	protected String name;
 	protected int firstYear;
 	protected String filepath;
@@ -65,7 +69,9 @@ public class Calendar {
 				String[] value = prop.getProperty("" + i).split(" ");
 				insert(new Event(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
 			}
+			loaded = true;
 		} catch (Exception e) {
+			loaded = false;
 			CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
 		}		
 	}
@@ -76,6 +82,7 @@ public class Calendar {
 	 */
 	protected boolean save() {
 		try {
+			if (!loaded) return false;
 			Properties properties = new Properties();
 			for (int i = 0; i < events.size(); i++) {
 				properties.setProperty("" + i, events.get(i).toString());
@@ -113,10 +120,8 @@ public class Calendar {
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
 		Event event = new Event(wat, date, repeat, remind, firstYear, defaultTumtum);
-		if (!existsEvent(event)) {
-			insert(event);
-			added = save();
-		}
+		insert(event);
+		added = save();
 		load();
 		return added;
 	}
@@ -238,7 +243,7 @@ public class Calendar {
 	 */
 	protected void insert (Event event) {
 		for (int i = 0; i < events.size(); i++) {
-			if (event.getDate() < events.get(i).getDate()) {
+			if (!existsEvent(event) && event.getDate() < events.get(i).getDate()) {
 				events.add(i, event);
 				return;
 			}			
