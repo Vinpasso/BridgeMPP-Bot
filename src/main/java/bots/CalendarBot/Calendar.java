@@ -60,6 +60,7 @@ public class Calendar {
 	 */
 	protected void load() {
 		try {
+			events = new ArrayList<>();
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + name + ".properties");
 			prop.load(fis);
@@ -120,8 +121,8 @@ public class Calendar {
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
 		Event event = new Event(wat, date, repeat, remind, firstYear, defaultTumtum);
-		insert(event);
-		added = save();
+		added = insert(event);
+		added = added && save();
 		load();
 		return added;
 	}
@@ -171,6 +172,7 @@ public class Calendar {
 				events.remove(i);
 				removed = save();
 				load();
+				break;
 			}
 		}
 		return removed;
@@ -241,14 +243,16 @@ public class Calendar {
 	 * 
 	 * @param event
 	 */
-	protected void insert (Event event) {
+	protected boolean insert (Event event) {
+		if (existsEvent(event)) return false;
 		for (int i = 0; i < events.size(); i++) {
-			if (!existsEvent(event) && event.getDate() < events.get(i).getDate()) {
+			if (event.getDate() < events.get(i).getDate()) {
 				events.add(i, event);
-				return;
-			}			
+				return true;
+			}
 		}
 		events.add(event);
+		return true;
 	}
 	
 	

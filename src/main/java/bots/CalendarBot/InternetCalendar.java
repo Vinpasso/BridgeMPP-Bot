@@ -1,6 +1,7 @@
 package bots.CalendarBot;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,7 @@ public class InternetCalendar extends Calendar
 	@Override
 	protected void load()
 	{
+		events = new ArrayList<>();
 		try
 		{
 			String internetcalendar = IOUtils.toString(new URL(name).openConnection().getInputStream(), "UTF-8");

@@ -1,6 +1,7 @@
 package bots.CalendarBot;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -21,10 +22,8 @@ public class CalendarBirthday extends Calendar {
 	public boolean add (String wat, int date, int repeat, int remind) {
 		boolean added = false;
 		EventBirthday event = new EventBirthday(wat, date + 480, defaultRepeat, defaultRemind, firstYear, defaultTumtum);
-		if (!existsEvent(event)) {
-			insert(event);
-			added = save();
-		}
+		added = insert(event);
+		added = added && save();
 		load();
 		return added;
 	}
@@ -38,6 +37,7 @@ public class CalendarBirthday extends Calendar {
 	@Override
 	protected void load() {
 		try {
+			events = new ArrayList<>();
 			Properties prop = new Properties();
 			FileInputStream fis = new FileInputStream(filepath + name + ".properties");
 			prop.load(fis);

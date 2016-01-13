@@ -6,6 +6,11 @@ unreleased:
 ##### ADDED:
 - Calendar Official Holiday
 
+v. 2.1.5 - 2016-01-13:
+--------
+##### FIXED:
+- Deleting or adding events let duplicate number of events if autodelpast were enabled
+- Deleting an event let hang CalendarBot if events existed more than once
 
 v. 2.1.4 - 2016-01-13:
 --------
