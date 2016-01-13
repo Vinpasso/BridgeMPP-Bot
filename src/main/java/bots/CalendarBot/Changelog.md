@@ -7,6 +7,12 @@ unreleased:
 - Calendar Official Holiday
 
 
+v. 2.1.4 - 2016-01-13:
+--------
+##### FIXED:
+- First use of calendarbot could not save calendars
+- First use of a new created calendar could not save any events
+
 v. 2.1.3 - 2016-01-12:
 --------
 ##### ADDED:

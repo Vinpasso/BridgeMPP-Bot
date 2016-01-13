@@ -15,7 +15,7 @@ public class Calendar {
 	/**
 	 * false if events were not loaded otherwise true
 	 */
-	protected boolean loaded = false;
+	protected boolean loaded = true;
 	protected String name;
 	protected int firstYear;
 	protected String filepath;
