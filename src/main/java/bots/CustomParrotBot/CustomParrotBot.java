@@ -68,8 +68,12 @@ public class CustomParrotBot {
 				if (!conditionResult.equalsIgnoreCase("true")) {
 					continue;
 				}
-				String parrotResult = scriptEngine.eval(parrot.operation)
-						.toString();
+				Object operationResult = scriptEngine.eval(parrot.operation);
+				if(operationResult == null)
+				{
+					continue;
+				}
+				String parrotResult = operationResult.toString();
 				result += parrot.name + ": " + parrotResult + "\n";
 			} catch (ScriptException e) {
 				result += parrot.name + " is rapidly loosing sanity...";
