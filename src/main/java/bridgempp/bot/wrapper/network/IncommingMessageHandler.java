@@ -47,18 +47,7 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 		{
 			bot.sendMessage(new Message(message.getGroup(), "This is Status Check triggered by " + bot.name + "\nResult:\n" + BotWrapper.statusCheck(), MessageFormat.PLAIN_TEXT));
 		}
-		Schedule.execute(new Runnable() {
-			public void run()
-			{
-				try
-				{
-					bot.synchronizedMessageReceived(message);
-				} catch (Exception e)
-				{
-					BotWrapper.printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + e.getStackTrace()[0].toString(), MessageFormat.PLAIN_TEXT), bot);
-				}
-			}
-		});
+		bot.messageToQueue(message);
 	}
 
 	@Override
