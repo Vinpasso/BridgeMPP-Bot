@@ -24,7 +24,7 @@ public class Schedule
 			public Thread newThread(Runnable r)
 			{
 				Thread thread = new Thread(r);
-				thread.setName("Bot Thread Executor #" + threadNumber);
+				thread.setName("Bot Thread Executor #" + threadNumber++);
 				thread.setPriority(Thread.MIN_PRIORITY);
 				thread.setDaemon(false);
 				return thread;
