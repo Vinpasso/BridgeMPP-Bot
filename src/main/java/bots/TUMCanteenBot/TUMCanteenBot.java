@@ -32,7 +32,7 @@ import bridgempp.util.Log;
 public class TUMCanteenBot extends Bot {
 	
 	private static final String baseAPIUrl = "http://www.devapp.it.tum.de/mensaapp/exportDB.php";
-	private static final Pattern canteenQueryPattern = Pattern.compile("\\?canteen ([.+])");
+	private static final Pattern canteenQueryPattern = Pattern.compile("\\?canteen (.++)");
 	
 	private static final SimpleDateFormat canteenDateFormat = new SimpleDateFormat("yyyy-MM-dd");;
 	private static final Calendar calendar = Calendar.getInstance(Locale.UK);
@@ -175,7 +175,9 @@ public class TUMCanteenBot extends Bot {
 	}
 
 	private void respondListCanteens(Message message) {
-		StringBuilder b = new StringBuilder(4 + 25 * canteensMap.size());
+		StringBuilder b = new StringBuilder(15 + 25 * canteensMap.size());
+		b.append("ID  NAME\n");
+		
 		boolean first = true; // meh
 		for (Entry<Integer, CanteenStruct> c : canteensMap.entrySet()) {
 			if (first) {
@@ -201,7 +203,7 @@ public class TUMCanteenBot extends Bot {
 			return;
 		}
 		
-		String idString = matcher.group();
+		String idString = matcher.group(1).trim();
 		int id;
 		try {
 			id = Integer.parseInt(idString);
@@ -299,7 +301,7 @@ public class TUMCanteenBot extends Bot {
 			}
 			
 			StringBuilder b = new StringBuilder(200);
-			b.append("Dishes served on " + dateToWeekday(new Date()).toLowerCase() + " at the \"" + selectedCanteen.name + "\"\n");
+			b.append("Dishes served on " + dateToWeekday(new Date()) + " at the \"" + selectedCanteen.name + "\"\n");
 			
 			for (int i = 0; i < dishCategories.length; i++) {
 				List<DishStruct> l = dishCategories[i];
