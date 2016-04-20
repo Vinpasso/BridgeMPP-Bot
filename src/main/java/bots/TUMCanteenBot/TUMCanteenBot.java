@@ -77,6 +77,8 @@ public class TUMCanteenBot extends Bot {
 	
 	private static class CanteenStruct {
 		public String name; // TODO implement caching
+		public Date currentMenuDate;
+		public List<DishStruct>[] cachedDishes;
 	}
 	
 	private static int lookUpDishPrice(DishType dishType, int priceType) {
@@ -142,6 +144,7 @@ public class TUMCanteenBot extends Bot {
 				
 				CanteenStruct c = new CanteenStruct();
 				c.name = name;
+				c.currentMenuDate = null;
 				canteensMap.put(id, c);
 			}
 			
@@ -197,6 +200,7 @@ public class TUMCanteenBot extends Bot {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void respondQueryCanteen(Message message) {
 		Matcher matcher = canteenQueryPattern.matcher(message.getMessage());
 		if (!matcher.find()) {
@@ -219,116 +223,134 @@ public class TUMCanteenBot extends Bot {
 			return;
 		}
 		
-		try {
-			JSONObject root = queryAPI("?mensa_id=" + id);
-			JSONArray canteenMenu = root.getJSONArray("mensa_menu");
-			
-			@SuppressWarnings("unchecked") // because we can't directly create an array with a generic type
-			List<DishStruct>[] dishCategories = new List[DishType.values().length];
+		List<DishStruct>[] dishCategories;
+		
+		long now = System.currentTimeMillis();
+		Date today = new Date(now - (now % 86400000));
+		if (selectedCanteen.currentMenuDate == null || !selectedCanteen.currentMenuDate.equals(today)) {
+			dishCategories = new List[DishType.values().length];
 			for (int i = 0; i < dishCategories.length; i++) {
 				dishCategories[i] = new ArrayList<DishStruct>(6);
 			}
 			
-			long offset = 32400000L; // 1000 * 60 * 60 * 9
-			// having the offset at 9h means that at 24:00 - 9h = 15:00 the bot will switch
-			// to displaying dishes served the next day
-			// TODO handle weekends
-			long now = new Date().getTime() + offset;
-			long twentyFourHours = 86400000L; // == 1000 * 60 * 60 * 24
-			Date nowMinus24h = new Date(now - twentyFourHours);
-			Date nowPlus24h = new Date(now + twentyFourHours);
-			
-			for (int i = 0; i < canteenMenu.length(); i++) {
-				JSONObject dishObj = canteenMenu.getJSONObject(i);
-				String dateString = dishObj.getString("date");
-				Date date;
-				try {
-					date = canteenDateFormat.parse(dateString);
-					
-				} catch (ParseException e) {
-					Log.log(Level.WARNING, "The API returned an invalid date string for dish #" + dishObj.getString("id") + ", skipping", e);
-					continue;
-				}
+			try {
+				parseCanteenMenu(id, dishCategories);
 				
-				// skip dishes not on the menu today
-				if (!date.after(nowMinus24h) || !date.before(nowPlus24h)) {
-					continue;
-				}
+			} catch (JSONException e) {
+				Log.log(Level.WARNING, "The API returned invalid JSON", e);
+				sendMessage(message, "ERROR: Could not retrieve results because the API returned invalid JSON.");
+				return;
 				
-				DishType type;
-				switch (dishObj.getString("type_short")) {
-					case "tg":
-						type = DishType.DAILY;
-						break;
-					case "ae":
-						type = DishType.SPECIAL;
-						break;
-					case "bg":
-						type = DishType.ORGANIC;
-						break;
-					default:
-						Log.log(Level.WARNING, "The API returned an invalid dish type for #" + dishObj.getString("id") + ", skipping");
-						continue;
-				}
-				
-				String priceTypeString = dishObj.getString("type_nr");
-				int priceType;
-				try {
-					priceType = Integer.parseInt(priceTypeString) - 1; // because this is going to be an array index
-					
-				} catch (NumberFormatException e) {
-					Log.log(Level.WARNING, "The API returned an invalid price type for dish #" + dishObj.getString("id") + ", skipping");
-					continue;
-				}
-				
-				DishStruct dish = new DishStruct();
-				dish.date = date;
-				dish.name = dishObj.getString("name");
-				dish.type = type;
-				dish.price = lookUpDishPrice(type, priceType);
-				dishCategories[type.ordinal()].add(dish);
-			}
-			
-			int numDishes = 0;
-			for (List<DishStruct> l : dishCategories) {
-				numDishes += l.size();
-			}
-			
-			// either it's the weekend or a bug, hopefully the former
-			if (numDishes == 0) {
-				sendMessage(message, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes today.");
+			} catch (IOException e) {
+				Log.log(Level.WARNING, "Could not query the TUM canteen API", e);
+				sendMessage(message, "ERROR: Could not query the TUM canteen API.");
 				return;
 			}
 			
-			StringBuilder b = new StringBuilder(200);
-			b.append("Dishes served on " + dateToWeekday(new Date()) + " at the \"" + selectedCanteen.name + "\"\n");
+			selectedCanteen.currentMenuDate = today;
+			selectedCanteen.cachedDishes = dishCategories;
 			
-			for (int i = 0; i < dishCategories.length; i++) {
-				List<DishStruct> l = dishCategories[i];
-				if (l.size() == 0) {
-					continue;
-				}
-				
-				b.append("\n");
-				b.append(DishType.values()[i].toString());
-				b.append(":\n");
-				
-				l.sort((d1, d2) -> d1.price - d2.price);
-				for (DishStruct dish : l) {
-					b.append("- " + dish.name + " ");
-					b.append(String.format("%d.%02d€\n", dish.price / 100, dish.price % 100));
-				}
+		} else {
+			dishCategories = selectedCanteen.cachedDishes;
+		}
+		
+		
+		int numDishes = 0;
+		for (List<DishStruct> l : dishCategories) {
+			numDishes += l.size();
+		}
+		
+		// either it's the weekend or a bug, hopefully the former
+		if (numDishes == 0) {
+			sendMessage(message, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes today.");
+			return;
+		}
+		
+		StringBuilder b = new StringBuilder(200);
+		b.append("Dishes served on " + dateToWeekday(new Date()) + " at the \"" + selectedCanteen.name + "\"\n");
+		
+		for (int i = 0; i < dishCategories.length; i++) {
+			List<DishStruct> l = dishCategories[i];
+			if (l.size() == 0) {
+				continue;
 			}
 			
-			sendMessage(message, b.toString());
+			b.append("\n");
+			b.append(DishType.values()[i].toString());
+			b.append(":\n");
 			
-		} catch (JSONException e) {
-			Log.log(Level.WARNING, "The API returned invalid JSON", e);
-			sendMessage(message, "ERROR: Could not retrieve results because the API returned invalid JSON.");
-			return;
+			l.sort((d1, d2) -> d1.price - d2.price);
+			for (DishStruct dish : l) {
+				b.append("- " + dish.name + " ");
+				b.append(String.format("%d.%02d€\n", dish.price / 100, dish.price % 100));
+			}
+		}
+		
+		sendMessage(message, b.toString());
+	}
+
+	private void parseCanteenMenu(int id, List<DishStruct>[] dishCategories) throws MalformedURLException, JSONException, IOException {
+		JSONObject root = queryAPI("?mensa_id=" + id);
+		JSONArray canteenMenu = root.getJSONArray("mensa_menu");
+		
+		long offset = 32400000L; // 1000 * 60 * 60 * 9
+		// having the offset at 9h means that at 24:00 - 9h = 15:00 the bot will switch
+		// to displaying dishes served the next day
+		// TODO handle weekends
+		long now = new Date().getTime() + offset;
+		long twentyFourHours = 86400000L; // == 1000 * 60 * 60 * 24
+		Date nowMinus24h = new Date(now - twentyFourHours);
+		Date nowPlus24h = new Date(now + twentyFourHours);
+		
+		for (int i = 0; i < canteenMenu.length(); i++) {
+			JSONObject dishObj = canteenMenu.getJSONObject(i);
+			String dateString = dishObj.getString("date");
+			Date date;
+			try {
+				date = canteenDateFormat.parse(dateString);
+				
+			} catch (ParseException e) {
+				Log.log(Level.WARNING, "The API returned an invalid date string for dish #" + dishObj.getString("id") + ", skipping", e);
+				continue;
+			}
 			
-		} catch (IOException e) {
-			Log.log(Level.WARNING, "Could not query the TUM canteen API", e);
+			// skip dishes not on the menu today
+			if (!date.after(nowMinus24h) || !date.before(nowPlus24h)) {
+				continue;
+			}
+			
+			DishType type;
+			switch (dishObj.getString("type_short")) {
+				case "tg":
+					type = DishType.DAILY;
+					break;
+				case "ae":
+					type = DishType.SPECIAL;
+					break;
+				case "bg":
+					type = DishType.ORGANIC;
+					break;
+				default:
+					Log.log(Level.WARNING, "The API returned an invalid dish type for #" + dishObj.getString("id") + ", skipping");
+					continue;
+			}
+			
+			String priceTypeString = dishObj.getString("type_nr");
+			int priceType;
+			try {
+				priceType = Integer.parseInt(priceTypeString) - 1; // because this is going to be an array index
+				
+			} catch (NumberFormatException e) {
+				Log.log(Level.WARNING, "The API returned an invalid price type for dish #" + dishObj.getString("id") + ", skipping");
+				continue;
+			}
+			
+			DishStruct dish = new DishStruct();
+			dish.date = date;
+			dish.name = dishObj.getString("name");
+			dish.type = type;
+			dish.price = lookUpDishPrice(type, priceType);
+			dishCategories[type.ordinal()].add(dish);
 		}
 	}
 	
