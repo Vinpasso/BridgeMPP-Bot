@@ -225,16 +225,22 @@ public class TUMCanteenBot extends Bot {
 		
 		List<DishStruct>[] dishCategories;
 		
-		long now = System.currentTimeMillis();
-		Date today = new Date(now - (now % 86400000));
-		if (selectedCanteen.currentMenuDate == null || !selectedCanteen.currentMenuDate.equals(today)) {
+		
+		long offset = 32400000L; // 9 hours
+		// having the offset at 9h means that at 24:00 - 9h = 15:00 the bot will switch
+		// to displaying dishes served the next day
+		// TODO handle weekends
+		long date = System.currentTimeMillis() + offset;
+		Date dateObject = new Date(date - (date % 86400000));
+		
+		if (selectedCanteen.currentMenuDate == null || !selectedCanteen.currentMenuDate.equals(dateObject)) {
 			dishCategories = new List[DishType.values().length];
 			for (int i = 0; i < dishCategories.length; i++) {
 				dishCategories[i] = new ArrayList<DishStruct>(6);
 			}
 			
 			try {
-				parseCanteenMenu(id, dishCategories);
+				parseCanteenMenu(id, date, dishCategories);
 				
 			} catch (JSONException e) {
 				Log.log(Level.WARNING, "The API returned invalid JSON", e);
@@ -247,7 +253,7 @@ public class TUMCanteenBot extends Bot {
 				return;
 			}
 			
-			selectedCanteen.currentMenuDate = today;
+			selectedCanteen.currentMenuDate = dateObject;
 			selectedCanteen.cachedDishes = dishCategories;
 			
 		} else {
@@ -262,12 +268,12 @@ public class TUMCanteenBot extends Bot {
 		
 		// either it's the weekend or a bug, hopefully the former
 		if (numDishes == 0) {
-			sendMessage(message, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes today.");
+			sendMessage(message, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes on " + dateToWeekday(dateObject) + ".");
 			return;
 		}
 		
 		StringBuilder b = new StringBuilder(200);
-		b.append("Dishes served on " + dateToWeekday(new Date()) + " at the \"" + selectedCanteen.name + "\"\n");
+		b.append("Dishes served on " + dateToWeekday(dateObject) + " at the \"" + selectedCanteen.name + "\"\n");
 		
 		for (int i = 0; i < dishCategories.length; i++) {
 			List<DishStruct> l = dishCategories[i];
@@ -289,25 +295,19 @@ public class TUMCanteenBot extends Bot {
 		sendMessage(message, b.toString());
 	}
 
-	private void parseCanteenMenu(int id, List<DishStruct>[] dishCategories) throws MalformedURLException, JSONException, IOException {
-		JSONObject root = queryAPI("?mensa_id=" + id);
+	private void parseCanteenMenu(int canteenId, long date, List<DishStruct>[] dishCategories) throws MalformedURLException, JSONException, IOException {
+		JSONObject root = queryAPI("?mensa_id=" + canteenId);
 		JSONArray canteenMenu = root.getJSONArray("mensa_menu");
 		
-		long offset = 32400000L; // 1000 * 60 * 60 * 9
-		// having the offset at 9h means that at 24:00 - 9h = 15:00 the bot will switch
-		// to displaying dishes served the next day
-		// TODO handle weekends
-		long now = new Date().getTime() + offset;
-		long twentyFourHours = 86400000L; // == 1000 * 60 * 60 * 24
-		Date nowMinus24h = new Date(now - twentyFourHours);
-		Date nowPlus24h = new Date(now + twentyFourHours);
+		Date nowMinus24h = new Date(date - 86400000L);
+		Date now = new Date(date);
 		
 		for (int i = 0; i < canteenMenu.length(); i++) {
 			JSONObject dishObj = canteenMenu.getJSONObject(i);
 			String dateString = dishObj.getString("date");
-			Date date;
+			Date dateDish;
 			try {
-				date = canteenDateFormat.parse(dateString);
+				dateDish = canteenDateFormat.parse(dateString);
 				
 			} catch (ParseException e) {
 				Log.log(Level.WARNING, "The API returned an invalid date string for dish #" + dishObj.getString("id") + ", skipping", e);
@@ -315,9 +315,10 @@ public class TUMCanteenBot extends Bot {
 			}
 			
 			// skip dishes not on the menu today
-			if (!date.after(nowMinus24h) || !date.before(nowPlus24h)) {
+			if (!dateDish.after(nowMinus24h) || !dateDish.before(now)) {
 				continue;
 			}
+			System.out.println(canteenDateFormat.format(dateDish) + " " + dishObj.getString("name"));
 			
 			DishType type;
 			switch (dishObj.getString("type_short")) {
@@ -346,7 +347,7 @@ public class TUMCanteenBot extends Bot {
 			}
 			
 			DishStruct dish = new DishStruct();
-			dish.date = date;
+			dish.date = dateDish;
 			dish.name = dishObj.getString("name");
 			dish.type = type;
 			dish.price = lookUpDishPrice(type, priceType);
