@@ -91,7 +91,7 @@ public class CustomParrotBot {
 	/**
 	 * @return The Bot's message result
 	 */
-	@MetaMethod(trigger = "?parrot custom new ", helpTopic = "Create a new Javascrip powered Custom Parrot and load it into the Custom Parrot Cage")
+	@MetaMethod(trigger = "?parrot custom new ", helpTopic = "Create a new Javascript powered Custom Parrot and load it into the Custom Parrot Cage")
 	public String newCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot") String name,
 			@MetaParameter(helpTopic = "The Javascript code to determine whether a Parrot wants to reply to this message. Should evaluate to either true or false") String condition,
