@@ -76,7 +76,7 @@ public class CommandTransceiver extends SimpleChannelInboundHandler<ProtoBuf.Mes
 	
 	private void sendCommand(String command, Bot bot)
 	{
-		Log.log(Level.INFO, "Bot: " + bot.name + " is in State: " + state.toString());
+		Log.log(Level.INFO, "State: " + state.toString(), bot);
 		ChannelFuture future = BotWrapper.printCommand(command, bot);
 		future.addListener(new GenericFutureListener<Future<? super Void>>() {
 
@@ -85,11 +85,11 @@ public class CommandTransceiver extends SimpleChannelInboundHandler<ProtoBuf.Mes
 			{
 				if(future.isSuccess())
 				{
-					Log.log(Level.INFO, "Bot: " + bot.name + " sent the command request: " + command);
+					Log.log(Level.INFO, "Sent the command request: " + command, bot);
 				}
 				else
 				{
-					Log.log(Level.SEVERE, "Bot: " + bot.name + " failed to send the command request: " + command);
+					Log.log(Level.SEVERE, "Failed to send the command request: " + command, bot);
 					BotWrapper.shutdown();
 				}
 			}
@@ -102,7 +102,7 @@ public class CommandTransceiver extends SimpleChannelInboundHandler<ProtoBuf.Mes
 		String confirmation = msg.getMessage();
 		if(confirmation.equalsIgnoreCase("BridgeMPP: command status success"))
 		{
-			Log.log(Level.INFO, "Status success for Bot: " + bot.name + " for status: " + state.toString());
+			Log.log(Level.INFO, "Status success: " + state.toString(), bot);
 			switch(state)
 			{
 				case CREATING_ALIAS:
@@ -132,18 +132,18 @@ public class CommandTransceiver extends SimpleChannelInboundHandler<ProtoBuf.Mes
 		}
 		else
 		{
-			Log.log(Level.SEVERE, "Unexpected Command confirmation: " + confirmation);
+			Log.log(Level.SEVERE, "Unexpected Command confirmation: " + confirmation, bot);
 			BotWrapper.shutdown();
 		}
 	}
 	
 	private void doneExecutingCommands()
 	{
-		Log.log(Level.INFO, "Commands successfully executed. Starting Incomming Message Handler");
+		Log.log(Level.INFO, "Commands successfully executed. Starting Incomming Message Handler", bot);
 		ChannelPipeline pipeline = channel.pipeline();
 		pipeline.remove(this);
 		pipeline.addLast("incommingMessageHandler", new IncommingMessageHandler(bot));		
-		Log.log(Level.INFO, "Started Incomming Message Handler");
+		Log.log(Level.INFO, "Started Incomming Message Handler", bot);
 	}
 
 	private enum State

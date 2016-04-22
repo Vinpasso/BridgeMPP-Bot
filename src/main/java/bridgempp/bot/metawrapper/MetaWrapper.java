@@ -116,7 +116,7 @@ public class MetaWrapper extends Bot
 		Object[] arguments = parseParametersCommandLineStyle(parameters, parameterString, message);
 		if (arguments == null)
 		{
-			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + "to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
+			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + " to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
 			return;
 		}
 		Object instanceObject = method.getDeclaringClass().equals(getClass())?this:metaInstance;
@@ -180,7 +180,7 @@ public class MetaWrapper extends Bot
 				+ getTrigger(method.getAnnotation(MetaMethod.class), method);
 		for (Parameter parameter : method.getParameters())
 		{
-			helpTopic += "<" + parameter.getType() + " " + parameter.getName() + "> ";
+			helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + "> ";
 		}
 		helpTopic += "\n";
 		if (method.getAnnotation(MetaMethod.class) != null && !method.getAnnotation(MetaMethod.class).equals(""))
@@ -191,7 +191,7 @@ public class MetaWrapper extends Bot
 		{
 			if (parameter.getAnnotation(MetaParameter.class) != null)
 			{
-				helpTopic += "<" + parameter.getType() + " " + parameter.getName() + ">: "
+				helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + ">: "
 						+ parameter.getAnnotation(MetaParameter.class).helpTopic() + "\n";
 			}
 		}

@@ -82,6 +82,22 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
+					<execution>
+						<id>installTransportEnabler</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>lib/transport-enabler.jar</file>
+							<groupId>transport-enabler</groupId>
+							<artifactId>transport-enabler</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<localRepositoryPath>libmvn/</localRepositoryPath>
+							<createChecksum>true</createChecksum>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -240,7 +256,11 @@
 			<artifactId>python-scripting</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>transport-enabler</groupId>
+			<artifactId>transport-enabler</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 	</dependencies>
 </project>

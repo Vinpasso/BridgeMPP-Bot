@@ -38,7 +38,7 @@ public class WikiHelpBotBridgeMPPIntegration extends bridgempp.bot.wrapper.Bot {
 		}
 		if (wikiWis != null) {
 			String xhtmlwikiWisdom = HTMLBrPattern.matcher(wikiWis).replaceAll("<br/>");
-			sendMessage(new Message("WikiBot", xhtmlwikiWisdom,MessageFormat.XHTML));
+			sendMessage(new Message(message.getGroup(), xhtmlwikiWisdom,MessageFormat.XHTML));
 		}
 	}
 

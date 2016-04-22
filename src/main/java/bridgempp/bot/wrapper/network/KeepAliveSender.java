@@ -73,7 +73,7 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		Log.log(Level.SEVERE,
-						"Communications have broken down on a Connection due to Channel Derigistration");
+						"Communications have broken down on a Connection due to Channel Deregistration");
 		BotWrapper.shutdown();
 	}
 }
