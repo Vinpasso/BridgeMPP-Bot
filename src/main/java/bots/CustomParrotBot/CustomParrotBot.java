@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import javax.script.ScriptEngine;
@@ -52,6 +53,7 @@ public class CustomParrotBot {
 	@MetaMethod(trigger = "", helpTopic = "Any message will trigger a check whether Custom Parrots wish to reply to the message")
 	public String processParrots(Message message) {
 		String result = "";
+		String lowerCaseMessage = message.getPlainTextMessage().toLowerCase();
 		Enumeration<CustomParrot> elements = table.elements();
 		while (elements.hasMoreElements()) {
 			CustomParrot parrot = elements.nextElement();
@@ -62,6 +64,7 @@ public class CustomParrotBot {
 			scriptEngine.put("author", message.getSender());
 			scriptEngine.put("group", message.getGroup());
 			scriptEngine.put("message", message.getPlainTextMessage());
+			scriptEngine.put("lowerCaseMessage", lowerCaseMessage);
 			try {
 				String conditionResult = scriptEngine.eval(parrot.condition)
 						.toString();
@@ -215,8 +218,21 @@ public class CustomParrotBot {
 		return "The Parrot Cage signals full steam ahead!";
 	}
 	
+	public void optimizeParrots()
+	{
+		Iterator<CustomParrot> parrots = table.values().iterator();
+		while(parrots.hasNext())
+		{
+			ParrotOptimization.applyOptimizations(parrots.next());
+		}
+		saveList();
+	}
+	
 	private void saveList() {
 		try {
+			table.forEach((n, p) -> {
+				ParrotOptimization.applyOptimizations(p);
+			});
 			metaBot.properties.put("parrotlist", encodeList(table));
 			metaBot.saveProperties();
 		} catch (Exception e) {
