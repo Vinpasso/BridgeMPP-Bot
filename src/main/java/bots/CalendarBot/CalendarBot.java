@@ -16,7 +16,7 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "2.1.5";
+	public final static String VERSION = "2.2.0"; //remove line 105 tag 1 at version 3.0
 	private static CalendarBot instance;
 	public static boolean eventsPastAutoDelOn = false;
 	private static boolean alertson = true;
@@ -102,11 +102,11 @@ public class CalendarBot extends Bot {
 			for (int i = 0; i < size; i++) {
 				//downward compatible (adds false to String)
 				String[] value = (prop.getProperty("" + i) + " false").split(" ");
-				if (value[0].equals("birthday")) continue;
+				if (value[0].equals("birthday") || value[0].equals("Birthdays") || value[0].equals("Holidays")) continue;
 				//internet calendar
 				if (value[0].startsWith("http://"))
 				{
-					calendars.add(new InternetCalendar(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
+					calendars.add(new CalendarInternet(value[0], firstYear, filepath, Integer.parseInt(value[1]), Integer.parseInt(value[2]), Boolean.parseBoolean(value[3])));
 					continue;
 				}
 				//normal calendar
@@ -114,6 +114,8 @@ public class CalendarBot extends Bot {
 			}
 			//birthday calendar
 			calendars.add(new CalendarBirthday(firstYear, filepath));
+			//holiday calendar
+			calendars.add(new CalendarHoliday(firstYear, filepath));
 			loaded = true;
 		} catch (Exception e) {
 			loaded = false;
@@ -136,6 +138,7 @@ public class CalendarBot extends Bot {
 			properties.setProperty("eventsPastAutoDelOn", "" + eventsPastAutoDelOn);
 			properties.setProperty("alertson", "" + alertson);
 			properties.setProperty("size", "" + calendars.size());
+			properties.setProperty("version", VERSION);
 			properties.store(fos, "");
 			fos.close();
 			return true;

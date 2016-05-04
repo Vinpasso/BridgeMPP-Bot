@@ -1,10 +1,19 @@
 #CHANGELOG
 
-
-unreleased:
+unreleased
 --------
 ##### ADDED:
-- Calendar Official Holiday
+- Reminds of past Events
+- Internet clock
+
+v 2.2.0 - 2016-04-29:
+--------
+##### ADDED:
+- Calendar Holidays
+- supports:
+<br>	- Official Bavarian Holidays
+<br>	- Unofficial Bavarian Holidays
+<br>	- Official Italian Holidays
 
 v. 2.1.5 - 2016-01-13:
 --------
@@ -15,7 +24,7 @@ v. 2.1.5 - 2016-01-13:
 v. 2.1.4 - 2016-01-13:
 --------
 ##### FIXED:
-- First use of calendarbot could not save calendars
+- First use of Calendarbot could not save calendars
 - First use of a new created calendar could not save any events
 
 v. 2.1.3 - 2016-01-12:
