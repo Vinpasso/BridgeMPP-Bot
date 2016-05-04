@@ -222,13 +222,13 @@ public class BotWrapper
 	{
 		try
 		{
-			Log.log(Level.INFO, "Loading bot: " + botConfig.getPath());
+			Log.wrapperLog(Level.INFO, "Loading bot: " + botConfig.getPath());
 			Properties botProperties = new Properties();
 			if (!botConfig.exists())
 			{
 				botConfig.createNewFile();
 			}
-			Log.log(Level.INFO, "Loading bot properties: " + botConfig.getPath());
+			Log.wrapperLog(Level.INFO, "Loading bot properties: " + botConfig.getPath());
 			botProperties.load(new FileInputStream(botConfig));
 			String botClass = botProperties.getProperty("botClass");
 			if (botClass == null)
@@ -248,17 +248,17 @@ public class BotWrapper
 			Bot bot = injector.getInstance((Class<Bot>) clazz);
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
-			Log.log(Level.INFO, "Initializing bot: " + botConfig.getPath());
+			Log.wrapperLog(Level.INFO, "Initializing bot: " + botConfig.getPath());
 			bot.initializeBot();
-			Log.log(Level.INFO, "Initialized bot: " + botConfig.getPath());
+			Log.wrapperLog(Level.INFO, "Initialized bot: " + botConfig.getPath());
 
-			Log.log(Level.INFO, "Creating bot network interface: " + botConfig.getPath());
+			Log.wrapperLog(Level.INFO, "Creating bot network interface: " + botConfig.getPath());
 			String serverAddress = botProperties.getProperty("serverAddress");
 			int portNumber = Integer.parseInt(botProperties.getProperty("serverPort"));
 			if (serverAddress == null)
 			{
 				writeDefaultConfig(botProperties);
-				Log.log(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
+				Log.wrapperLog(Level.SEVERE, "Server Address is null, cannot execute BridgeMPP server commands");
 				fail();
 			}
 			String serverKey = botProperties.getProperty("serverKey");
@@ -276,10 +276,10 @@ public class BotWrapper
 			String[] groups = botProperties.getProperty("groups").split("; ");
 			if (groups.length == 0)
 			{
-				throw new UnsupportedOperationException("No Groups declared. Please specify at least one Group to join");
+				throw new UnsupportedOperationException("No groups declared. Please specify at least one group to join");
 			}
 
-			Log.log(Level.INFO, "Connecting bot to server: " + botAlias);
+			Log.log(Level.INFO, "Connecting bot to server...", bot);
 
 			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(serverAddress, portNumber));
 			// byte[] protocol = new byte[1];
@@ -295,11 +295,11 @@ public class BotWrapper
 				{
 					if (!future.isSuccess())
 					{
-						Log.log(Level.WARNING, "Connection could not be Established: " + botAlias);
+						Log.log(Level.WARNING, "Connection could not be established!", bot);
 						BotWrapper.shutdown();
 					} else
 					{
-						Log.log(Level.INFO, "Connection established: " + botAlias);
+						Log.log(Level.INFO, "Connection established.", bot);
 						bot.channel = channelFuture.channel();
 						new CommandTransceiver(bot.channel, bot.name, serverKey, groups, bot).initializeCommands();
 					}
@@ -311,7 +311,7 @@ public class BotWrapper
 			bots.add(bot);
 		} catch (Exception ex)
 		{
-			Log.log(Level.SEVERE, null, ex);
+			Log.log(Level.SEVERE, "Unexpected error", ex);
 		}
 	}
 

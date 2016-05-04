@@ -100,16 +100,16 @@ public class ShowMeBot extends Bot {
 
 	public QueryResult getGoogleImageSearchResult(String query, boolean random) throws IOException {
 		QueryResult result = new QueryResult();
-		result.queryURL = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query);
+		result.queryURL = new URL("https://www.googleapis.com/customsearch/v1?cx=016170731421469020746%3Amnifwlr6hw8&key=AIzaSyC_4KVn-EWwHTXuFLbmyDxnjrVX09WWY8s&searchType=image&q=" + query);
 		result.searchURL = new URL("https://www.google.com/search?tbm=isch&q=" + query);
 		URLConnection connection = result.queryURL.openConnection();
 		connection.addRequestProperty("Referer", "http://vinpasso.org");
 		String jsonSearchQuery = IOUtils.toString(connection.getInputStream());
 		JSONObject jsonQuery = new JSONObject(jsonSearchQuery);
-		JSONArray queryArray = jsonQuery.getJSONObject("responseData").getJSONArray("results");
+		JSONArray queryArray = jsonQuery.getJSONArray("items");
 		result.response = queryArray.length();
 		result.index = (random)?new Random().nextInt(Math.max(result.response, 0)):0;
-		result.resultURL = new URL(queryArray.getJSONObject(result.index).getString("unescapedUrl"));
+		result.resultURL = new URL(queryArray.getJSONObject(result.index).getString("link"));
 		return result;
 	}
 
