@@ -24,7 +24,7 @@ public class LunarPhase {
 	public LunarPhase (int firstYear, int lang, double date) {
 		this.firstYear = firstYear;
 		this.firstNewMoon = CalDateFormat.dateToMin("07.01.1970 20:55", firstYear) / 1440;
-		this.date = date;
+		this.date = date / 1440;
 		this.lang = lang;
 	}
 	
@@ -50,7 +50,7 @@ public class LunarPhase {
 	 * 
 	 * @return
 	 */
-	private  double getDayOfLunarPhase () {
+	public  double getDayOfLunarPhase () {
 		return (date - firstNewMoon) % daysLunarPhase;
 	}
 	

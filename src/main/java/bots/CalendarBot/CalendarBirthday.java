@@ -11,11 +11,11 @@ import java.util.Properties;
  */
 public class CalendarBirthday extends Calendar {
 	public CalendarBirthday(int firstYear, String filepath) {
-		super("birthday", firstYear, filepath, 360, 10080, true);
+		super("Birthdays", firstYear, filepath, 360, 10080, true);
 	}
 	
 	public CalendarBirthday () {
-		super("birthday", 0, null, 0, 0, false);
+		super("Birthdays", 0, null, 0, 0, false);
 	}
 	
 	@Override

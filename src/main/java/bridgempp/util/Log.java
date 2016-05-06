@@ -3,6 +3,8 @@ package bridgempp.util;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bridgempp.bot.wrapper.Bot;
+
 
 public class Log {
 
@@ -26,4 +28,13 @@ public class Log {
 		return Thread.currentThread().getStackTrace()[3].getClass();
 	}
 	
+	public static void log(Level level, String message, Bot bot)
+	{
+		Logger.getLogger(getCallingClass().getName()).log(level, bot.name + ": " + message);
+	}
+	
+	public static void wrapperLog(Level level, String message)
+	{
+		Logger.getLogger(getCallingClass().getName()).log(level, "Bot Wrapper: " + message);
+	}	
 }

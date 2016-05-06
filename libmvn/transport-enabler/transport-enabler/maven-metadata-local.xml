@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>python-scripting</groupId>
-  <artifactId>python-scripting</artifactId>
+  <groupId>transport-enabler</groupId>
+  <artifactId>transport-enabler</artifactId>
   <versioning>
     <release>1.0</release>
     <versions>
