@@ -17,11 +17,19 @@ import java.util.Base64;
 public class ImageEdit {
 
 
+    public static String imageAsTag(String url, int Imagewidth, int Imageheight, String alt, String imageformat){
+        int width = Imagewidth > 320 ? 320 : Imagewidth;
+        int height = Imageheight > 320 ? 320 : Imageheight;
+
+        return "<img src=\"data:image/jpeg;base64,"  + Base64.getEncoder().encodeToString(resizeImage(url,width,height,imageformat)) + "\" " +
+            "alt=\"" + alt + "\" width=\"" + width + "\" height=\"" + height + "\"/>";
+    }
+
     public static String imageAsTag(String url, int Imagewidth, int Imageheight, String alt ){
         int width = Imagewidth > 320 ? 320 : Imagewidth;
         int height = Imageheight > 320 ? 320 : Imageheight;
 
-        return "<img src=\"data:image/png;base64,"  + Base64.getEncoder().encodeToString(resizeImage(url,width,height)) + "\" " +
+        return "<img src=\"data:image/jpeg;base64,"  + Base64.getEncoder().encodeToString(resizeImage(url,width,height)) + "\" " +
                "alt=\"" + alt + "\" width=\"" + width + "\" height=\"" + height + "\"/>";
     }
 
@@ -35,6 +43,15 @@ public class ImageEdit {
 
     public static byte[] resizeImage(URLConnection connection, int imagewidth, int imageHeight){
         return resizeImage(connection,imagewidth,imageHeight,"JPG");
+    }
+
+    public static byte[] resizeImage(String url, int imageWidth, int imageHeight, String imageType){
+        try{
+            return resizeImage(new URL(url).openConnection(),imageHeight,imageHeight,imageType);
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     public static byte[] resizeImage(URLConnection connection, int imageWidth, int imageHeight, String imageType) {
