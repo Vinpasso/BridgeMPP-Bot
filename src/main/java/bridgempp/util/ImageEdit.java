@@ -33,7 +33,11 @@ public class ImageEdit {
         }
     }
 
-    public static byte[] resizeImage(URLConnection connection, int imageWidth, int imageHeight) {
+    public static byte[] resizeImage(URLConnection connection, int imagewidth, int imageHeight){
+        return resizeImage(connection,imagewidth,imageHeight,"JPG");
+    }
+
+    public static byte[] resizeImage(URLConnection connection, int imageWidth, int imageHeight, String imageType) {
         int width = imageWidth > 100 ? 100 : imageWidth;
         int height = imageHeight > 100 ? 100 : imageHeight;
 
@@ -49,7 +53,7 @@ public class ImageEdit {
             graphics.finalize();
             graphics.dispose();
             ByteBuffer buffer = ByteBuffer.allocate(49000);
-            ImageIO.write(resizedImage, "PNG", new OutputStream() {
+            ImageIO.write(resizedImage, imageType, new OutputStream() {
 
                 @Override
                 public void write(int b) throws IOException {

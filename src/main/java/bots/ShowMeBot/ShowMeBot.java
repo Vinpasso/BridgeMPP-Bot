@@ -54,7 +54,7 @@ public class ShowMeBot extends Bot {
 			byte[] image;
 			image = resizeImage(connection, 100, 100);
 			if (image != null) {
-				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/png;base64,"
+				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/jpeg;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
 						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}

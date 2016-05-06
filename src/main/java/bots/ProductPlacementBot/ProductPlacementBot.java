@@ -111,7 +111,7 @@ public class ProductPlacementBot extends Bot {
 	private void sendMessage (Advertisement advertisement, Message message) {
 		byte[] image = advertisement.getImage();
 		if (image != null) {
-			sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/png;base64,"
+			sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/jpeg;base64,"
 					+ Base64.getEncoder().encodeToString(image) + "\" alt=\""
 					+ ((advertisement.getInfo() != null) ? advertisement.getInfo() : "")
 					+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
