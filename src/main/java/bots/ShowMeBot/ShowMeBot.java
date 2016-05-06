@@ -22,6 +22,8 @@ import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 
+import static bridgempp.util.ImageEdit.resizeImage;
+
 public class ShowMeBot extends Bot {
 
 	private String[] triggers = { "zeig mir", "zeige mir", "show me" };
@@ -52,7 +54,7 @@ public class ShowMeBot extends Bot {
 			byte[] image;
 			image = resizeImage(connection, 100, 100);
 			if (image != null) {
-				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/jpeg;base64,"
+				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/png;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
 						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
 			}
@@ -63,40 +65,7 @@ public class ShowMeBot extends Bot {
 		}
 	}
 
-	public byte[] resizeImage(URLConnection connection, int width, int height) {
-		try {
-			BufferedImage originalImage = ImageIO.read(connection.getInputStream());
-			BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			Graphics2D graphics = resizedImage.createGraphics();
-			graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			graphics.drawImage(originalImage, 0, 0, width, height, null);
-			graphics.finalize();
-			graphics.dispose();
-			ByteBuffer buffer = ByteBuffer.allocate(49000);
-			ImageIO.write(resizedImage, "JPG", new OutputStream() {
 
-				@Override
-				public void write(int b) throws IOException {
-					buffer.put((byte) b);
-				}
-
-				@Override
-				public void write(byte[] bytes, int start, int length) {
-					buffer.put(bytes, start, length);
-				}
-
-			});
-			buffer.flip();
-			byte[] array = new byte[buffer.remaining()];
-			buffer.get(array, 0, array.length);
-			return array;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public QueryResult getGoogleImageSearchResult(String query, boolean random) throws IOException {
 		QueryResult result = new QueryResult();
