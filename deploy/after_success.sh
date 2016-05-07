@@ -27,7 +27,7 @@ sleep 120
 echo "Wait complete"
 echo "0
 !botusekey $BRIDGEMPP_KEY
-!botcreatealias Build Bot
+!botcreatealias Build\ Bot
 !botsubscribegroup $BRIDGEMPP_GROUP
 New Version has been loaded
 New Version: $TRAVIS_BUILD_NUMBER
