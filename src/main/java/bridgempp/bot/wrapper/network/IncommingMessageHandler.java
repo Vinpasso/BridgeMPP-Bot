@@ -3,6 +3,7 @@ package bridgempp.bot.wrapper.network;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.time.Duration;
 import java.util.logging.Level;
 
 import bridgempp.bot.messageformat.MessageFormat;
@@ -47,18 +48,11 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 		{
 			bot.sendMessage(new Message(message.getGroup(), "This is Status Check triggered by " + bot.name + "\nResult:\n" + BotWrapper.statusCheck(), MessageFormat.PLAIN_TEXT));
 		}
-		Schedule.execute(new Runnable() {
-			public void run()
-			{
-				try
-				{
-					bot.synchronizedMessageReceived(message);
-				} catch (Exception e)
-				{
-					BotWrapper.printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + e.getStackTrace()[0].toString(), MessageFormat.PLAIN_TEXT), bot);
-				}
-			}
-		});
+		if (message.getMessage().startsWith("?botwrapper load"))
+		{
+			bot.sendMessage(new Message(message.getGroup(), "This is Load Check triggered by " + bot.name + "\nResult:\n" + Duration.ofMillis(bot.getProcessingTime()).toString(), MessageFormat.PLAIN_TEXT));
+		}
+		Schedule.submitMessage(bot, message);
 	}
 
 	@Override

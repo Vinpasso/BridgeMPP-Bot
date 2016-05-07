@@ -24,6 +24,7 @@ public abstract class Bot {
 	public String configFile;
 	public Properties properties;
 	protected Channel channel;
+	private long processingTime = 0;
 
 	/**
 	 * Sets the Properties loaded from the Bot Configuration file
@@ -102,5 +103,35 @@ public abstract class Bot {
 	public synchronized void synchronizedMessageReceived(Message message)
 	{
 		messageReceived(message);
+	}
+	
+	void appendProcessingTime(long timeConsumed)
+	{
+		if(timeConsumed < 0)
+		{
+			Log.log(Level.WARNING, "Bot: " + name + " attempted to cheat the delay mechanism");
+			return;
+		}
+		processingTime += timeConsumed;
+		if(processingTime < 0)
+		{
+			processingTime = Long.MAX_VALUE;
+		}
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @return the processingTime
+	 */
+	public long getProcessingTime()
+	{
+		return processingTime;
 	}
 }
