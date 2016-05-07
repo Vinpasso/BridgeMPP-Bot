@@ -43,12 +43,13 @@ public class KappaBot {
         try{
             //download the emote map. To use the full map use the following url: (may or may not work)
             // https://twitchemotes.com/api_cache/v2/global.json
-            fillMap(JsonReader.readJsonFromUrl("https://twitchemotes.com/api_cache/v2/global.json"));
+            fillMap(JsonReader.readJsonFromUrl("http://twitchemotes.com/api_cache/v2/global.json"));
             return null;
         }
-        catch (Exception e){
+        catch (Exception c){
             try{
                 fillMap(JsonReader.readJsonFromUrl("http://twitchemotes.com/api_cache/v2/global.json"));
+                return null;
             }catch(Exception e){
                 return e.getMessage();
             }
