@@ -46,13 +46,8 @@ public class KappaBot {
             fillMap(JsonReader.readJsonFromUrl("http://twitchemotes.com/api_cache/v2/global.json"));
             return null;
         }
-        catch (Exception c){
-            try{
-                fillMap(JsonReader.readJsonFromUrl("http://twitchemotes.com/api_cache/v2/global.json"));
-                return null;
-            }catch(Exception e){
-                return e.getMessage();
-            }
+        catch(Exception e){
+            return e.getMessage();
         }
     }
 
