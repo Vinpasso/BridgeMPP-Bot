@@ -50,7 +50,7 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 		}
 		if (message.getMessage().startsWith("?botwrapper load"))
 		{
-			bot.sendMessage(new Message(message.getGroup(), "This is Load Check triggered by " + bot.name + "\nResult:\n" + Duration.ofMillis(bot.getProcessingTime()).toString(), MessageFormat.PLAIN_TEXT));
+			bot.sendMessage(new Message(message.getGroup(), "Load Check: " + bot.name + " has used " + Duration.ofMillis(bot.getProcessingTime()).toString().substring(2) + " of processing time", MessageFormat.PLAIN_TEXT));
 		}
 		Schedule.submitMessage(bot, message);
 	}
