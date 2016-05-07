@@ -20,7 +20,7 @@ public class Schedule
 {
 	private static ThreadFactory threadFactory;
 	private static ScheduledExecutorService executorService;
-	private static PriorityBlockingQueue<Entry<Bot, Message>> messageQueue;
+	private static PriorityBlockingQueue<MessageEntry> messageQueue;
 	private static final int numThreads = 5;
 	
 	public static void startExecutorService()
@@ -39,14 +39,7 @@ public class Schedule
 			}
 		};
 		executorService = Executors.newScheduledThreadPool(5, threadFactory);
-		messageQueue = new PriorityBlockingQueue<>(10, new Comparator<Entry<Bot, Message>>() {
-
-			@Override
-			public int compare(Entry<Bot, Message> o1, Entry<Bot, Message> o2)
-			{
-				return (int) (o1.getKey().getProcessingTime() - o2.getKey().getProcessingTime());
-			}
-		});
+		messageQueue = new PriorityBlockingQueue<>();
 		int i = 0;
 		do
 		{
@@ -108,7 +101,7 @@ public class Schedule
 	
 	public static void submitMessage(Bot bot, Message message)
 	{
-		messageQueue.add(new AbstractMap.SimpleEntry<Bot, Message>(bot, message));
+		messageQueue.add(new MessageEntry(message, bot));
 	}
 	
 	protected static Runnable createTask()
@@ -116,7 +109,7 @@ public class Schedule
 		return new Runnable() {
 			public void run()
 			{
-				Entry<Bot, Message> entry;
+				MessageEntry entry;
 				try
 				{
 					entry = messageQueue.take();
@@ -124,8 +117,8 @@ public class Schedule
 				{
 					return;
 				}
-				Bot bot = entry.getKey();
-				Message message = entry.getValue();
+				Bot bot = entry.getBot();
+				Message message = entry.getMessage();
 				long startTime = System.currentTimeMillis();
 				try
 				{
