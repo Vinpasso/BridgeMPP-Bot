@@ -51,7 +51,7 @@ public class WikiHelpBot {
 		if (askingMatcher.find()) {
 			int IndexOfQMark = msg.indexOf('?');
 			int start = askingMatcher.end();
-			return getWikiHelp(msg.substring(start - 1, IndexOfQMark > start ? IndexOfQMark : msg.length()).trim(),IndexOfQMark+1 >= msg.length() ? null : msg.substring(IndexOfQMark+1));
+			return getWikiHelp(msg.substring(start - 1, IndexOfQMark > start ? IndexOfQMark : msg.length()).trim(),IndexOfQMark+1 >= msg.length() || IndexOfQMark < 0 ? null : msg.substring(IndexOfQMark+1));
 		}
 		return null;
 

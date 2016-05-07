@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
-public class InternetCalendar extends Calendar
+public class CalendarInternet extends Calendar
 {
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class InternetCalendar extends Calendar
 	 * @param firstYear
 	 * @param filepath
 	 */
-	public InternetCalendar(String name, int firstYear, String filepath)
+	public CalendarInternet(String name, int firstYear, String filepath)
 	{
 		this(name, firstYear, filepath, -1, -1, false);
 	}
@@ -28,7 +28,7 @@ public class InternetCalendar extends Calendar
 	 * @param defaultRepeat
 	 * @param defaultRemind
 	 */
-	public InternetCalendar(String name, int firstYear, String filepath, int defaultRepeat, int defaultRemind, boolean defaultTumtum)
+	public CalendarInternet(String name, int firstYear, String filepath, int defaultRepeat, int defaultRemind, boolean defaultTumtum)
 	{
 		super(name, firstYear, filepath, defaultRepeat, defaultRemind, defaultTumtum);
 		load();

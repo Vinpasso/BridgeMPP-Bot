@@ -16,8 +16,8 @@ public class ProductPlacementBot extends Bot {
 	int currentIndex;
 	AdvertisementSearcher advertSearcher;
 	public static Sender sender = new Sender();
-	
-	
+
+
 	public void initializeBot() {
 		repeatTime = 30;
 		repeatTimeTags = 10;
@@ -28,23 +28,23 @@ public class ProductPlacementBot extends Bot {
 		advertSearcher = new AdvertisementSearcher(playList);
 		sendMessage(new Message("tumspam", "Product Placement Bot: Wenig Publikum aber viel Werbung.", MessageFormat.PLAIN_TEXT));
 	}
-	
+
 	public void messageReceived (Message message) {
-		
+
 		/**sender*/
 		sender.add(message.getSender());
 		/**end sender*/
-		
+
 		String msg = message.getPlainTextMessage();
-		
+
 		//check for command
 		if (msg.toLowerCase().startsWith("?ppb ")) {
-			
+
 			//command: getSender
 			if (msg.substring(5).equals("getSender")) {
 				sendMessage(new Message(message.getGroup(), sender.toString(), MessageFormat.PLAIN_TEXT));
 			}
-			
+
 			else if (new PasswordChecker(msg.substring(5)).checkPassword()) {
 				int newRepeatTime = -2;
 				int i = 1;
@@ -80,22 +80,22 @@ public class ProductPlacementBot extends Bot {
 				sendMessage(new Message(message.getGroup(), "Access denied", MessageFormat.PLAIN_TEXT));
 			}
 		}
-		
+
 		msg = message.getSender() + " " + msg;
-		
+
 		//if playList is empty
 		if (playList.length == 0) return;
-		
+
 		//play Product Placement by Tag
 		Advertisement advertisement = advertSearcher.searchAdvertisement(msg);
-		if (advertisement != null && ((advertisement.getLastPlayed() + repeatTimeTags) <= currentTime())) {			
+		if (advertisement != null && ((advertisement.getLastPlayed() + repeatTimeTags) <= currentTime())) {
 			lastPlayed = currentTime();
 			advertisement.setLastPlayed(currentTime());
 			sendMessage(advertisement, message);
 		}
-		
+
 		//play Product Placement by playList
-		else if ((lastPlayed + repeatTime) <= currentTime()) {			
+		else if ((lastPlayed + repeatTime) <= currentTime()) {
 			lastPlayed = currentTime();
 			playList[currentIndex].setLastPlayed(currentTime());
 			sendMessage(playList[currentIndex], message);
@@ -107,7 +107,7 @@ public class ProductPlacementBot extends Bot {
 			}
 		}
 	}
-	
+
 	private void sendMessage (Advertisement advertisement, Message message) {
 		byte[] image = advertisement.getImage();
 		if (image != null) {
@@ -120,7 +120,7 @@ public class ProductPlacementBot extends Bot {
 			sendMessage(new Message(message.getGroup(), advertisement.getInfo(), MessageFormat.PLAIN_TEXT));
 		}
 	}
-	
+
 	private int currentTime() {
 		return CalDateFormat.dateToMin(CurrentDate.getDateWTime(), 1970);
 	}

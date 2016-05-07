@@ -22,8 +22,8 @@ New Version: $TRAVIS_BUILD_NUMBER
 sftp $SSH_USER@$SSH_HOST <<EOF
 put message.txt /bots-upload/message.txt
 EOF
-echo "Waiting 120 Seconds for restart"
-sleep 120
+echo "Waiting 300 Seconds for restart"
+sleep 300
 echo "Wait complete"
 echo "0
 !botusekey $BRIDGEMPP_KEY
