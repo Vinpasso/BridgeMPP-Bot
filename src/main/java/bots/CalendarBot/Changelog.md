@@ -6,6 +6,12 @@ unreleased
 - Reminds of past Events
 - Internet clock
 
+v 2.2.1 - 2016-05-09:
+--------
+##### FIXED:
+- CalendarHoliday let hang CalendarBot if the next "Muttertag" / "Erntedankfest" is next year
+- Alerts of CalendarHoliday weren't enabled for the group "tumsog"
+
 v 2.2.0 - 2016-04-29:
 --------
 ##### ADDED:

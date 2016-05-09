@@ -7,7 +7,7 @@ package bots.CalendarBot;
  */
 public class CalendarHoliday extends Calendar {
 	public CalendarHoliday(int firstYear, String filepath) {
-		super("Holidays", firstYear, filepath, 0, 0, false);
+		super("Holidays", firstYear, filepath, 0, 0, true);
 		load();
 	}
 	
@@ -122,8 +122,9 @@ public class CalendarHoliday extends Calendar {
 	 */
 	private int dateByWeekday(String date, String weekday) {
 		boolean nextDate = false;
-		int min = dateToMin(date, "00:00", nextDate);
+		int min;
 		do {
+			min = dateToMin(date, "00:00", nextDate);
 			nextDate = true;
 			while(!CalDateFormat.minToWeekday(min, firstYear).equals(weekday)) {
 				min++;
