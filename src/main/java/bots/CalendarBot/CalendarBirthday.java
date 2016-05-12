@@ -1,5 +1,6 @@
 package bots.CalendarBot;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -36,10 +37,12 @@ public class CalendarBirthday extends Calendar {
 	
 	@Override
 	protected void load() {
+		String nameLoad = name;
+		if (!new File(filepath + nameLoad + ".properties").exists()) nameLoad = "birthday";
 		try {
 			events = new ArrayList<>();
 			Properties prop = new Properties();
-			FileInputStream fis = new FileInputStream(filepath + name + ".properties");
+			FileInputStream fis = new FileInputStream(filepath + nameLoad + ".properties");
 			prop.load(fis);
 			fis.close();
 			int size = Integer.parseInt(prop.getProperty("size"));
