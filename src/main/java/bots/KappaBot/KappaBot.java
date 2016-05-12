@@ -1,6 +1,7 @@
 package bots.KappaBot;
 
 import bridgempp.util.JsonReader;
+import com.google.api.client.json.Json;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -39,16 +40,23 @@ public class KappaBot {
         return emotes_to_url.size();
     }
 
-    public String refresh_emotes(){
+    public JSONObject refresh_emotes(String old_emotes){
         try{
-            //download the emote map. To use the full map use the following url: (may or may not work)
-            // https://twitchemotes.com/api_cache/v2/global.json
-            fillMap(JsonReader.readJsonFromUrl("https://twitchemotes.com/api_cache/v2/global.json"));
-            return null;
+            return refresh_emotes();
         }
         catch(Exception e){
-            return e.getMessage();
+            JSONObject jsObject = new JSONObject(old_emotes);
+            fillMap(jsObject);
+            return jsObject;
         }
+    }
+
+    public JSONObject refresh_emotes(){
+            //download the emote map. To use the full map use the following url: (may or may not work)
+            // https://twitchemotes.com/api_cache/v2/global.json
+            JSONObject jsObject = JsonReader.readJsonFromUrl("https://twitchemotes.com/api_cache/v2/global.json");
+            fillMap(jsObject);
+            return jsObject;
     }
 
     public static String getUrlFromImageID(String id){
