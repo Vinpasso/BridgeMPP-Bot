@@ -12,24 +12,39 @@ import java.nio.charset.Charset;
  */
 public class JsonReader {
 
-    private static String readAll(Reader rd) throws IOException {
+    private static String readAll(Reader rd) {
         StringBuilder sb = new StringBuilder();
         int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
+        try {
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+        } catch(Exception e){
+            System.err.println("[JSONReader] failed to read all from Reader in JSONReader.readAll");
         }
         return sb.toString();
     }
 
-    public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-        InputStream is = new URL(url).openStream();
+
+    public static JSONObject readJsonFromUrl(String url) throws JSONException {
+        InputStream is = null;
+
+        try{
+            is = new URL(url).openStream();
+        }
+        catch(Exception e){
+            System.err.println("[JSONReader] failed to request URL: " + url + "in JSONReader.readJsonFromUrl");
+            return new JSONObject();
+        }
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
             return json;
         } finally {
-            is.close();
+            try {
+                is.close();
+            }catch (Exception e){}
         }
     }
 
