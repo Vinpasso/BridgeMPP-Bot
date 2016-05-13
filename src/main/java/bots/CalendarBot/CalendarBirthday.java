@@ -13,10 +13,12 @@ import java.util.Properties;
 public class CalendarBirthday extends Calendar {
 	public CalendarBirthday(int firstYear, String filepath) {
 		super("Birthdays", firstYear, filepath, 360, 10080, true);
+		load();
 	}
 	
 	public CalendarBirthday () {
 		super("Birthdays", 0, null, 0, 0, false);
+		load();
 	}
 	
 	@Override
@@ -38,22 +40,28 @@ public class CalendarBirthday extends Calendar {
 	@Override
 	protected void load() {
 		String nameLoad = name;
-		if (!new File(filepath + nameLoad + ".properties").exists()) nameLoad = "birthday";
-		try {
-			events = new ArrayList<>();
-			Properties prop = new Properties();
-			FileInputStream fis = new FileInputStream(filepath + nameLoad + ".properties");
-			prop.load(fis);
-			fis.close();
-			int size = Integer.parseInt(prop.getProperty("size"));
-			for (int i = 0; i < size; i++) {
-				String[] value = prop.getProperty("" + i).split(" ");
-				insert(new EventBirthday(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
+		for (int j = 0; j < 2; j++) {
+			try {
+				events = new ArrayList<>();
+				Properties prop = new Properties();
+				FileInputStream fis = new FileInputStream(filepath + nameLoad + ".properties");
+				prop.load(fis);
+				fis.close();
+				int size = Integer.parseInt(prop.getProperty("size"));
+				if (size == 0) {
+					nameLoad = "birthday";
+					continue;
+				}
+				for (int i = 0; i < size; i++) {
+					String[] value = prop.getProperty("" + i).split(" ");
+					insert(new EventBirthday(value[1], Integer.parseInt(value[0]), Integer.parseInt(value[2]), Integer.parseInt(value[3]), firstYear, defaultTumtum));
+				}
+				loaded = true;
+			} catch (Exception e) {
+				loaded = false;
+				nameLoad = "birthday";
+				if (j == 1) CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
 			}
-			loaded = true;
-		} catch (Exception e) {
-			loaded = false;
-			CalendarBot.printMessage(ErrorMessages.eventsNotLoadError(this), false);
-		}		
+		}
 	}
 }

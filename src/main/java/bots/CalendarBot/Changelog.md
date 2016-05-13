@@ -6,6 +6,11 @@ unreleased
 - Reminds of past Events
 - Internet clock
 
+v 2.2.3 -2016-05-13:
+--------
+##### FIXED:
+- Events of Calendar Birthday weren't loaded 
+
 v 2.2.2 -2016-05-12:
 --------
 ##### FIXED:

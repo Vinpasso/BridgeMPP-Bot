@@ -16,10 +16,10 @@ import bridgempp.bot.wrapper.Message;
  *
  */
 public class CalendarBot extends Bot {
-	public final static String VERSION = "2.2.2"; 
+	public final static String VERSION = "2.2.3"; 
 	/* version 3.0:
 	 * remove line 105 tag 1
-	 * remove CalendarBirthday line 40f
+	 * remove CalendarBirthday line 16, 21, 42, 43, 51-54, 62, 63 tag 1
 	 */
 	private static CalendarBot instance;
 	public static boolean eventsPastAutoDelOn = false;
