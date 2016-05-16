@@ -251,11 +251,18 @@ public class TUMCanteenBot extends Bot {
 	private void queryCanteen(CanteenStruct selectedCanteen, String replyGroupId) {
 		List<DishStruct>[] dishCategories;
 		
-		// TODO handle weekends
 		Calendar date = CanteenTimeHelper.getToday();
 		// if it's later than, for example, 15:00, switch to displaying the menu of the next day
 		if (CanteenTimeHelper.getNow().get(Calendar.HOUR_OF_DAY) >= SWITCH_TO_NEXT_DAY_HOUR)
 			date.roll(Calendar.DATE, 1);
+		
+		// skip the weekend
+		switch (date.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.SATURDAY:
+				date.roll(Calendar.DATE, 1);
+			case Calendar.SUNDAY:
+				date.roll(Calendar.DATE, 1);
+		}
 		
 		// check if we can use the cached API response
 		if (selectedCanteen.currentMenuDate != date.getTimeInMillis()) {
