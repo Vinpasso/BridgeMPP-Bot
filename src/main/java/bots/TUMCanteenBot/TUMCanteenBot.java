@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,19 +31,23 @@ import org.json.JSONTokener;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
+import bridgempp.bot.wrapper.Schedule;
 import bridgempp.util.Log;
 
 public class TUMCanteenBot extends Bot {
 	
 	private static final String baseAPIUrl = "http://www.devapp.it.tum.de/mensaapp/exportDB.php";
-	private static final Pattern canteenQueryPattern = Pattern.compile("\\?canteen (.++)");
+	private static final Pattern canteenQueryPattern = Pattern.compile("^\\?\\p{Alpha}+ (\\H+)");
 	
-	private static final SimpleDateFormat canteenDateFormat = new SimpleDateFormat("yyyy-MM-dd");;
-	private static final Calendar calendar = Calendar.getInstance(Locale.UK);
+	private static final SimpleDateFormat canteenDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private static String dateToWeekday(Date date) {
-		calendar.setTime(date);
-		return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, Locale.UK);
+	private static final int SCHEDULE_DAILY_MESSSAGE_AT_HOURS = 8;
+	private static final int SWITCH_TO_NEXT_DAY_HOUR = 15;
+	
+	private Consumer<String> debugOutputReader;
+	
+	static {
+		canteenDateFormat.setTimeZone(CanteenTimeHelper.CET_ZONE);
 	}
 	
 	// all prices are for students only
@@ -76,8 +84,12 @@ public class TUMCanteenBot extends Bot {
 	}
 	
 	private static class CanteenStruct {
-		public String name; // TODO implement caching
-		public Date currentMenuDate;
+		public int id;
+		public String name;
+		/**
+		 * The time when the {@code cachedDishes} were last updated or {@code null if nothing is cached}
+		 */
+		public long currentMenuDate;
 		public List<DishStruct>[] cachedDishes;
 	}
 	
@@ -117,11 +129,13 @@ public class TUMCanteenBot extends Bot {
 	
 	private boolean isInitialized;
 	private Map<Integer, CanteenStruct> canteensMap;
+	private Map<Integer, Future<?>> scheduledMap;
 
 	@Override
 	public void initializeBot() {
 		isInitialized = false;
-		canteensMap = new HashMap<>();;
+		canteensMap = new HashMap<>();
+		scheduledMap = new HashMap<>();
 		name = "TUM Canteen Bot";
 		
 		try {
@@ -143,8 +157,9 @@ public class TUMCanteenBot extends Bot {
 				}
 				
 				CanteenStruct c = new CanteenStruct();
+				c.id = id;
 				c.name = name;
-				c.currentMenuDate = null;
+				c.currentMenuDate = -1;
 				canteensMap.put(id, c);
 			}
 			
@@ -172,14 +187,47 @@ public class TUMCanteenBot extends Bot {
 		if (msg.startsWith("?listcanteens")) {
 			respondListCanteens(message);
 			
+		} else if (msg.startsWith("?canteendaily")) {
+			getCanteenFromMessage(message).ifPresent((canteen) -> enableDailyMessage(canteen, message));
+			
+		} else if (msg.startsWith("?canteendisabledaily")) {
+			getCanteenFromMessage(message).ifPresent((canteen) -> disableDailyMessage(canteen, message));
+
 		} else if (msg.startsWith("?canteen")) {
-			respondQueryCanteen(message);
+			getCanteenFromMessage(message).ifPresent((canteen) -> queryCanteen(canteen, message.getGroup()));
 		}
+			
+	}
+	
+	private Optional<CanteenStruct> getCanteenFromMessage(Message message) {
+		Matcher matcher = canteenQueryPattern.matcher(message.getMessage());
+		if (!matcher.find()) {
+			sendMessage(message.getGroup(), "To see a list of all available canteens, type ?listcanteens");
+			return Optional.empty();
+		}
+		
+		String idString = matcher.group(1).trim();
+		int id;
+		try {
+			id = Integer.parseInt(idString);
+			
+		} catch (NumberFormatException e) {
+			sendMessage(message.getGroup(), idString + " is not a valid integer canteen ID! To see a list of all available canteens, type ?listcanteens");
+			return Optional.empty();
+		}
+		
+		CanteenStruct selectedCanteen = canteensMap.get(id);
+		if (selectedCanteen == null) {
+			sendMessage(message.getGroup(), "A canteen with the ID " + id + " does not exist! To see a list of all available canteens and their IDs, type ?listcanteens");
+			return Optional.empty();
+		}
+		
+		return Optional.of(selectedCanteen);
 	}
 
 	private void respondListCanteens(Message message) {
 		StringBuilder b = new StringBuilder(15 + 25 * canteensMap.size());
-		b.append("ID  NAME\n");
+		b.append("\nID  NAME\n");
 		
 		boolean first = true; // meh
 		for (Entry<Integer, CanteenStruct> c : canteensMap.entrySet()) {
@@ -195,65 +243,42 @@ public class TUMCanteenBot extends Bot {
 			b.append(c.getValue().name);
 		}
 		
-		Message answer = new Message(message.getGroup(), b.toString(), MessageFormat.PLAIN_TEXT);
-		sendMessage(answer);
+		sendMessage(message.getGroup(), b.toString());
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void respondQueryCanteen(Message message) {
-		Matcher matcher = canteenQueryPattern.matcher(message.getMessage());
-		if (!matcher.find()) {
-			return;
-		}
-		
-		String idString = matcher.group(1).trim();
-		int id;
-		try {
-			id = Integer.parseInt(idString);
-			
-		} catch (NumberFormatException e) {
-			sendMessage(message, idString + " is not a valid integer canteen ID! To see a list of all available canteens, type ?listcanteens");
-			return;
-		}
-		
-		CanteenStruct selectedCanteen = canteensMap.get(id);
-		if (selectedCanteen == null) {
-			sendMessage(message, "A canteen with the ID " + id + " does not exist! To see a list of all available canteens and their IDs, type ?listcanteens");
-			return;
-		}
-		
+	private void queryCanteen(CanteenStruct selectedCanteen, String replyGroupId) {
 		List<DishStruct>[] dishCategories;
 		
-		
-		long offset = 32400000L; // 9 hours
-		// having the offset at 9h means that at 24:00 - 9h = 15:00 the bot will switch
-		// to displaying dishes served the next day
 		// TODO handle weekends
-		long date = System.currentTimeMillis() + offset;
-		Date dateObject = new Date(date - (date % 86400000));
+		Calendar date = CanteenTimeHelper.getToday();
+		// if it's later than, for example, 15:00, switch to displaying the menu of the next day
+		if (CanteenTimeHelper.getNow().get(Calendar.HOUR_OF_DAY) >= SWITCH_TO_NEXT_DAY_HOUR)
+			date.roll(Calendar.DATE, 1);
 		
-		if (selectedCanteen.currentMenuDate == null || !selectedCanteen.currentMenuDate.equals(dateObject)) {
+		// check if we can use the cached API response
+		if (selectedCanteen.currentMenuDate != date.getTimeInMillis()) {
 			dishCategories = new List[DishType.values().length];
 			for (int i = 0; i < dishCategories.length; i++) {
 				dishCategories[i] = new ArrayList<DishStruct>(6);
 			}
 			
 			try {
-				parseCanteenMenu(id, date, dishCategories);
+				parseCanteenMenu(selectedCanteen.id, date, dishCategories);
 				
 			} catch (JSONException e) {
 				Log.log(Level.WARNING, "The API returned invalid JSON", e);
-				sendMessage(message, "ERROR: Could not retrieve results because the API returned invalid JSON.");
+				sendMessage(replyGroupId, "ERROR: Could not retrieve results because the API returned invalid JSON.");
 				return;
 				
 			} catch (IOException e) {
 				Log.log(Level.WARNING, "Could not query the TUM canteen API", e);
-				sendMessage(message, "ERROR: Could not query the TUM canteen API.");
+				sendMessage(replyGroupId, "ERROR: Could not query the TUM canteen API.");
 				return;
 			}
 			
-			selectedCanteen.currentMenuDate = dateObject;
+			selectedCanteen.currentMenuDate = date.getTimeInMillis();
 			selectedCanteen.cachedDishes = dishCategories;
 			
 		} else {
@@ -266,14 +291,15 @@ public class TUMCanteenBot extends Bot {
 			numDishes += l.size();
 		}
 		
+		String weekday = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, Locale.UK);
 		// either it's the weekend or a bug, hopefully the former
 		if (numDishes == 0) {
-			sendMessage(message, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes on " + dateToWeekday(dateObject) + ".");
+			sendMessage(replyGroupId, "Canteen \"" + selectedCanteen.name + "\" does not serve any dishes on " + weekday + ".");
 			return;
 		}
 		
-		StringBuilder b = new StringBuilder(200);
-		b.append("Dishes served on " + dateToWeekday(dateObject) + " at the \"" + selectedCanteen.name + "\"\n");
+		StringBuilder b = new StringBuilder(400);
+		b.append("Dishes served on " + weekday + " at the \"" + selectedCanteen.name + "\"\n");
 		
 		for (int i = 0; i < dishCategories.length; i++) {
 			List<DishStruct> l = dishCategories[i];
@@ -292,15 +318,48 @@ public class TUMCanteenBot extends Bot {
 			}
 		}
 		
-		sendMessage(message, b.toString());
+		sendMessage(replyGroupId, b.toString());
 	}
 
-	private void parseCanteenMenu(int canteenId, long date, List<DishStruct>[] dishCategories) throws MalformedURLException, JSONException, IOException {
+	private void enableDailyMessage(CanteenStruct canteen, Message message) {
+		sendMessage(message.getGroup(), "Daily messages scheduled for canteen " + canteen.id);
+		
+		// check if already scheduled
+		if (scheduledMap.containsKey(canteen.id))
+			return;
+		
+		final Runnable dailyMessage = new Runnable() {
+			
+			@Override
+			public void run() {
+				if (scheduledMap.containsKey(canteen.id)) {
+					// not the first run, query the canteen and send a chat message
+					queryCanteen(canteen, message.getGroup());
+				}
+				
+				if (Thread.interrupted())
+					return;
+				
+				long delay = CanteenTimeHelper.getMillisecondsUntilTomorrow(SCHEDULE_DAILY_MESSSAGE_AT_HOURS, 0, 0);
+				Future<?> scheduledFutureMessage = Schedule.scheduleOnce(this, delay, TimeUnit.MILLISECONDS);
+				scheduledMap.put(canteen.id, scheduledFutureMessage);
+			}
+			
+		};
+		dailyMessage.run();
+	}
+
+	private void disableDailyMessage(CanteenStruct canteen, Message message) {
+		Future<?> future = scheduledMap.remove(canteen.id);
+		if (future != null)
+			future.cancel(true);
+		
+		sendMessage(message.getGroup(), "Disabled daily messages for canteen " + canteen.id);
+	}
+
+	private void parseCanteenMenu(int canteenId, Calendar date, List<DishStruct>[] dishCategories) throws MalformedURLException, JSONException, IOException {
 		JSONObject root = queryAPI("?mensa_id=" + canteenId);
 		JSONArray canteenMenu = root.getJSONArray("mensa_menu");
-		
-		Date nowMinus24h = new Date(date - 86400000L);
-		Date now = new Date(date);
 		
 		for (int i = 0; i < canteenMenu.length(); i++) {
 			JSONObject dishObj = canteenMenu.getJSONObject(i);
@@ -314,11 +373,10 @@ public class TUMCanteenBot extends Bot {
 				continue;
 			}
 			
-			// skip dishes not on the menu today
-			if (!dateDish.after(nowMinus24h) || !dateDish.before(now)) {
+			// skip dishes for days we are not looking for
+			if (date.getTimeInMillis() != dateDish.getTime()) {
 				continue;
 			}
-			System.out.println(canteenDateFormat.format(dateDish) + " " + dishObj.getString("name"));
 			
 			DishType type;
 			switch (dishObj.getString("type_short")) {
@@ -355,9 +413,18 @@ public class TUMCanteenBot extends Bot {
 		}
 	}
 	
-	private void sendMessage(Message received, String answer) {
-		Message answerMessage = new Message(received.getGroup(), answer, MessageFormat.PLAIN_TEXT);
+	private void sendMessage(String group, String answer) {
+		if (debugOutputReader != null) {
+			debugOutputReader.accept(answer);
+			return;
+		}
+		
+		Message answerMessage = new Message(group, answer, MessageFormat.PLAIN_TEXT);
 		sendMessage(answerMessage);
+	}
+	
+	public void setDebugOutputReader(Consumer<String> consumer) {
+		debugOutputReader = consumer;
 	}
 
 }
