@@ -248,9 +248,6 @@ public class BotWrapper
 			Bot bot = injector.getInstance((Class<Bot>) clazz);
 			bot.setProperties(botProperties);
 			bot.configFile = botConfig.getAbsolutePath();
-			Log.wrapperLog(Level.INFO, "Initializing bot: " + botConfig.getPath());
-			bot.initializeBot();
-			Log.wrapperLog(Level.INFO, "Initialized bot: " + botConfig.getPath());
 
 			Log.wrapperLog(Level.INFO, "Creating bot network interface: " + botConfig.getPath());
 			String serverAddress = botProperties.getProperty("serverAddress");

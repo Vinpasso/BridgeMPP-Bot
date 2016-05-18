@@ -1,9 +1,5 @@
 package bridgempp.bot.wrapper;
 
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.PriorityQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -12,6 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.util.Log;
@@ -125,7 +123,7 @@ public class Schedule
 					bot.synchronizedMessageReceived(message);
 				} catch (Exception e)
 				{
-					BotWrapper.printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + e.getStackTrace()[0].toString(), MessageFormat.PLAIN_TEXT), bot);
+					BotWrapper.printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + ExceptionUtils.getStackTrace(e), MessageFormat.PLAIN_TEXT), bot);
 				}
 				bot.appendProcessingTime(System.currentTimeMillis() - startTime);
 			}
