@@ -72,14 +72,7 @@ public class BotWrapper
 		bootstrap = new Bootstrap();
 		bootstrap.group(loopGroup);
 		bootstrap.channel(NioSocketChannel.class);
-		bootstrap.handler(new ChannelInitializer<Channel>() {
 
-			@Override
-			protected void initChannel(Channel channel) throws Exception
-			{
-
-			}
-		});
 		Log.log(Level.INFO, "Initializing Guice");
 		// init Guice Injector
 		initGuice();
@@ -198,13 +191,7 @@ public class BotWrapper
 		{
 			return null;
 		}
-		try
-		{
-			message.validate();
-		} catch (Exception e)
-		{
-			throw new InvalidMessageFormatException(e);
-		}
+		message.validate();
 
 		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat().getName()).setMessage(message.getMessage()).setSender(message.getSender())
 				.setTarget(message.getTarget()).setGroup(message.group).build();
@@ -288,7 +275,7 @@ public class BotWrapper
 			channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
 
 				@Override
-				public void operationComplete(Future<? super Void> future) throws Exception
+				public void operationComplete(Future<? super Void> future)
 				{
 					if (!future.isSuccess())
 					{

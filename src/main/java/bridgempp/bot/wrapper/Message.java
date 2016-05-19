@@ -2,6 +2,7 @@ package bridgempp.bot.wrapper;
 
 import java.io.StringReader;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,18 +52,20 @@ public class Message {
 	 * Check whether this Message violates BridgeMPP Message Restrictions
 	 * Throws an exception which may or may not be caught at will
 	 * 
-	 * @throws Exception
+	 * @throws InvalidMessageException
 	 *             The Reason for the invalidation of this message
 	 */
-	public void validate() throws Exception {
+	public void validate() throws InvalidMessageException {
+		try
+		{
 		if (getMessage().length() > 60000) {
-			throw new Exception("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
+			throw new InvalidMessageException("Dangerous Message Length " + getMessage().length() + "! Send request rejected");
 		}
 		Matcher matcher = Pattern.compile("[\\x00-\\x08\\x0E-\\x1F]").matcher(getMessage());
 		if (matcher.find()) {
-			throw new Exception(
+			throw new InvalidMessageException(
 					"Dangerous Control Characters detected! Access Denied!\nAt position: " + matcher.start() + ", Character: " + URLEncoder.encode(getMessage().substring(matcher.start(), matcher.end()), "UTF-8") + "\nURL Encoded Original Message: "
-							+ URLEncoder.encode(getMessage(), "UTF-8"));
+							+ URLEncoder.encode(getMessage(), StandardCharsets.UTF_8.name()));
 		}
 		if(messageFormat == MessageFormat.XHTML)
 		{
@@ -72,6 +75,10 @@ public class Message {
 			factory.setExpandEntityReferences(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			builder.parse(new InputSource(new StringReader("<body>" + getMessage() + "</body>")));
+		}
+		} catch (Exception e)
+		{
+			throw new InvalidMessageException(e);
 		}
 	}
 

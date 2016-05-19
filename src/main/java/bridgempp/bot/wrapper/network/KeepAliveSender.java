@@ -41,8 +41,7 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) {
 				if (!future.isSuccess()) {
 					Log.log(Level.SEVERE,
 							"A Connection has been disconnected after PING: "
@@ -55,8 +54,7 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Exception",
 						cause);
@@ -64,14 +62,14 @@ public class KeepAliveSender extends ChannelDuplexHandler {
 	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	public void channelInactive(ChannelHandlerContext ctx) {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Channel Deactivation");
 		BotWrapper.shutdown();
 	}
 
 	@Override
-	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+	public void channelUnregistered(ChannelHandlerContext ctx) {
 		Log.log(Level.SEVERE,
 						"Communications have broken down on a Connection due to Channel Deregistration");
 		BotWrapper.shutdown();

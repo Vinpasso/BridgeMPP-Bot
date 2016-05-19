@@ -2,6 +2,7 @@ package bots.CustomParrotBot;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Base64;
@@ -241,7 +242,7 @@ public class CustomParrotBot {
 	}
 	
 	private Hashtable<String, CustomParrot> decodeList(String base64String)
-			throws Exception {
+			throws IOException, ClassNotFoundException {
 		byte[] objectData = Base64.getDecoder().decode(base64String);
 		ObjectInputStream objectInputStream = new ObjectInputStream(
 				new ByteArrayInputStream(objectData));
@@ -256,7 +257,7 @@ public class CustomParrotBot {
 	}
 
 	private String encodeList(Hashtable<String, CustomParrot> list)
-			throws Exception {
+			throws IOException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 				byteArrayOutputStream);

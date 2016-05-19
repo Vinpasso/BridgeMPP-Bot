@@ -1,6 +1,7 @@
 package bots.QuizBot.parsers;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -19,7 +20,7 @@ public class HearthstoneCardParser
 			"<span class=\"hearthstone-health\" title=\"Health\">(.*?)<\\/span>",
 			"<meta name=\"description\" content=\"([^\"]+?)\">" };
 
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args) throws IOException, InterruptedException
 	{
 		PrintStream ps = new PrintStream(new File("parsed.txt"));
 		Pattern idPattern = Pattern.compile("\\{\"id\":([^,]*?),\"image\":");

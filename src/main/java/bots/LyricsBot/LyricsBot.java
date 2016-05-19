@@ -1,5 +1,6 @@
 package bots.LyricsBot;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -29,7 +30,7 @@ public class LyricsBot extends Bot {
 		}
 	}
 
-	public String getSongData(String query) throws Exception {
+	public String getSongData(String query) throws IOException {
 		URL url = new URL("http://api.lyricsnmusic.com/songs?api_key=bca4a09909e6837db805b28d13ea4b&per_page=1&q=" + URLEncoder.encode(query, "UTF-8"));
 		URLConnection connection = url.openConnection();
 		connection.addRequestProperty("Referer", "http://vinpasso.org");

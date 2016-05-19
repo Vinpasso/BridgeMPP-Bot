@@ -76,8 +76,7 @@ public class CommandTransceiver extends
 		future.addListener(new GenericFutureListener<Future<? super Void>>() {
 
 			@Override
-			public void operationComplete(Future<? super Void> future)
-					throws Exception {
+			public void operationComplete(Future<? super Void> future) {
 				if (future.isSuccess()) {
 					Log.log(Level.INFO, "Sent the command request: " + command,
 							bot);
@@ -92,8 +91,7 @@ public class CommandTransceiver extends
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Message msg)
-			throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, Message msg) {
 		String confirmation = msg.getMessage();
 		if (confirmation.equalsIgnoreCase("BridgeMPP: command status success")) {
 			Log.log(Level.INFO, "Status success: " + state.toString(), bot);
