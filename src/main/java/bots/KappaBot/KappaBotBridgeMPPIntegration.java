@@ -30,15 +30,7 @@ public class KappaBotBridgeMPPIntegration extends Bot {
 
     @Override
     public void initializeBot() {
-        String old_emotes = properties.getProperty("old_emotes");
-        if (old_emotes != null) {
-            this.properties.setProperty("old_emotes", bot.refresh_emotes(properties.getProperty("old_emotes")).toString(4));
-        }
-        else{
-            this.properties.setProperty("old_emotes",bot.refresh_emotes(properties.getProperty("old_emotes")).toString(4));
-        }
-        this.saveProperties();
-
+            this.properties.setProperty("old_emotes", bot.refresh_emotes(properties.getProperty("old_emotes","{emotes:{}}")).toString(4));
     }
 
     @Override
