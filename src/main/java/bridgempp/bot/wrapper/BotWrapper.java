@@ -73,6 +73,7 @@ public class BotWrapper
 		bootstrap.group(loopGroup);
 		bootstrap.channel(NioSocketChannel.class);
 
+		//Do not remove this
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 
 			@Override
