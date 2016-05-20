@@ -4,13 +4,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.logging.Level;
 
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 import bridgempp.util.Log;
+import bridgempp.util.Util;
 
 public class MetaWrapper extends Bot
 {
@@ -113,7 +113,7 @@ public class MetaWrapper extends Bot
 	private void runMethod(Method method, Message message, String parameterString)
 	{
 		Parameter[] parameters = method.getParameters();
-		Object[] arguments = parseParametersCommandLineStyle(parameters, parameterString, message);
+		Object[] arguments = Util.parseParametersCommandLineStyle(parameters, parameterString, message);
 		if (arguments == null)
 		{
 			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + " to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
@@ -197,101 +197,4 @@ public class MetaWrapper extends Bot
 		}
 		return helpTopic;
 	}
-
-	private Object[] parseParametersCommandLineStyle(Parameter[] parameters, String message, Message bridgemppMessage)
-	{
-		if (parameters.length == 0)
-		{
-			return new Object[0];
-		}
-		if (parameters.length == 1 && parameters[0].getType().equals(Message.class))
-		{
-			return new Object[] { bridgemppMessage };
-		}
-		String[] splittedString = splitCommandLine(message);
-		Object[] parameterObjects = new Object[parameters.length];
-		int splittedProgress = 0;
-		for (int i = 0; i < parameterObjects.length; i++)
-		{
-			if(parameters[i].getType().equals(Message.class))
-			{
-				parameterObjects[i] = bridgemppMessage;
-				continue;
-			}
-			if(splittedProgress >= splittedString.length)
-			{
-				return null;
-			}
-			switch (parameters[i].getType().getName())
-			{
-				case "java.lang.String":
-					parameterObjects[i] = splittedString[splittedProgress];
-					break;
-				case "boolean":
-					parameterObjects[i] = Boolean.parseBoolean(splittedString[splittedProgress]);
-					break;
-				case "int":
-					parameterObjects[i] = Integer.parseInt(splittedString[splittedProgress]);
-					break;
-				case "double":
-					parameterObjects[i] = Double.parseDouble(splittedString[splittedProgress]);
-					break;
-				case "float":
-					parameterObjects[i] = Float.parseFloat(splittedString[splittedProgress]);
-					break;
-				default:
-					parameterObjects[i] = splittedString[splittedProgress];
-					break;
-			}
-			splittedProgress++;
-		}
-		if(splittedProgress != splittedString.length)
-		{
-			return null;
-		}
-		return parameterObjects;
-	}
-
-	public String[] splitCommandLine(String message)
-	{
-		message = message + " ";
-		LinkedList<String> list = new LinkedList<>();
-		char[] characters = message.toCharArray();
-		char delimiter = 0;
-		int startSequence = 0;
-		for (int i = 0; i < characters.length; i++)
-		{
-			if (delimiter == 0)
-			{
-				if (Character.isWhitespace(characters[i]))
-				{
-					continue;
-				}
-				if (characters[i] == '\'' || characters[i] == '\"')
-				{
-					startSequence = i;
-					delimiter = characters[i];
-				} else
-				{
-					startSequence = i - 1;
-					delimiter = ' ';
-				}
-			} else
-			{
-				if (characters[i] == delimiter && characters[i - 1] != '\\')
-				{
-					if (startSequence + 1 > i - 1)
-					{
-						list.add("");
-					} else
-					{
-						list.add(message.substring(startSequence + 1, i).replace("\\" + delimiter, "" + delimiter));
-					}
-					delimiter = 0;
-				}
-			}
-		}
-		return list.toArray(new String[list.size()]);
-	}
-
 }

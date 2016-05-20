@@ -44,8 +44,8 @@ public class Message {
 	 *            The format of the reply Message
 	 * @return The new Message, to be passed to sendMessage
 	 */
-	static Message replyTo(Message message, String text, MessageFormat format) {
-		return new Message(message.getMessage(), text, format);
+	public Message replyTo(String text, MessageFormat format) {
+		return new Message(getMessage(), text, format);
 	}
 
 	/**
