@@ -73,6 +73,15 @@ public class BotWrapper
 		bootstrap.group(loopGroup);
 		bootstrap.channel(NioSocketChannel.class);
 
+		bootstrap.handler(new ChannelInitializer<Channel>() {
+
+			@Override
+			protected void initChannel(Channel channel) throws Exception
+			{
+
+			}
+		});
+		
 		Log.log(Level.INFO, "Initializing Guice");
 		// init Guice Injector
 		initGuice();
