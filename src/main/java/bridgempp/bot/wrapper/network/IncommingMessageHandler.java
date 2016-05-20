@@ -77,7 +77,7 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBu
 			}
 			else if(parameters[2].equalsIgnoreCase(bot.getName()))
 			{
-				bot.sendMessage(message.replyTo("Set " + bot.name + " property " + parameters[3] + " is " + bot.properties.getProperty(parameters[3]), MessageFormat.PLAIN_TEXT));
+				bot.sendMessage(message.replyTo("The " + bot.name + " property " + parameters[3] + " is " + bot.properties.getProperty(parameters[3]), MessageFormat.PLAIN_TEXT));
 			}
 		}
 		Schedule.submitMessage(bot, message);
