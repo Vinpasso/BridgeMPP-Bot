@@ -140,7 +140,7 @@ public class Util {
 		return list.toArray(new String[list.size()]);
 	}
 	
-	private static Pattern shellParser = Pattern.compile("((\"|')?(.*?)(?<!\\\\)\\2|(\\S+))", Pattern.DOTALL);
+	private static Pattern shellParser = Pattern.compile("((\"|')?(.*?)(?<!\\\\)\\2|((?:\\S|(?<=\\\\)\\s)+))", Pattern.DOTALL);
 	
 	public static String[] parseStringCommandLineStyle(String parameters)
 	{
@@ -148,14 +148,15 @@ public class Util {
 		Matcher matcher = shellParser.matcher(parameters);
 		while(matcher.find())
 		{
-			if(matcher.groupCount() == 4)
+			if(matcher.group(4) != null)
 			{
 				//No Quotes
-				results.add(matcher.group(4));
+				results.add(matcher.group(4).replaceAll("\\(.)", "$1"));
 			}
 			else
 			{
-				results.add(matcher.group(3).replaceAll("\\", ""));
+				//Quoted String
+				results.add(matcher.group(3).replaceAll("\\(.)", "$1"));
 			}
 		}
 		return results.toArray(new String[results.size()]);
