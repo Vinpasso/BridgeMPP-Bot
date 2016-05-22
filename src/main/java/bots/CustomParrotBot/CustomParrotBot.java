@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 import javax.script.ScriptEngine;
@@ -58,30 +59,37 @@ public class CustomParrotBot {
 		Enumeration<CustomParrot> elements = table.elements();
 		while (elements.hasMoreElements()) {
 			CustomParrot parrot = elements.nextElement();
-			if (!parrot.active) {
+			if (!parrot.isActive()) {
 				continue;
 			}
-			scriptEngine.put("parrotName", parrot.name);
+			if(parrot.getReputation() < 0 && ThreadLocalRandom.current().nextInt(-1000, 0) > parrot.getReputation())
+			{
+				parrot.increaseReputation();
+				continue;
+			}
+			scriptEngine.put("parrotName", parrot.getName());
 			scriptEngine.put("author", message.getSender());
 			scriptEngine.put("group", message.getGroup());
 			scriptEngine.put("message", message.getPlainTextMessage());
 			scriptEngine.put("lowerCaseMessage", lowerCaseMessage);
 			try {
-				String conditionResult = scriptEngine.eval(parrot.condition)
+				String conditionResult = scriptEngine.eval(parrot.getCondition())
 						.toString();
 				if (!conditionResult.equalsIgnoreCase("true")) {
 					continue;
 				}
-				Object operationResult = scriptEngine.eval(parrot.operation);
+				Object operationResult = scriptEngine.eval(parrot.getOperation());
 				if(operationResult == null)
 				{
+					parrot.increaseReputation();
 					continue;
 				}
 				String parrotResult = operationResult.toString();
-				result += parrot.name + ": " + parrotResult + "\n";
+				result += parrot.getName() + ": " + parrotResult + "\n";
+				parrot.decreaseReputation();
 			} catch (ScriptException e) {
-				result += parrot.name + " is rapidly loosing sanity...";
-				Log.log(Level.WARNING, "Parrot " + parrot.name
+				result += parrot.getName() + " is rapidly loosing sanity...";
+				Log.log(Level.WARNING, "Parrot " + parrot.getName()
 						+ " Script Failure", e);
 				if(debugParrots)
 				{
@@ -101,9 +109,9 @@ public class CustomParrotBot {
 			@MetaParameter(helpTopic = "The Javascript code to determine whether a Parrot wants to reply to this message. Should evaluate to either true or false") String condition,
 			@MetaParameter(helpTopic = "The Javascript code to formulate a Parrot Message. A String representation of the returned Object will be sent in the message") String operation) {
 		CustomParrot parrot = new CustomParrot(name, condition, operation);
-		table.put(parrot.name.toLowerCase(), parrot);
+		table.put(parrot.getName().toLowerCase(), parrot);
 		saveList();
-		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.name + " has been created";
+		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.getName() + " has been created";
 	}
 	
 	@MetaMethod(trigger = "?parrot custom delete ", helpTopic = "Remove a Custom Parrot from the Custom Parrot Cage")
@@ -116,14 +124,14 @@ public class CustomParrotBot {
 		{
 			return "The parrot could not be found while searching the Parrot Cage";
 		}
-		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.name + " has deceased at the age of " + Util.timeDeltaNow(parrot.birthday) + ". Long may he be remembered.";
+		return "It is " + Util.currentTimeAndDate() + ". Let it be known that Parrot " + parrot.getName() + " has deceased at the age of " + Util.timeDeltaNow(parrot.getBirthday()) + ". Long may he be remembered.";
 	}
 
 	@MetaMethod(trigger = "?parrot custom mute ", helpTopic = "Mute a Custom Parrot so that it will no longer respond to messages while it is muted")
 	public String muteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
 		CustomParrot parrot = getParrot(name);
-		parrot.active = false;
+		parrot.setActive(false);
 		saveList();
 		return "Parrot " + name + " has been gagged.";
 	}
@@ -132,7 +140,7 @@ public class CustomParrotBot {
 	public String unmuteCustomParrot(
 			@MetaParameter(helpTopic = "The name of the Parrot to Mute") String name) {
 		CustomParrot parrot = getParrot(name);
-		parrot.active = true;
+		parrot.setActive(true);
 		saveList();
 		return "Parrot " + name + " has been ungagged.";
 	}
@@ -163,8 +171,8 @@ public class CustomParrotBot {
 	{
 		getParrot(oldName);
 		CustomParrot parrot = table.remove(oldName.toLowerCase());
-		parrot.name = newName;
-		table.put(parrot.name.toLowerCase(), parrot);
+		parrot.setName(newName);
+		table.put(parrot.getName().toLowerCase(), parrot);
 		saveList();
 		return "Parrot " + oldName + " is now known as " + newName;
 	}
@@ -173,7 +181,7 @@ public class CustomParrotBot {
 	public String setConditionCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="The new condition of the Parrot")String newcondition)
 	{
 		CustomParrot parrot = getParrot(name);
-		parrot.condition = newcondition;
+		parrot.setCondition(newcondition);
 		saveList();
 		return "Parrot " + name + " has had brain surgery";
 	}
@@ -182,9 +190,18 @@ public class CustomParrotBot {
 	public String setOperationCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="The new operation of the Parrot")String newOperation)
 	{
 		CustomParrot parrot = getParrot(name);
-		parrot.operation = newOperation;
+		parrot.setOperation(newOperation);
 		saveList();
 		return "Parrot " + name + " has had tongue surgery";
+	}
+	
+	@MetaMethod(trigger = "?parrot custom set nerf ", helpTopic="Set whether the Parrot will be nerfed according to reputation")
+	public String setNerfCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="Whether to nerf the parrot when it has low reputation")boolean nerf)
+	{
+		CustomParrot parrot = getParrot(name);
+		parrot.setCanNerf(nerf);
+		saveList();
+		return "Parrot " + name + (nerf?" will now be nerfed according to reputation":" is now unaffected by reputation");
 	}
 	
 	
@@ -201,7 +218,7 @@ public class CustomParrotBot {
 		Enumeration<CustomParrot> enumerator = table.elements();
 		while(enumerator.hasMoreElements())
 		{
-			enumerator.nextElement().active = false;
+			enumerator.nextElement().setActive(false);
 		}
 		saveList();
 		return "The Parrot Cage screeches to a halt!";
@@ -213,7 +230,7 @@ public class CustomParrotBot {
 		Enumeration<CustomParrot> enumerator = table.elements();
 		while(enumerator.hasMoreElements())
 		{
-			enumerator.nextElement().active = true;
+			enumerator.nextElement().setActive(true);
 		}
 		saveList();
 		return "The Parrot Cage signals full steam ahead!";
@@ -250,7 +267,7 @@ public class CustomParrotBot {
 		int length = objectInputStream.readInt();
 		for(int i= 0; i < length; i++) {
 			CustomParrot parrot = (CustomParrot) objectInputStream.readObject();
-			list.put(parrot.name.toLowerCase(), parrot);
+			list.put(parrot.getName().toLowerCase(), parrot);
 		}
 		objectInputStream.close();
 		return list;
@@ -269,6 +286,11 @@ public class CustomParrotBot {
 		objectOutputStream.close();
 		return Base64.getEncoder().encodeToString(
 				byteArrayOutputStream.toByteArray());
+	}
+	
+	public void deinitializeBot(Bot metaBot)
+	{
+		saveList();
 	}
 
 }

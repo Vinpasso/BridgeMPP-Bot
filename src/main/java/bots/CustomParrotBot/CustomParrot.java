@@ -9,11 +9,13 @@ public class CustomParrot implements Serializable {
 	/**
 	 * 
 	 */
-	boolean active;
-	String condition;
-	String operation;
-	String name;
-	public long birthday;
+	private boolean active;
+	private String condition;
+	private String operation;
+	private String name;
+	private boolean canNerf = true;
+	private int reputation = 0;
+	private long birthday;
 
 	public CustomParrot(String name, String condition, String operation) {
 		this(true, name, condition, operation, System.currentTimeMillis());
@@ -21,15 +23,141 @@ public class CustomParrot implements Serializable {
 	
 	public CustomParrot(boolean active, String name, String condition, String operation, long birthday)
 	{
-		this.name = name;
-		this.condition = condition;
-		this.operation = operation;
-		this.active = true;
-		this.birthday = birthday;
+		this.setName(name);
+		this.setCondition(condition);
+		this.setOperation(operation);
+		this.setActive(true);
+		this.setBirthday(birthday);
 	}
 	
 	public String toString()
 	{
-		return "Custom Parrot: Name: " + name + " Condition: " + condition + " Operation: " + operation + " Active: " + active + " Age: " + Util.timeDeltaNow(birthday);
+		return "Custom Parrot: Name: " + getName() + " Active: " + isActive() + " Age: " + Util.timeDeltaNow(getBirthday()) + " Nerfable: " + canNerf() + " Reputation: " + getReputation() + " Condition: " + getCondition() + " Operation: " + getOperation() ;
 	}
+	
+	public void increaseReputation()
+	{
+		setReputation(getReputation() + 1);
+	}
+
+	public void decreaseReputation()
+	{
+		setReputation(getReputation() - 10);
+	}
+	
+	/**
+	 * @param reputation the reputation to set
+	 */
+	void setReputation(int reputation)
+	{
+		this.reputation = Math.max(-1000, Math.min(1000, reputation));
+	}
+	
+
+	/**
+	 * @return the birthday
+	 */
+	public long getBirthday()
+	{
+		return birthday;
+	}
+
+	/**
+	 * @param birthday the birthday to set
+	 */
+	public void setBirthday(long birthday)
+	{
+		this.birthday = birthday;
+	}
+
+	/**
+	 * @return the reputation
+	 */
+	int getReputation()
+	{
+		return reputation;
+	}
+
+
+
+	/**
+	 * @return the canNerf
+	 */
+	boolean canNerf()
+	{
+		return canNerf;
+	}
+
+	/**
+	 * @param canNerf the canNerf to set
+	 */
+	void setCanNerf(boolean canNerf)
+	{
+		this.canNerf = canNerf;
+	}
+
+	/**
+	 * @return the name
+	 */
+	String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
+	 * @return the operation
+	 */
+	String getOperation()
+	{
+		return operation;
+	}
+
+	/**
+	 * @param operation the operation to set
+	 */
+	void setOperation(String operation)
+	{
+		this.operation = operation;
+	}
+
+	/**
+	 * @return the condition
+	 */
+	String getCondition()
+	{
+		return condition;
+	}
+
+	/**
+	 * @param condition the condition to set
+	 */
+	void setCondition(String condition)
+	{
+		this.condition = condition;
+	}
+
+	/**
+	 * @return the active
+	 */
+	boolean isActive()
+	{
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	void setActive(boolean active)
+	{
+		this.active = active;
+	}
+
 }

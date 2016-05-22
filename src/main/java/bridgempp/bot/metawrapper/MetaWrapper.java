@@ -66,24 +66,38 @@ public class MetaWrapper extends Bot
 			}
 			try
 			{
-			metaClass.getMethod("initializeBot", Bot.class).invoke(metaInstance, this);
+				metaClass.getMethod("initializeBot", Bot.class).invoke(metaInstance, this);
 			} catch (NoSuchMethodException e)
 			{
 				Log.log(Level.INFO, "Meta Wrapper: Bot does not have an initialize Method");
 			}
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			Log.log(Level.SEVERE, getName() + ": Failed to initialize Bot", e);
 		}
 	}
 
-
+	@Override
+	public void deinitializeBot()
+	{
+		try
+		{
+			Method method = metaClass.getMethod("deinitializeBot", Bot.class);
+			if (method == null)
+			{
+				return;
+			}
+			method.invoke(metaInstance, this);
+		} catch (Exception e)
+		{
+			Log.log(Level.SEVERE, getName() + ": Failed to deinitialize Bot", e);
+		}
+	}
 
 	private String getTrigger(MetaMethod methodAnnotation, Method method)
 	{
 		// <triggerPrefix><trigger>
-		return (classAnnotation.triggerPrefix() + methodAnnotation.trigger()).replaceAll("\\$CLASSNAME",
-				metaClass.getName()).replaceAll("\\$METHODNAME", method.getName());
+		return (classAnnotation.triggerPrefix() + methodAnnotation.trigger()).replaceAll("\\$CLASSNAME", metaClass.getName()).replaceAll("\\$METHODNAME", method.getName());
 	}
 
 	private String getDefaultTrigger(Method method)
@@ -119,7 +133,7 @@ public class MetaWrapper extends Bot
 			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + " to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
 			return;
 		}
-		Object instanceObject = method.getDeclaringClass().equals(getClass())?this:metaInstance;
+		Object instanceObject = method.getDeclaringClass().equals(getClass()) ? this : metaInstance;
 		try
 		{
 			Object returnObject = method.invoke(instanceObject, arguments);
@@ -129,15 +143,14 @@ public class MetaWrapper extends Bot
 			}
 		} catch (Exception e)
 		{
-			if(e.getCause() != null && e.getCause() instanceof MetaNotifyException)
+			if (e.getCause() != null && e.getCause() instanceof MetaNotifyException)
 			{
 				sendMessage(new Message(message.getGroup(), e.getCause().getMessage(), MessageFormat.PLAIN_TEXT));
-			}
-			else
+			} else
 			{
 				sendMessage(new Message(message.getGroup(), "A Meta Error has ocurred: " + e.toString(), MessageFormat.PLAIN_TEXT));
 				Throwable cause = e.getCause();
-				while(cause != null)
+				while (cause != null)
 				{
 					sendMessage(new Message(message.getGroup(), "The previous Error was caused by: " + cause.toString(), MessageFormat.PLAIN_TEXT));
 					cause = cause.getCause();
@@ -151,7 +164,7 @@ public class MetaWrapper extends Bot
 	{
 		return "?man " + metaClass.getSimpleName();
 	}
-	
+
 	public String getHelpTopicForClass()
 	{
 		String helpTopic = "Man Page for " + metaClass.getSimpleName() + " at " + metaClass.getName() + "\n";
@@ -168,7 +181,7 @@ public class MetaWrapper extends Bot
 		}
 		return helpTopic;
 	}
-	
+
 	public String getHelpIndex()
 	{
 		return "Man Page: " + metaClass.getSimpleName() + ": " + getManTrigger();
@@ -176,8 +189,7 @@ public class MetaWrapper extends Bot
 
 	protected String getHelpTopicForMethod(Method method)
 	{
-		String helpTopic = "Method: " + method.getName() + " Usage: "
-				+ getTrigger(method.getAnnotation(MetaMethod.class), method);
+		String helpTopic = "Method: " + method.getName() + " Usage: " + getTrigger(method.getAnnotation(MetaMethod.class), method);
 		for (Parameter parameter : method.getParameters())
 		{
 			helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + "> ";
@@ -191,8 +203,7 @@ public class MetaWrapper extends Bot
 		{
 			if (parameter.getAnnotation(MetaParameter.class) != null)
 			{
-				helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + ">: "
-						+ parameter.getAnnotation(MetaParameter.class).helpTopic() + "\n";
+				helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + ">: " + parameter.getAnnotation(MetaParameter.class).helpTopic() + "\n";
 			}
 		}
 		return helpTopic;
