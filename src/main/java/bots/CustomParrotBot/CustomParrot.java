@@ -32,7 +32,7 @@ public class CustomParrot implements Serializable {
 	
 	public String toString()
 	{
-		return "Custom Parrot: Name: " + getName() + " Active: " + isActive() + " Age: " + Util.timeDeltaNow(getBirthday()) + " Nerfable: " + canNerf() + " Reputation: " + getReputation() + " Condition: " + getCondition() + " Operation: " + getOperation() ;
+		return "Custom Parrot: Name: " + getName() + " Active: " + isActive() + " Age: " + Util.timeDeltaNow(getBirthday()) + " Nerfable: " + canNerf() + " Reputation: " + getReputation();
 	}
 	
 	public void increaseReputation()
@@ -40,9 +40,9 @@ public class CustomParrot implements Serializable {
 		setReputation(getReputation() + 1);
 	}
 
-	public void decreaseReputation()
+	public void decreaseReputation(int numParrots)
 	{
-		setReputation(getReputation() - 10);
+		setReputation(getReputation() - numParrots);
 	}
 	
 	/**

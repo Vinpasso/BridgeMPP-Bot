@@ -86,7 +86,7 @@ public class CustomParrotBot {
 				}
 				String parrotResult = operationResult.toString();
 				result += parrot.getName() + ": " + parrotResult + "\n";
-				parrot.decreaseReputation();
+				parrot.decreaseReputation(table.size());
 			} catch (ScriptException e) {
 				result += parrot.getName() + " is rapidly loosing sanity...";
 				Log.log(Level.WARNING, "Parrot " + parrot.getName()
@@ -163,7 +163,9 @@ public class CustomParrotBot {
 
 	@MetaMethod(trigger = "?parrot custom list", helpTopic = "List all the Parrots, including their Conditions and Operators")
 	public String listCustomParrots() {
-		return table.toString();
+		StringBuilder builder = new StringBuilder();
+		table.forEach((e, v) -> builder.append(v.toString() + "\n"));
+		return builder.toString().trim();
 	}
 
 	@MetaMethod(trigger = "?parrot custom set name ", helpTopic="Overwrite a Parrots name and set a new one")
@@ -194,6 +196,21 @@ public class CustomParrotBot {
 		saveList();
 		return "Parrot " + name + " has had tongue surgery";
 	}
+	
+	@MetaMethod(trigger = "?parrot custom get operation ", helpTopic="Get a parrot's current operation code")
+	public String getOperationCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name)
+	{
+		CustomParrot parrot = getParrot(name);
+		return "Parrot operation operation " + name + ": " + parrot.getOperation();
+	}
+	
+	@MetaMethod(trigger = "?parrot custom get condition ", helpTopic="Get a parrot's current condition code")
+	public String getConditionCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name)
+	{
+		CustomParrot parrot = getParrot(name);
+		return "Parrot condition code " + name + ": " + parrot.getCondition();
+	}
+
 	
 	@MetaMethod(trigger = "?parrot custom set nerf ", helpTopic="Set whether the Parrot will be nerfed according to reputation")
 	public String setNerfCustomParrot(@MetaParameter(helpTopic="The current name of the Parrot")String name, @MetaParameter(helpTopic="Whether to nerf the parrot when it has low reputation")boolean nerf)
