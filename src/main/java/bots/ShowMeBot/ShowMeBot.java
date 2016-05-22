@@ -1,18 +1,13 @@
 package bots.ShowMeBot;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
+import static bridgempp.util.ImageEdit.resizeImage;
+
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -21,8 +16,6 @@ import org.json.JSONObject;
 import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
-
-import static bridgempp.util.ImageEdit.resizeImage;
 
 public class ShowMeBot extends Bot {
 

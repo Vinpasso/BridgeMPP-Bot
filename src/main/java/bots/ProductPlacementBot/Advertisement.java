@@ -3,7 +3,6 @@ package bots.ProductPlacementBot;
 import java.net.URL;
 import java.net.URLConnection;
 
-import bots.ShowMeBot.ShowMeBot;
 import bridgempp.util.ImageEdit;
 
 public class Advertisement {

@@ -4,14 +4,6 @@ import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.Message;
 import bridgempp.util.ImageEdit;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONObject;
-
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**

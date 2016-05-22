@@ -3,7 +3,6 @@ package bots.ParrsonRuntimeEnvironment;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
 import bridgempp.bot.database.PersistenceManager;
