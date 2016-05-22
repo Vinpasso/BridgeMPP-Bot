@@ -76,6 +76,7 @@ public class CustomParrotBot {
 				String conditionResult = scriptEngine.eval(parrot.getCondition())
 						.toString();
 				if (!conditionResult.equalsIgnoreCase("true")) {
+					parrot.increaseReputation();
 					continue;
 				}
 				Object operationResult = scriptEngine.eval(parrot.getOperation());
@@ -251,6 +252,18 @@ public class CustomParrotBot {
 		}
 		saveList();
 		return "The Parrot Cage signals full steam ahead!";
+	}
+	
+	@MetaMethod(trigger = "?parrot custom emergency nerf", helpTopic="Nerf all Parrots using reputation in an emergency")
+	public String emergencyNerf()
+	{
+		Enumeration<CustomParrot> enumerator = table.elements();
+		while(enumerator.hasMoreElements())
+		{
+			enumerator.nextElement().setCanNerf(true);
+		}
+		saveList();
+		return "The Parrot Cage signals green light for nerf avenue!";
 	}
 	
 	public void optimizeParrots()
