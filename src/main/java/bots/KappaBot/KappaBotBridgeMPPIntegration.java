@@ -33,7 +33,7 @@ public class KappaBotBridgeMPPIntegration extends Bot {
                 sendMessage(new Message(message.getGroup(), "Currently loaded Emotes: " + bot.getEmoteCount(), MessageFormat.XHTML));
             }
             if (remMessage.startsWith(kappaRefreshCommand)) {
-                this.properties.setProperty("old_emotes",bot.refresh_emotes().toString(4));
+                this.properties.setProperty("old_emotes",bot.refresh_emotes(properties.getProperty("old_emotes","{emotes:{}}")).toString(4));
                 this.saveProperties();
                 sendMessage(new Message(message.getGroup(), "All Emotes successfully been loaded", MessageFormat.XHTML));
             }
