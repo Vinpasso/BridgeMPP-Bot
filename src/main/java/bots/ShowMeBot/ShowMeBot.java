@@ -21,6 +21,9 @@ public class ShowMeBot extends Bot {
 
 	private String[] triggers = { "zeig mir", "zeige mir", "show me" };
 
+    private static final int imageWidth = 320;
+    private static final int imageHeight = 240;
+
 	@Override
 	public void initializeBot() {
 
@@ -45,11 +48,11 @@ public class ShowMeBot extends Bot {
 			QueryResult result = getGoogleImageSearchResult(query, message.getMessage().toLowerCase().contains("random"));
 			URLConnection connection = result.resultURL.openConnection();
 			byte[] image;
-			image = resizeImage(connection, 100, 100);
+			image = resizeImage(connection, imageWidth, imageHeight);
 			if (image != null) {
 				sendMessage(new Message(message.getGroup(), "\n<img src=\"data:image/jpeg;base64,"
 						+ Base64.getEncoder().encodeToString(image) + "\" alt=\"" + query
-						+ "\" width=\"320\" height=\"240\"/>", MessageFormat.XHTML));
+						+ "\" width=\"" + imageWidth + "\" height=\"" + imageHeight + "\"/>", MessageFormat.XHTML));
 			}
 			sendMessage(new Message(message.getGroup(), "<br/><img src=\"" + result.resultURL.toString() + "\" alt=\"" + query
 					+ "\" width=\"100\" height=\"100\"/><br/>\nSource (" + (result.index + 1) + "/" + result.response + "): "+ result.resultURL.toString().replaceAll("&", "&amp;") + "<br/>\nQuery: " + result.searchURL.toString().replaceAll("&", "&amp;"), MessageFormat.XHTML));
