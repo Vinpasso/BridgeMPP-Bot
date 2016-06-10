@@ -22,7 +22,7 @@ public class ShowMeBot extends Bot {
 	private String[] triggers = { "zeig mir", "zeige mir", "show me" };
 
     private static final int imageWidth = 320;
-    private static final int imageHeight = 240;
+    private static final int imageHeight = 0;
 
 	@Override
 	public void initializeBot() {

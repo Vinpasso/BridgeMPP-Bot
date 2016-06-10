@@ -56,12 +56,26 @@ public class ImageEdit {
         }
     }
 
-    public static byte[] resizeImage(URLConnection connection, int imageWidth, int imageHeight, String imageType) {
-        int width = imageWidth;
-        int height = imageHeight;
+    public static byte[] resizeImage(URLConnection connection, int width, int height, String imageType) {
         
         try {
             BufferedImage originalImage = ImageIO.read(connection.getInputStream());
+            double aspectRatio = originalImage.getWidth() / originalImage.getHeight();
+            
+            if(width == 0 && height == 0)
+            {
+            	width = originalImage.getWidth();
+            	height = originalImage.getHeight();
+            }
+            else if (width == 0)
+            {
+            	width = (int)(height * aspectRatio);
+            }
+            else if (height == 0)
+            {
+            	height = (int)(width / aspectRatio);
+            }
+            
             BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = resizedImage.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
