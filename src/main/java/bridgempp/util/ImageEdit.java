@@ -57,6 +57,9 @@ public class ImageEdit {
     }
 
     public static byte[] resizeImage(URLConnection connection, int imageWidth, int imageHeight, String imageType) {
+        int width = imageWidth;
+        int height = imageHeight;
+        
         try {
             BufferedImage originalImage = ImageIO.read(connection.getInputStream());
             BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
