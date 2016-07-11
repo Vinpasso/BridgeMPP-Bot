@@ -42,7 +42,7 @@ public class ImageEdit {
     }
 
     public static byte[] resizeImage(URLConnection connection, int imagewidth, int imageHeight){
-        return resizeImage(connection,imagewidth,imageHeight,"JPG");
+        return resizeImage(connection,imagewidth,imageHeight,"PNG");
     }
 
     public static byte[] resizeImage(String url, int imageWidth, int imageHeight, String imageType){
