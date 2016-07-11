@@ -14,15 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-@Entity(name = "QuizEntry")
+@Entity(name = "QUIZENTRY")
 public class QuizEntry
 {
 	@Id()
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name = "Identifier", nullable = false)
+	@Column(name = "IDENTIFIER", nullable = false)
 	private int identifier;
 	
-	@OneToMany(mappedBy="quizEntry", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="QUIZENTRY", cascade=CascadeType.ALL, orphanRemoval = true)
 	private List<QuizValue> quizValues = new ArrayList<QuizValue>();
 	
 	@ManyToOne(optional = false)

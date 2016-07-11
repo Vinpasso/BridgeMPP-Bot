@@ -11,7 +11,7 @@ import javax.script.ScriptException;
 public class Runtime
 {
 	@Id()
-	@Column(name = "Name", nullable = false, length = 255)
+	@Column(name = "NAME", nullable = false, length = 255)
 	private String name;
 	
 	

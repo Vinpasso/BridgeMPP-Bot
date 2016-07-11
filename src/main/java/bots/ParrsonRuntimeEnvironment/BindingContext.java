@@ -16,17 +16,17 @@ import com.thoughtworks.xstream.XStream;
 import bridgempp.bot.database.PersistenceManager;
 import bridgempp.util.Log;
 
-@Entity(name = "ScriptBindingContext")
+@Entity(name = "SCRIPTBINDINGCONTEXT")
 public class BindingContext
 {
 	@Id()
 	@GeneratedValue()
 	int id;
 	
-	@Column(name = "Persistent", nullable = false)
+	@Column(name = "PERSISTENT", nullable = false)
 	boolean persistent;
 	
-	@Column(name = "BindingData", nullable = false, length = 50000000)
+	@Column(name = "BINDINGDATA", nullable = false, length = 50000000)
 	@Lob
 	String data = "";
 	

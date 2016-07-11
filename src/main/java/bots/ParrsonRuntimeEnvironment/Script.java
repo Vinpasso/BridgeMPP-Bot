@@ -5,17 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-@Entity(name = "Script")
+@Entity(name = "SCRIPT")
 public class Script
 {
 	@Id()
-	@Column(name = "name", nullable = false, length = 255)
+	@Column(name = "NAME", nullable = false, length = 255)
 	private String name;
 	
-	@Column(name = "language", nullable = false, length = 255)
+	@Column(name = "LANGUAGE", nullable = false, length = 255)
 	private String language;
 	
-	@Column(name = "code", nullable = false)
+	@Column(name = "CODE", nullable = false)
 	@Lob
 	private String script;
 	

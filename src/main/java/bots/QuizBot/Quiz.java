@@ -13,20 +13,20 @@ import javax.persistence.OneToMany;
 
 import bridgempp.bot.database.PersistenceManager;
 
-@Entity(name = "QuizBot_Quiz")
+@Entity(name = "QUIZBOT_QUIZ")
 public class Quiz
 {
 	/**
 	 * 
 	 */
 	@Id
-	@Column(name = "Name", nullable = false, length=255)
+	@Column(name = "NAME", nullable = false, length=255)
 	private String name = "Unnamed Quiz";
 	
-	@Column(name = "NumberOfEntryColumns", nullable = false)
+	@Column(name = "NUMBEROFENTRYCOLUMNS", nullable = false)
 	private int numberOfColumns = 0;
 	
-	@Column(name="Headers", nullable = false)
+	@Column(name="HEADERS", nullable = false)
 	@OneToMany(mappedBy="quiz", cascade=CascadeType.ALL, orphanRemoval=true)
 	private List<QuizHeader> headers = new ArrayList<QuizHeader>();
 	

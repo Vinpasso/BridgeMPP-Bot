@@ -8,12 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-@Entity(name = "QuizValue")
+@Entity(name = "QUIZVALUE")
 public class QuizValue
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="Identifier", nullable = false)
+	@Column(name="IDENTIFIER", nullable = false)
 	private int identifier;
 	
 	@ManyToOne(cascade = CascadeType.ALL, optional = false)
@@ -22,7 +22,7 @@ public class QuizValue
 	@ManyToOne(optional = false)
 	private QuizHeader quizHeader;
 
-	@Column(name = "Value", length = 1024, nullable = true)
+	@Column(name = "QUIZENTRY_VALUE", length = 1024, nullable = true)
 	private String value;
 
 	public QuizValue(QuizEntry quizEntry, QuizHeader quizHeader, String value)

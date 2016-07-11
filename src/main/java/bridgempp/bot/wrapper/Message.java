@@ -45,7 +45,7 @@ public class Message {
 	 * @return The new Message, to be passed to sendMessage
 	 */
 	public Message replyTo(String text, MessageFormat format) {
-		return new Message(getMessage(), text, format);
+		return new Message(getGroup(), text, format);
 	}
 
 	/**
