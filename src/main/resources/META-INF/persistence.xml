@@ -7,9 +7,9 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/bridgempp-bots?serverTimezone=Europe/Berlin" />
-			<property name="javax.persistence.jdbc.user" value="bridgempp-bots" />
-			<property name="javax.persistence.jdbc.password" value="bridgempp-bots" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1:3306/bridgempp-bot?serverTimezone=Europe/Berlin" />
+			<property name="javax.persistence.jdbc.user" value="bridgempp-bot" />
+			<property name="javax.persistence.jdbc.password" value="bridgempp-bot" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.connection.charSet" value="UTF-8" />
