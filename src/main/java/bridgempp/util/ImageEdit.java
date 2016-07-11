@@ -1,8 +1,6 @@
 package bridgempp.util;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,11 +55,11 @@ public class ImageEdit {
     }
 
     public static byte[] resizeImage(URLConnection connection, int width, int height, String imageType) {
-        
+
         try {
             BufferedImage originalImage = ImageIO.read(connection.getInputStream());
             double aspectRatio = originalImage.getWidth() / originalImage.getHeight();
-            
+
             if(width == 0 && height == 0)
             {
             	width = originalImage.getWidth();
@@ -75,13 +73,14 @@ public class ImageEdit {
             {
             	height = (int)(width / aspectRatio);
             }
-            
-            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = resizedImage.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setBackground(Color.WHITE);
+            //graphics.setBackground(Color.WHITE);
             graphics.drawImage(originalImage, 0, 0, width, height, null);
             graphics.finalize();
             graphics.dispose();
