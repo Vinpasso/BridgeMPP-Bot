@@ -192,7 +192,7 @@ public class MetaWrapper extends Bot
 		MetaMethod annotation = method.getAnnotation(MetaMethod.class);
 		if(annotation == null)
 		{
-			return "Method: " + method.getName() + " does not have a help topic";
+			return "Method: " + method.getName() + " does not have a help topic\n";
 		}
 		String helpTopic = "Method: " + method.getName() + " Usage: " + getTrigger(annotation, method);
 		for (Parameter parameter : method.getParameters())
