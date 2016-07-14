@@ -22,7 +22,7 @@ public class QuizEntry
 	@Column(name = "IDENTIFIER", nullable = false)
 	private int identifier;
 	
-	@OneToMany(mappedBy="QUIZENTRY", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="quizEntry", cascade=CascadeType.ALL, orphanRemoval = true)
 	private List<QuizValue> quizValues = new ArrayList<QuizValue>();
 	
 	@ManyToOne(optional = false)
