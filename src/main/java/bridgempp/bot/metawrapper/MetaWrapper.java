@@ -189,15 +189,20 @@ public class MetaWrapper extends Bot
 
 	protected String getHelpTopicForMethod(Method method)
 	{
-		String helpTopic = "Method: " + method.getName() + " Usage: " + getTrigger(method.getAnnotation(MetaMethod.class), method);
+		MetaMethod annotation = method.getAnnotation(MetaMethod.class);
+		if(annotation == null)
+		{
+			return "Method: " + method.getName() + " does not have a help topic";
+		}
+		String helpTopic = "Method: " + method.getName() + " Usage: " + getTrigger(annotation, method);
 		for (Parameter parameter : method.getParameters())
 		{
 			helpTopic += "<" + parameter.getType().getSimpleName() + " " + parameter.getName() + "> ";
 		}
 		helpTopic += "\n";
-		if (method.getAnnotation(MetaMethod.class) != null && !method.getAnnotation(MetaMethod.class).equals(""))
+		if (annotation != null && !annotation.equals(""))
 		{
-			helpTopic += method.getAnnotation(MetaMethod.class).helpTopic() + "\n";
+			helpTopic += annotation.helpTopic() + "\n";
 		}
 		for (Parameter parameter : method.getParameters())
 		{
