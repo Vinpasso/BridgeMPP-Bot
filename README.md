@@ -5,6 +5,7 @@ BridgeMPP-Bot
 
 
 [![Build Status](https://travis-ci.org/Vinpasso/BridgeMPP-Bot.svg?branch=master)](https://travis-ci.org/Vinpasso/BridgeMPP-Bot)
+[![Dependency Status](https://www.versioneye.com/user/projects/57937ddaad9529003cef16b7/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57937ddaad9529003cef16b7)
 
 BridgeMPP-Bot is a collection of Chat Bots currently running on BridgeMPP Server.
 
