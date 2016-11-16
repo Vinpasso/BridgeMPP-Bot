@@ -1,6 +1,6 @@
 
 
-[![Project BridgeMPP](https://github.com/Vinpasso/BridgeMPP-Bots/raw/master/src/main/resources/BridgeMPPLogo.png )](https://github.com/Vinpasso/BridgeMPP/)
+[![Project BridgeMPP-Bot](https://github.com/Vinpasso/BridgeMPP-Bot/raw/master/src/main/resources/BridgeMPPLogo.png )](https://github.com/Vinpasso/BridgeMPP-Bot/)
 BridgeMPP-Bot
 ================
 
