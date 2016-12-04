@@ -3,7 +3,7 @@ echo "The current Pull Request is $TRAVIS_BRANCH"
 if [ $TRAVIS_PULL_REQUEST == "false" -a $TRAVIS_BRANCH == "master" ]
 then
 sftp $SSH_USER@$SSH_HOST <<EOF
-put target/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar /bots-upload/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar
+put bridgempp-bots-package/target/bridgempp-bots-package-1.0.0-jar-with-dependencies.jar /bots-upload/BridgeMPP-Bot-1.0.0-jar-with-dependencies.jar
 EOF
 echo "$TRAVIS_BUILD_NUMBER" > version.txt
 sftp $SSH_USER@$SSH_HOST <<EOF
