@@ -4,10 +4,11 @@ import java.util.logging.Level;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper;
-import bridgempp.bot.wrapper.network.ProtoBuf.Message;
+import bridgempp.message.MessageBuilder;
+import bridgempp.services.socket.ProtoBufUtils;
+import bridgempp.services.socket.protobuf.Message;
 import bridgempp.util.Log;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -23,7 +24,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 public class CommandTransceiver extends
-		SimpleChannelInboundHandler<ProtoBuf.Message> {
+		SimpleChannelInboundHandler<Message> {
 	private State state;
 	private Channel channel;
 	private Bot bot;
@@ -50,7 +51,7 @@ public class CommandTransceiver extends
 		pipeline.addLast("idleStateHandler", new IdleStateHandler(120, 60, 120));
 		pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
 		pipeline.addLast("protobufDecoder", new ProtobufDecoder(
-				ProtoBuf.Message.getDefaultInstance()));
+				Message.getDefaultInstance()));
 		pipeline.addLast("frameEncoder",
 				new ProtobufVarint32LengthFieldPrepender());
 		pipeline.addLast("protobufEncoder", new ProtobufEncoder());
@@ -92,7 +93,9 @@ public class CommandTransceiver extends
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Message msg) {
-		String confirmation = msg.getMessage();
+		MessageBuilder messageBuilder = new MessageBuilder(null, null);
+		ProtoBufUtils.parseMessage(msg, messageBuilder);
+		String confirmation = messageBuilder.build().getPlainTextMessageBody();
 		if (confirmation.equalsIgnoreCase("BridgeMPP: command status success")) {
 			Log.log(Level.INFO, "Status success: " + state.toString(), bot);
 			switch (state) {
@@ -131,7 +134,7 @@ public class CommandTransceiver extends
 			Log.wrapperLog(Level.INFO, "Initialized bot: " + bot.getName());
 		} catch (Exception e) {
 			Log.log(Level.WARNING, "Error while initializing Bot: " + bot.getName(), e);
-			bot.sendMessage(new bridgempp.bot.wrapper.Message("", "Error while initializing Bot: " + bot.getName() + "\n" + e.toString() + "\n" + ExceptionUtils.getStackTrace(e), MessageFormat.PLAIN_TEXT));
+			bot.sendMessage(new MessageBuilder(null, null).addPlainTextBody("Error while initializing Bot: " + bot.getName() + "\n" + e.toString() + "\n" + ExceptionUtils.getStackTrace(e)).build());
 		}
 		Log.log(Level.INFO,
 				"Commands successfully executed. Starting Incomming Message Handler",

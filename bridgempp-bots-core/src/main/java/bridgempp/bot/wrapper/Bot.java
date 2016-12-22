@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import bridgempp.message.Message;
 import bridgempp.util.Log;
 
 /**

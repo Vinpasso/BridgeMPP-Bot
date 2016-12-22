@@ -11,7 +11,9 @@ import java.util.logging.Level;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import bridgempp.bot.messageformat.MessageFormat;
+import bridgempp.data.DataManager;
+import bridgempp.message.Message;
+import bridgempp.message.MessageBuilder;
 import bridgempp.util.Log;
 
 public class Schedule
@@ -141,7 +143,12 @@ public class Schedule
 						bot.synchronizedMessageReceived(message);
 					} catch (Exception e)
 					{
-						BotWrapper.printMessage(new Message(message.getGroup(), "A Bot has crashed!\n" + e.toString() + "\n" + ExceptionUtils.getStackTrace(e), MessageFormat.PLAIN_TEXT), bot);
+						BotWrapper.printMessage(
+								new MessageBuilder(null, null)
+								.addDestinationsFromGroupNoLoopback(message.getGroups())
+								.addPlainTextBody("A Bot has crashed!\n" + e.toString() + "\n" + ExceptionUtils.getStackTrace(e))
+								.build(),
+								bot);
 					}
 					bot.appendProcessingTime(System.currentTimeMillis() - startTime);
 				}

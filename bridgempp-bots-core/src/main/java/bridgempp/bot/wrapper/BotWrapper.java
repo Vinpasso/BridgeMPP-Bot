@@ -31,9 +31,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import bridgempp.bot.database.PersistenceManager;
-import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.network.CommandTransceiver;
-import bridgempp.bot.wrapper.network.ProtoBuf;
+import bridgempp.message.Message;
+import bridgempp.message.MessageBuilder;
+import bridgempp.services.socket.ProtoBufUtils;
 import bridgempp.util.Log;
 
 /**
@@ -197,29 +198,28 @@ public class BotWrapper
 	{
 		if (bot.channel == null)
 		{
-			if (message.message.length() == 0)
+			if (message.getLength() == 0)
 			{
 				System.out.println("CONSOLE BOT: Empty Message");
 			}
-			System.out.println("CONSOLE BOT: " + message.toComplexString());
+			System.out.println("CONSOLE BOT: " + message.toString());
 			return null;
 		}
-		if (message.message.length() == 0)
+		if (message.getLength() == 0)
 		{
 			return null;
 		}
-		message.validate();
+		//message.validate();
 
-		ProtoBuf.Message protoMessage = ProtoBuf.Message.newBuilder().setMessageFormat(message.getMessageFormat().getName()).setMessage(message.getMessage()).setSender(message.getSender())
-				.setTarget(message.getTarget()).setGroup(message.group).build();
+		bridgempp.services.socket.protobuf.Message protoMessage = ProtoBufUtils.serializeMessage(message);
 		ChannelFuture future = bot.channel.writeAndFlush(protoMessage);
-		Log.log(Level.INFO, "Outbound: " + message.toComplexString());
+		Log.log(Level.INFO, "Outbound: " + message.toString());
 		return future;
 	}
 
 	public static ChannelFuture printCommand(String command, Bot bot)
 	{
-		return printMessage(new Message("", command, MessageFormat.PLAIN_TEXT), bot);
+		return printMessage(new MessageBuilder(null, null).addPlainTextBody(command).build(), bot);
 	}
 
 	private static void botInitialize(File botConfig) throws UnsupportedOperationException
