@@ -6,10 +6,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
-import bridgempp.message.Message;
+import bridgempp.bot.wrapper.Message;
 import bridgempp.util.Log;
 import bridgempp.util.Util;
 
@@ -118,9 +117,9 @@ public class MetaWrapper extends Bot
 		while (keys.hasMoreElements())
 		{
 			String key = keys.nextElement();
-			if (message.getPlainTextMessageBody().toLowerCase().startsWith(key.toLowerCase()))
+			if (message.getPlainTextMessage().toLowerCase().startsWith(key.toLowerCase()))
 			{
-				runMethod(methods.get(key), message, message.getPlainTextMessageBody().substring(key.length()));
+				runMethod(methods.get(key), message, message.getPlainTextMessage().substring(key.length()));
 			}
 		}
 	}
@@ -131,7 +130,7 @@ public class MetaWrapper extends Bot
 		Object[] arguments = Util.parseParametersCommandLineStyle(parameters, parameterString, message);
 		if (arguments == null)
 		{
-			sendMessage(message.directConstructReply(null, null, "Syntax Error: Type " + getManTrigger() + " to print a complete help topic\n" + getHelpTopicForMethod(method)));
+			sendMessage(new Message(message.getGroup(), "Syntax Error: Type " + getManTrigger() + " to print a complete help topic\n" + getHelpTopicForMethod(method), MessageFormat.PLAIN_TEXT));
 			return;
 		}
 		Object instanceObject = method.getDeclaringClass().equals(getClass()) ? this : metaInstance;
@@ -140,20 +139,20 @@ public class MetaWrapper extends Bot
 			Object returnObject = method.invoke(instanceObject, arguments);
 			if (returnObject != null)
 			{
-				sendMessage(message.directConstructReply(null, null, returnObject.toString()));
+				sendMessage(new Message(message.getGroup(), returnObject.toString(), MessageFormat.PLAIN_TEXT));
 			}
 		} catch (Exception e)
 		{
 			if (e.getCause() != null && e.getCause() instanceof MetaNotifyException)
 			{
-				sendMessage(message.directConstructReply(null, null, e.getCause().getMessage()));
+				sendMessage(new Message(message.getGroup(), e.getCause().getMessage(), MessageFormat.PLAIN_TEXT));
 			} else
 			{
-				sendMessage(message.directConstructReply(null, null, "A Meta Error has ocurred: " + e.toString() + "\n" + ExceptionUtils.getStackTrace(e)));
+				sendMessage(new Message(message.getGroup(), "A Meta Error has ocurred: " + e.toString(), MessageFormat.PLAIN_TEXT));
 				Throwable cause = e.getCause();
 				while (cause != null)
 				{
-					sendMessage(message.directConstructReply(null, null, "The previous Error was caused by: " + cause.toString() + "\n" + ExceptionUtils.getStackTrace(cause)));
+					sendMessage(new Message(message.getGroup(), "The previous Error was caused by: " + cause.toString(), MessageFormat.PLAIN_TEXT));
 					cause = cause.getCause();
 				}
 				e.printStackTrace();

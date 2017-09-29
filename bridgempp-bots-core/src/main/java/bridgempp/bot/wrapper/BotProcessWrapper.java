@@ -11,8 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import bridgempp.message.Message;
-import bridgempp.message.MessageBuilder;
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.util.Log;
 
 /**
@@ -44,7 +43,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
 
     @Override
     public void messageReceived(Message message) {
-        printStream.println(message.getPlainTextMessageBody());
+        printStream.println(message.getMessage());
     }
 
     public void readMessage() {
@@ -67,7 +66,7 @@ public class BotProcessWrapper extends Bot implements Runnable {
                 if (line.equals("null") || line.isEmpty()) {
                     continue;
                 }
-                sendMessage(new MessageBuilder(null, null).addPlainTextBody(line).build());
+                sendMessage(new Message("", line, MessageFormat.PLAIN_TEXT));
             } catch (IOException ex) {
                 Log.log(Level.SEVERE, null, ex);
             }

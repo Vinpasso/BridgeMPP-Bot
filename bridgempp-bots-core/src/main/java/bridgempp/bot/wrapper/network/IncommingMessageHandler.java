@@ -6,16 +6,15 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.time.Duration;
 import java.util.logging.Level;
 
+import bridgempp.bot.messageformat.MessageFormat;
 import bridgempp.bot.wrapper.Bot;
 import bridgempp.bot.wrapper.BotWrapper;
+import bridgempp.bot.wrapper.Message;
 import bridgempp.bot.wrapper.Schedule;
-import bridgempp.message.Message;
-import bridgempp.message.MessageBuilder;
-import bridgempp.services.socket.ProtoBufUtils;
 import bridgempp.util.Log;
 import bridgempp.util.Util;
 
-public class IncommingMessageHandler extends SimpleChannelInboundHandler<bridgempp.services.socket.protobuf.Message>
+public class IncommingMessageHandler extends SimpleChannelInboundHandler<ProtoBuf.Message>
 {
 	private Bot bot;
 
@@ -24,57 +23,61 @@ public class IncommingMessageHandler extends SimpleChannelInboundHandler<bridgem
 		this.bot = bot;
 	}
 
-	protected void channelRead0(ChannelHandlerContext channelHandlerContext, bridgempp.services.socket.protobuf.Message protoMessage)
+	protected void channelRead0(ChannelHandlerContext channelHandlerContext, ProtoBuf.Message protoMessage)
 	{
-		Message message = ProtoBufUtils.parseMessage(protoMessage, new MessageBuilder(null, null)).build();
-		String lowerCaseMessage = message.getPlainTextMessageBody().toLowerCase();
+		Message message = new Message(protoMessage.getGroup(), protoMessage.getSender(), protoMessage.getTarget(), protoMessage.getMessage(),
+				MessageFormat.parseMessageFormat(protoMessage.getMessageFormat()));
+		String lowerCaseMessage = message.getMessage().toLowerCase();
 		if (lowerCaseMessage.length() == 0)
 		{
 			return;
 		}
-		Log.log(Level.INFO, "Inbound: " + message.toString());
+		Log.log(Level.INFO, "Inbound: " + message.toComplexString());
 		if (lowerCaseMessage.startsWith("?botwrapper reload"))
 		{
-			bot.sendMessage(message.directConstructReply(null, null, "Bot Wrapper reloading. Respawn Throttle 60 seconds"));
+			bot.sendMessage(new Message(message.getGroup(), "Bot Wrapper reloading. Respawn Throttle 60 seconds", MessageFormat.PLAIN_TEXT));
 			BotWrapper.shutdown();
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper ping"))
 		{
-			bot.sendMessage(message.directConstructReply(null, null, "This is " + bot.name + " at your service"));
+			bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " at your service", MessageFormat.PLAIN_TEXT));
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper version"))
 		{
-			bot.sendMessage(message.directConstructReply(null, null, "This is " + bot.name + " running on BridgeMPP-Bot-Wrapper Build: #" + BotWrapper.build));
+			bot.sendMessage(new Message(message.getGroup(), "This is " + bot.name + " running on BridgeMPP-Bot-Wrapper Build: #" + BotWrapper.build, MessageFormat.PLAIN_TEXT));
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper status"))
 		{
-			bot.sendMessage(message.directConstructReply(null, null, "This is Status Check triggered by " + bot.name + "\nResult:\n" + BotWrapper.statusCheck()));
+			bot.sendMessage(new Message(message.getGroup(), "This is Status Check triggered by " + bot.name + "\nResult:\n" + BotWrapper.statusCheck(), MessageFormat.PLAIN_TEXT));
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper load"))
 		{
-			bot.sendMessage(message.directConstructReply(null, null, "Load Check: " + bot.name + " has used " + Duration.ofMillis(bot.getProcessingTime()).toString().substring(2) + " of processing time"));
+			bot.sendMessage(new Message(message.getGroup(), "Load Check: " + bot.name + " has used " + Duration.ofMillis(bot.getProcessingTime()).toString().substring(2) + " of processing time",
+					MessageFormat.PLAIN_TEXT));
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper setproperty "))
 		{
-			String[] parameters = Util.parseStringCommandLineStyle(message.getPlainTextMessageBody());
-			if (parameters.length < 5)
+			String[] parameters = Util.parseStringCommandLineStyle(message.getMessage());
+			if(parameters.length < 5)
 			{
-				bot.sendMessage(message.directConstructReply(null, null, "Not enough Arguments! Requires <Bot Name> <Property Name> <Property Value>"));
-			} else if (parameters[2].equalsIgnoreCase(bot.getName()))
+				bot.sendMessage(message.replyTo("Not enough Arguments! Requires <Bot Name> <Property Name> <Property Value>", MessageFormat.PLAIN_TEXT));
+			}
+			else if(parameters[2].equalsIgnoreCase(bot.getName()))
 			{
 				bot.properties.setProperty(parameters[3], parameters[4]);
-				bot.sendMessage(message.directConstructReply(null, null, "Set " + bot.name + " property " + parameters[3] + " to " + parameters[4]));
+				bot.sendMessage(message.replyTo("Set " + bot.name + " property " + parameters[3] + " to " + parameters[4], MessageFormat.PLAIN_TEXT));
 			}
 		}
 		if (lowerCaseMessage.startsWith("?botwrapper getproperty "))
 		{
-			String[] parameters = Util.parseStringCommandLineStyle(message.getPlainTextMessageBody());
-			if (parameters.length < 4)
+			String[] parameters = Util.parseStringCommandLineStyle(message.getMessage());
+			if(parameters.length < 4)
 			{
-				bot.sendMessage(message.directConstructReply(null, null, "Not enough Arguments! Requires <Bot Name> <Property Name>"));
-			} else if (parameters[2].equalsIgnoreCase(bot.getName()))
+				bot.sendMessage(message.replyTo("Not enough Arguments! Requires <Bot Name> <Property Name>", MessageFormat.PLAIN_TEXT));
+			}
+			else if(parameters[2].equalsIgnoreCase(bot.getName()))
 			{
-				bot.sendMessage(message.directConstructReply(null, null, "The " + bot.name + " property " + parameters[3] + " is " + bot.properties.getProperty(parameters[3])));
+				bot.sendMessage(message.replyTo("The " + bot.name + " property " + parameters[3] + " is " + bot.properties.getProperty(parameters[3]), MessageFormat.PLAIN_TEXT));
 			}
 		}
 		Schedule.submitMessage(bot, message);

@@ -1,7 +1,5 @@
 package bridgempp.bot.wrapper;
 
-import bridgempp.message.Message;
-
 public class MessageEntry implements Comparable<MessageEntry>
 {
 	private long creationTime;

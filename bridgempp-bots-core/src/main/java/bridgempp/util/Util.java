@@ -9,7 +9,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bridgempp.message.Message;
+import bridgempp.bot.wrapper.Message;
 
 import java.time.Duration;
 
